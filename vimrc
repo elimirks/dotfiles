@@ -2,13 +2,14 @@ runtime! archlinux.vim
 
 " The following are commented out as they cause vim to behave a lot
 " differently from regular Vi. They are highly recommended though.
-set showcmd		" Show (partial) command in status line.
-set showmatch		" Show matching brackets.
-set ignorecase		" Do case insensitive matching
-set smartcase		" Do smart case matching
-set incsearch		" Incremental search
-set autowrite		" Automatically save before commands like :next and :make
-set hidden             " Hide buffers when they are abandoned
+set showcmd     " Show (partial) command in status line.
+set showmatch   " Show matching brackets.
+set ignorecase  " Do case insensitive matching
+set smartcase   " Do smart case matching
+set incsearch   " Incremental search
+set hlsearch    " Highlight search results
+set autowrite   " Automatically save before commands like :next and :make
+set hidden      " Hide buffers when they are abandoned
 set nocompatible
 set ruler
 
@@ -32,10 +33,10 @@ set cinkeys=0{,0},:,0#,!^F
 " Scroll padding
 set scrolloff=10
 
-" Highlight search results
-set hlsearch
+" Undeline the current line
+set cursorline
 
-" put on the syntax!
+" Fire up the syntax!
 syntax on
 
 " Source a auto completion configuration file if available
@@ -58,4 +59,10 @@ set t_Co=256
 colorscheme delek
 " The default colours for searches are a bit hard to see
 hi Search ctermfg=0 ctermbg=11
+
+" Display the column seperator.
+set colorcolumn=80
+hi ColorColumn ctermbg=8
+hi DbgBreakptLine ctermfg=none ctermbg=235
+hi DbgBreakptSign ctermbg=1
 
