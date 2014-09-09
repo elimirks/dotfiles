@@ -19,7 +19,6 @@ set background=light
 set ts=2
 
 " Set the line numbers
-set relativenumber
 set number
 
 " Auto indent
@@ -60,9 +59,17 @@ colorscheme delek
 " The default colours for searches are a bit hard to see
 hi Search ctermfg=0 ctermbg=11
 
-" Display the column seperator.
-set colorcolumn=80
 hi ColorColumn ctermbg=8
 hi DbgBreakptLine ctermfg=none ctermbg=235
 hi DbgBreakptSign ctermbg=1
+
+" Vim 7.3 and up features
+
+if v:version < 703
+	finish
+endif
+
+set relativenumber
+" Display the column seperator.
+set colorcolumn=80
 
