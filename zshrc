@@ -133,7 +133,13 @@ function precmd() {
 	echo
 }
 
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+ZSH_SYNTAX_PATH=/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+if [ -e $ZSH_SYNTAX_PATH ]; then
+	source $ZSH_SYNTAX_PATH
+fi
+if [ -d $HOME/.zsh ]; then
+	source $HOME/.zsh/*
+fi
 
 # Enable the home/end/delete keys
 bindkey "\e[7~" beginning-of-line
