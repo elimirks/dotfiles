@@ -150,3 +150,5 @@ bindkey "\e[3~" delete-char
 export PATH="$PATH:$HOME/bin"
 export EDITOR='vim'
 
+[ "$TERM" = "rxvt-unicode-256color" ] && export TERM=rxvt
+
