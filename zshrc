@@ -66,7 +66,7 @@ setopt promptsubst
 alias grep='grep --color=always'
 alias ls='ls --color=always'
 
-if [ `command -v grc`]; then
+if [ `command -v grc` ]; then
 	# grc colors.. this is a very neat program
 	alias ping='grc ping'
 	alias traceroute='grc traceroute'
