@@ -2,7 +2,6 @@ runtime! archlinux.vim
 
 " The following are commented out as they cause vim to behave a lot
 " differently from regular Vi. They are highly recommended though.
-set showcmd     " Show (partial) command in status line.
 set showmatch   " Show matching brackets.
 set ignorecase  " Do case insensitive matching
 set smartcase   " Do smart case matching
@@ -72,4 +71,17 @@ endif
 set relativenumber
 " Display the column seperator.
 set colorcolumn=80
+
+" Status Line
+set showcmd " Show (partial) command in status line.
+set laststatus=2                             " always show statusbar  
+set statusline=
+set statusline+=%-10.3n\                   " buffer number  
+set statusline+=%f\                          " filename   
+set statusline+=%h%m%r%w                     " status flags  
+set statusline+=\[%{strlen(&ft)?&ft:'none'}] " file type  
+set statusline+=%=                           " right align remainder  
+set statusline+=0x%-8B                       " character value  
+set statusline+=%-14(%l,%c%V%)               " line, character  
+set statusline+=%<%P                         " file position  
 
