@@ -63,14 +63,11 @@ hi DbgBreakptLine ctermfg=none ctermbg=235
 hi DbgBreakptSign ctermbg=1
 
 " Vim 7.3 and up features
-
-if v:version < 703
-	finish
+if v:version >= 703
+	set relativenumber
+	" Display the column seperator.
+	set colorcolumn=80
 endif
-
-set relativenumber
-" Display the column seperator.
-set colorcolumn=80
 
 " Status Line
 set showcmd " Show (partial) command in status line.
