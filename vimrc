@@ -58,7 +58,7 @@ colorscheme delek
 " The default colours for searches are a bit hard to see
 hi Search ctermfg=0 ctermbg=11
 
-hi ColorColumn ctermbg=8
+hi ColorColumn ctermbg=233
 hi DbgBreakptLine ctermfg=none ctermbg=235
 hi DbgBreakptSign ctermbg=1
 
