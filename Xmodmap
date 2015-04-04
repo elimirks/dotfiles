@@ -1,0 +1,12 @@
+! This is meant to be used with the layout "pl dvp"
+
+remove Lock = Caps_Lock
+keysym Caps_Lock = Escape
+add Lock = Caps_Lock
+
+! Remap right alt to shift
+keycode 108 = Shift_R
+add Shift = Shift_R
+
+! Remap the right super key to Alt_GR/International key
+keycode 134 = ISO_Level3_Shift
