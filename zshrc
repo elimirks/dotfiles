@@ -61,10 +61,14 @@ PROMPT="$PROMPT_USER_HOST_TIME $PROMPT_STATUS %F{$pc['pwd']}%~ $prompt_newline%F
 setopt promptsubst
 
 
+if [[ `uname` == 'Linux' ]]; then
+	alias ls='ls --color=always'
+else  # Mac
+	alias ls='ls -G'
+fi
 
 # Nice colors
 alias grep='grep --color=always'
-alias ls='ls --color=always'
 
 if [ `command -v grc` ]; then
 	# grc colors.. this is a very neat program
@@ -130,7 +134,7 @@ zstyle ':completion:*' completer _expand _complete _correct _approximate
 zstyle ':completion:*' format 'Completing %d'
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*' menu select=2
-eval "$(dircolors -b)"
+`command -v dircolors` && eval "$(dircolors -b)"
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-colors ''
 zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
