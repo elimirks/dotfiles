@@ -91,6 +91,11 @@ function mkc { mkdir $@ && cd $1 }
 alias ll='ls -l'
 alias la='ls -la'
 
+alias ..="cd .. && ls"
+alias ...="cd ../.. && ls"
+alias ....="cd ../../.. && ls"
+alias .....="cd ../../../.. && ls"
+
 # Colorify man
 function man() {
 	env \
