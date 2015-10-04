@@ -55,7 +55,8 @@ pc['frown']=${1:-'red'}
 SMILE="if [ \$? = 0 ]; then echo \"%F{$pc['smile']}:)\"; else; echo \"%F{$pc['frown']}:(\"; fi"
 PROMPT_STATUS="\`$SMILE\`"
 PROMPT_USER_HOST_TIME="%F{$pc['user']}%n %F{$pc['host']}%m%F{$pc['time']} %T%f"
-PROMPT="$PROMPT_USER_HOST_TIME $PROMPT_STATUS %F{$pc['pwd']}%~ $prompt_newline%F{$pc['prom']}%# %F{$pc['com']}"
+PROMPT="$PROMPT_USER_HOST_TIME $PROMPT_STATUS %F{$pc['pwd']}%~
+%F{$pc['prom']}%# %F{$pc['com']}"
 setopt promptsubst
 
 
