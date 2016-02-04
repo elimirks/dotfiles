@@ -31,7 +31,7 @@ set cinkeys=0{,0},:,0#,!^F
 " Scroll padding
 set scrolloff=10
 
-" Undeline the current line
+" Underline the current line
 set cursorline
 
 " Fire up the syntax!
@@ -65,7 +65,7 @@ hi DbgBreakptSign ctermbg=1
 " Vim 7.3 and up features
 if v:version >= 703
 	set relativenumber
-	" Display the column seperator.
+	" Display the column separator.
 	set colorcolumn=80
 endif
 
@@ -81,4 +81,10 @@ set statusline+=%=                           " right align remainder
 set statusline+=0x%-8B                       " character value  
 set statusline+=%-14(%l,%c%V%)               " line, character  
 set statusline+=%<%P                         " file position  
+
+set wildmenu
+set wildmode=list:longest,full
+
+" Spell checker for plain text documents
+map <leader>ss :setlocal spell!<cr>
 
