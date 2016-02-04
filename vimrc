@@ -49,9 +49,6 @@ cmap w!! %!sudo tee > /dev/null %
 au BufWinLeave ?* mkview
 au BufWinEnter ?* silent loadview
 
-" Easy NERDTree access
-cmap NT NERDTreeToggle
-
 " Yay colors ^_^
 set t_Co=256
 colorscheme delek
