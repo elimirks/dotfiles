@@ -56,6 +56,7 @@ colorscheme delek
 hi Search ctermfg=0 ctermbg=11
 
 hi ColorColumn ctermbg=233
+hi CursorLine cterm=none ctermbg=233
 hi DbgBreakptLine ctermfg=none ctermbg=235
 hi DbgBreakptSign ctermbg=1
 
