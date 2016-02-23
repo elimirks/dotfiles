@@ -86,3 +86,6 @@ set wildmode=list:longest,full
 " Spell checker for plain text documents
 map <leader>ss :setlocal spell!<cr>
 
+" Space in normal mode switches window
+noremap <space> <C-w>w
+
