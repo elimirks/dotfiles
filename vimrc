@@ -83,9 +83,26 @@ set statusline+=%<%P                         " file position
 set wildmenu
 set wildmode=list:longest,full
 
-" Spell checker for plain text documents
-map <leader>ss :setlocal spell!<cr>
+"=============="
+" Key bindings "
+"=============="
 
-" Space in normal mode switches window
-noremap <space> <C-w>w
+" Note: this _MUST_ be before other keybindings
+let g:mapleader = "\<Space>"
+
+" Spell checker for plain text documents
+map <leader>s :setlocal spell!<cr>
+
+noremap <Leader><Leader> <C-w>w
+noremap <Leader>h <C-w>h
+noremap <Leader>j <C-w>j
+noremap <Leader>k <C-w>k
+noremap <Leader>l <C-w>l
+
+" Bye shift! #ergonomics
+noremap <Leader>; :
+
+" Bindings to help me be lazy
+noremap <Leader>bl :ls<CR>
+noremap <Leader>w :w<CR>
 
