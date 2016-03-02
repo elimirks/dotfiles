@@ -157,7 +157,9 @@ function preexec() {
 	echo
 }
 function precmd() {
-	echo
+	echo -e "$txtpur"
+	jobs
+	echo -ne "$txtrst"
 }
 
 ZSH_SYNTAX_PATH=/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
