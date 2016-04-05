@@ -104,5 +104,5 @@ noremap <Leader>; :
 
 " Bindings to help me be lazy
 noremap <Leader>bl :ls<CR>
-noremap <Leader>w :w<CR>
+noremap <Leader>w :update<CR>
 
