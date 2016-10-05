@@ -18,6 +18,7 @@
   (normal-top-level-add-subdirs-to-load-path))
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 
+;; Package manager
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
@@ -25,7 +26,7 @@
 (setq use-package-always-ensure t) ; Always ensure package is downloaded
 
 ;; Essential Settings
-(setq inhibit-splash-screen t
+(setq inhibit-splash-screen t ; No welcome screen
     inhibit-startup-message t
     inhibit-startup-echo-area-message t)
 (tool-bar-mode -1) ; No toolbar
@@ -57,17 +58,16 @@
   (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
   (setq evil-split-window-below t)
   (setq evil-vsplit-window-right t)
-  (define-key evil-ex-map "e " 'ido-find-file))
+  (define-key evil-ex-map "e " 'ido-find-file)) ; Automatically opens ido after :e
 
 ;; evil leader key
 (use-package evil-leader
   :config
-  (evil-leader/set-leader "<SPC>")
+  (evil-leader/set-leader "<SPC>") ; Bind leader to space
   (setq evil-leader/in-all-states 1)
   (global-evil-leader-mode)
   (evil-leader/set-key
-   "w"  'save-buffer ; w(rite)
-   ))
+   "w"  'save-buffer) ; Set leader bindings here
 
 ;; Tpope's surround
 (use-package evil-surround
@@ -85,7 +85,7 @@
         (define-key ido-completion-map [tab] 'ido-next-match))
     (add-hook 'ido-setup-hook #'my-ido-keys)
     :config
-    (setq ido-enable-flex-matching t)
+    (setq ido-enable-flex-matching t) ; Similar to fuzzy matching
     (setq ido-everywhere t)
     (ido-mode 1))
 
