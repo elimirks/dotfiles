@@ -1,8 +1,8 @@
-;  ____
-; |  _ \  _   _  _ __  ___  _ __ ___    __ _   ___  ___
-; | |_) || | | || '__|/ _ \| '_ ` _ \  / _` | / __|/ __|
-; |  __/ | |_| || |  |  __/| | | | | || (_| || (__ \__ \
-; |_|     \__,_||_|   \___||_| |_| |_| \__,_| \___||___/
+;  _____  _  _  __  __                   
+; | ____|| |(_)|  \/  |  __ _   ___  ___ 
+; |  _|  | || || |\/| | / _` | / __|/ __|
+; | |___ | || || |  | || (_| || (__ \__ \
+; |_____||_||_||_|  |_| \__,_| \___||___/
 
 ;; Setup package control
 (require 'package)
@@ -33,10 +33,12 @@
 (scroll-bar-mode -1) ; Hide scrollbars
 (menu-bar-mode -1) ; Hide menu bar
 (show-paren-mode t) ; Highlights matching parenthesis
-(electric-pair-mode t) ; Add closing pairs automatically
+;(electric-pair-mode t) ; Add closing pairs automatically
 (setq initial-scratch-message "") ; No scratch text
 (fset 'yes-or-no-p 'y-or-n-p) ; y/n instead of yes/no
-(setq-default indent-tabs-mode nil) ; No tabs use spaces
+; No tabs use spaces
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
 
 ;; Org Settings
 (setq org-pretty-entities t) ; Alows org to displayed UTF-8 chars like \alpha
@@ -44,21 +46,32 @@
 ;; Theme
 (use-package sublime-themes
   :config
-  (load-theme 'spolsky t))
+  (load-theme 'spolsky t)
+
+  ;; Reverse colors for the border to have nicer line  
+  (set-face-inverse-video-p 'vertical-border nil)
+  (set-face-background 'vertical-border (face-background 'default))
+
+  ;; Set symbol for the border
+  (set-display-table-slot standard-display-table
+                          'vertical-border 
+                          (make-glyph-code ?┃)))
 
 ;; Base evil package
 (use-package evil
   :init
-  ;; Unbind <C-u> for evil mode's use
+  ;; Unbind <C-u> for evil mode'
   (setq evil-want-C-u-scroll t)
   :config
   (evil-mode t)
   ;; Move up and down through wrapped lines
-  (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
-  (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
+  ;(define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
+  ;(define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
+	; Put the cursor in newly created panes
   (setq evil-split-window-below t)
   (setq evil-vsplit-window-right t)
-  (define-key evil-ex-map "e " 'ido-find-file)) ; Automatically opens ido after :e
+	; Automatically opens ido after :e
+  (define-key evil-ex-map "e " 'ido-find-file))
 
 ;; evil leader key
 (use-package evil-leader
@@ -67,7 +80,11 @@
   (setq evil-leader/in-all-states 1)
   (global-evil-leader-mode)
   (evil-leader/set-key
-   "w"  'save-buffer) ; Set leader bindings here
+	  ; Set leader bindings here
+    "w" 'save-buffer
+    "k" 'kill-this-buffer
+    "e" 'eshell
+    "m" 'ido-switch-buffer))
 
 ;; Tpope's surround
 (use-package evil-surround
@@ -115,6 +132,13 @@
 ;; Vim bindings for org mode
 (use-package evil-org)
 
+;; Relative line numbers n' stuff
+(use-package nlinum-relative
+  :config
+  (setq nlinum-relative-redisplay-delay 0)
+  (nlinum-relative-setup-evil)
+  (add-hook 'prog-mode-hook 'nlinum-relative-mode))
+
 ;; Better looking org headers
 (use-package org-bullets
   :config
@@ -123,6 +147,26 @@
 ;; Backup options
 (setq backup-by-copying t) ; Stop shinanigans with links
 (setq backup-directory-alist '((".*" . "~/.bak.emacs/backup/")))
+(if (eq nil (file-exists-p "~/.bak.emacs/")) ; Creates auto directory if it doesn't already exist
+    (make-directory "~/.bak.emacs/"))
 (if (eq nil (file-exists-p "~/.bak.emacs/auto")) ; Creates auto directory if it doesn't already exist
     (make-directory "~/.bak.emacs/auto"))
 (setq auto-save-file-name-transforms '((".*" "~/.bak.emacs/auto/" t))) ; backup in one place. flat, no tree structure
+
+;; esc quits like vim - nice evil mode stuff
+(defun minibuffer-keyboard-quit ()
+  "Abort recursive edit.
+    In Delete Selection mode, if the mark is active, just deactivate it;
+    then it takes a second \\[keyboard-quit] to abort the minibuffer."
+  (interactive)
+  (if (and delete-selection-mode transient-mark-mode mark-active)
+      (setq deactivate-mark  t)
+    (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
+    (abort-recursive-edit)))
+(define-key evil-normal-state-map [escape] 'keyboard-quit)
+(define-key evil-visual-state-map [escape] 'keyboard-quit)
+(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
