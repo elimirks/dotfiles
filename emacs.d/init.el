@@ -44,18 +44,7 @@
 (setq org-pretty-entities t) ; Alows org to displayed UTF-8 chars like \alpha
 
 ;; Theme
-(use-package sublime-themes
-  :config
-  (load-theme 'spolsky t)
-
-  ;; Reverse colors for the border to have nicer line  
-  (set-face-inverse-video-p 'vertical-border nil)
-  (set-face-background 'vertical-border (face-background 'default))
-
-  ;; Set symbol for the border
-  (set-display-table-slot standard-display-table
-                          'vertical-border 
-                          (make-glyph-code ?┃)))
+(load-theme 'spolsky)
 
 ;; Base evil package
 (use-package evil
@@ -170,3 +159,17 @@
 (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("d1177a530659bb01a72d05e5194e9ce7f08fffa58ba1220ea351e1f5492d9882" "0c29db826418061b40564e3351194a3d4a125d182c6ee5178c237a7364f0ff12" default))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
