@@ -26,7 +26,7 @@
   'spolsky
   '(linum-format " %7i "))
 
-(let ((*background*         "#161A1F")
+(let ((*background*         "#000000")
       (*comments*           "#8C8C8C")
       (*constant*           "#FF80F4")
       (*current-line*       "#151515")

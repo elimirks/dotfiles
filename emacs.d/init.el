@@ -26,9 +26,12 @@
 (setq use-package-always-ensure t) ; Always ensure package is downloaded
 
 ;; Essential Settings
+; For ansi-term n' stuff
+(setq explicit-shell-file-name
+      (if (file-readable-p "/usr/bin/zsh") "/usr/bin/zsh" "/bin/bash"))
 (setq inhibit-splash-screen t ; No welcome screen
-    inhibit-startup-message t
-    inhibit-startup-echo-area-message t)
+      inhibit-startup-message t
+      inhibit-startup-echo-area-message t)
 (tool-bar-mode -1) ; No toolbar
 (scroll-bar-mode -1) ; Hide scrollbars
 (menu-bar-mode -1) ; Hide menu bar
@@ -39,12 +42,48 @@
 ; No tabs use spaces
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
-
+(defvaralias 'c-basic-offset 'tab-width)
+(defvaralias 'cperl-indent-level 'tab-width)
 ;; Org Settings
 (setq org-pretty-entities t) ; Alows org to displayed UTF-8 chars like \alpha
 
 ;; Theme
-(load-theme 'spolsky)
+(load-theme 'spolsky t)
+(set-face-attribute 'default nil :height 110)
+
+(use-package rainbow-delimiters
+  :config
+  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(powerline-evil-normal-face ((t (:inherit powerline-evil-base-face :background "dark green"))))
+ '(rainbow-delimiters-depth-1-face ((t (:foreground "firebrick"))))
+ '(rainbow-delimiters-depth-2-face ((t (:foreground "dark magenta"))))
+ '(rainbow-delimiters-depth-3-face ((t (:foreground "orange red"))))
+ '(rainbow-delimiters-depth-4-face ((t (:foreground "blue"))))
+ '(rainbow-delimiters-depth-5-face ((t (:foreground "spring green"))))
+ '(rainbow-delimiters-depth-6-face ((t (:foreground "cyan"))))
+ '(rainbow-delimiters-unmatched-face ((t (:foreground "magenta")))))
+
+; TODO: Get this to work :|
+(defmacro with-face (str &rest properties)
+  `(propertize ,str 'face (list ,@properties)))
+;(format ":( [%s]" eshell-last-command-status)
+;(setq eshell-prompt-function
+;      (lambda ()
+;        (format "%s $ "
+;                (if (eq 0 eshell-last-command-status)
+;                    (with-face "hi" :foreground "#0f0")
+;                    (with-face "hi"
+;                               :foreground "#f00")))))
+;(setq eshell-prompt-regexp "^\(\:(\|:)\)\n[#$] ")
+
+(defun eshell-bindings ()
+	(define-key evil-normal-state-map (kbd "<up>") 'eshell-previous-matching-input-from-input)
+	(define-key evil-normal-state-map (kbd "<down>") 'eshell-next-matching-input-from-input))
 
 ;; Base evil package
 (use-package evil
@@ -60,7 +99,8 @@
   (setq evil-split-window-below t)
   (setq evil-vsplit-window-right t)
 	; Automatically opens ido after :e
-  (define-key evil-ex-map "e " 'ido-find-file))
+  (define-key evil-ex-map "e " 'ido-find-file)
+	(eshell-bindings))
 
 ;; evil leader key
 (use-package evil-leader
@@ -73,6 +113,7 @@
     "w" 'save-buffer
     "k" 'kill-this-buffer
     "e" 'eshell
+    "t" '(lambda () (interactive) (ansi-term "/usr/bin/zsh"))
     "m" 'ido-switch-buffer))
 
 ;; Tpope's surround
@@ -88,7 +129,8 @@
     :init
     (defun my-ido-keys ()
         "Has tab cycle through the matches"
-        (define-key ido-completion-map [tab] 'ido-next-match))
+        (define-key ido-completion-map [tab] 'ido-next-match)
+        (define-key ido-completion-map (kbd "C-c C-k") 'ido-kill-buffer-at-head))
     (add-hook 'ido-setup-hook #'my-ido-keys)
     :config
     (setq ido-enable-flex-matching t) ; Similar to fuzzy matching
@@ -159,16 +201,9 @@
 (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   (quote
-    ("d1177a530659bb01a72d05e5194e9ce7f08fffa58ba1220ea351e1f5492d9882" "0c29db826418061b40564e3351194a3d4a125d182c6ee5178c237a7364f0ff12" default))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
