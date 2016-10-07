@@ -46,10 +46,12 @@
 (defvaralias 'cperl-indent-level 'tab-width)
 ;; Org Settings
 (setq org-pretty-entities t) ; Alows org to displayed UTF-8 chars like \alpha
+;; Disable the annoying audible bell
+(setq visible-bell 1)
 
 ;; Theme
 (load-theme 'spolsky t)
-(set-face-attribute 'default nil :height 110)
+(set-face-attribute 'default nil :height 100)
 
 (use-package rainbow-delimiters
   :config
@@ -95,9 +97,9 @@
   ;; Move up and down through wrapped lines
   ;(define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
   ;(define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
-	; Put the cursor in newly created panes
-  (setq evil-split-window-below t)
-  (setq evil-vsplit-window-right t)
+                                        ; Put the cursor in newly created panes
+                                        ;(setq evil-split-window-below t)
+                                        ;(setq evil-vsplit-window-right t)
 	; Automatically opens ido after :e
   (define-key evil-ex-map "e " 'ido-find-file)
 	(eshell-bindings))
@@ -174,6 +176,10 @@
 (use-package org-bullets
   :config
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+(use-package markdown-mode
+  :mode ("\\.\\(m\\(ark\\)?down\\|md\\)$" . markdown-mode)
+  :config)
 
 ;; Backup options
 (setq backup-by-copying t) ; Stop shinanigans with links
