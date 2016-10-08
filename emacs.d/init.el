@@ -6,9 +6,12 @@
 
 ;; Setup package control
 (require 'package)
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
+(add-to-list 'package-archives
+             '("org" . "http://orgmode.org/elpa/"))
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives
+             '("melpa-stable" . "http://stable.melpa.org/packages/"))
 (setq package-enable-at-startup nil)
 (package-initialize)
 
@@ -46,6 +49,8 @@
 (defvaralias 'cperl-indent-level 'tab-width)
 ;; Org Settings
 (setq org-pretty-entities t) ; Alows org to displayed UTF-8 chars like \alpha
+(setq org-startup-truncated nil)
+(setq org-src-fontify-natively t)
 ;; Disable the annoying audible bell
 (setq visible-bell 1)
 
@@ -61,7 +66,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(powerline-evil-normal-face ((t (:inherit powerline-evil-base-face :background "dark green"))))
+ '(powerline-evil-normal-face
+   ((t (:inherit powerline-evil-base-face :background "dark green"))))
  '(rainbow-delimiters-depth-1-face ((t (:foreground "firebrick"))))
  '(rainbow-delimiters-depth-2-face ((t (:foreground "dark magenta"))))
  '(rainbow-delimiters-depth-3-face ((t (:foreground "orange red"))))
@@ -84,8 +90,10 @@
 ;(setq eshell-prompt-regexp "^\(\:(\|:)\)\n[#$] ")
 
 (defun eshell-bindings ()
-	(define-key evil-normal-state-map (kbd "<up>") 'eshell-previous-matching-input-from-input)
-	(define-key evil-normal-state-map (kbd "<down>") 'eshell-next-matching-input-from-input))
+	(define-key evil-normal-state-map (kbd "<up>")
+      'eshell-previous-matching-input-from-input)
+	(define-key evil-normal-state-map (kbd "<down>")
+      'eshell-next-matching-input-from-input))
 
 ;; Base evil package
 (use-package evil
@@ -116,6 +124,7 @@
     "k" 'kill-this-buffer
     "e" 'eshell
     "t" '(lambda () (interactive) (ansi-term "/usr/bin/zsh"))
+    "g" 'magit-status
     "m" 'ido-switch-buffer))
 
 ;; Tpope's surround
@@ -123,7 +132,8 @@
   :config
   (global-evil-surround-mode 1))
 
-;; External configuration for powerline and evil powerline (~/.emacs.d/lisp/init-powerline.el)
+;; External configuration for powerline and evil powerline
+;; (~/.emacs.d/lisp/init-powerline.el)
 (require 'init-powerline)
 
 ;; Nicer Completion
@@ -131,8 +141,10 @@
     :init
     (defun my-ido-keys ()
         "Has tab cycle through the matches"
-        (define-key ido-completion-map [tab] 'ido-next-match)
-        (define-key ido-completion-map (kbd "C-c C-k") 'ido-kill-buffer-at-head))
+        (define-key ido-completion-map [tab]
+          'ido-next-match)
+        (define-key ido-completion-map (kbd "C-c C-k")
+          'ido-kill-buffer-at-head))
     (add-hook 'ido-setup-hook #'my-ido-keys)
     :config
     (setq ido-enable-flex-matching t) ; Similar to fuzzy matching
@@ -149,21 +161,27 @@
   :config
   (global-set-key (kbd "M-x") 'smex)
   (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-  (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)) ;; This is your old M-x.
+  ;; This is your old M-x.
+  (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command))
 
 ;; Intelligently chooses between a space or hyphen when using ido
 (use-package ido-complete-space-or-hyphen)
 
 ;; Git porcelen
-(use-package magit
+(use-package magit)
+
+;; Help with keys
+(use-package which-key
   :config
-  (global-set-key "\C-x\g" 'magit-status))
+  (which-key-mode))
 
 ;; Vim bindings for magit
 (use-package evil-magit)
 
 ;; Vim bindings for org mode
-(use-package evil-org)
+(use-package evil-org
+  :config
+  (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode)))
 
 ;; Relative line numbers n' stuff
 (use-package nlinum-relative
@@ -184,11 +202,13 @@
 ;; Backup options
 (setq backup-by-copying t) ; Stop shinanigans with links
 (setq backup-directory-alist '((".*" . "~/.bak.emacs/backup/")))
-(if (eq nil (file-exists-p "~/.bak.emacs/")) ; Creates auto directory if it doesn't already exist
+; Creates auto directory if it doesn't already exist
+(if (eq nil (file-exists-p "~/.bak.emacs/"))
     (make-directory "~/.bak.emacs/"))
-(if (eq nil (file-exists-p "~/.bak.emacs/auto")) ; Creates auto directory if it doesn't already exist
+(if (eq nil (file-exists-p "~/.bak.emacs/auto"))
     (make-directory "~/.bak.emacs/auto"))
-(setq auto-save-file-name-transforms '((".*" "~/.bak.emacs/auto/" t))) ; backup in one place. flat, no tree structure
+; Backup in one place. Flat, no tree structure
+(setq auto-save-file-name-transforms '((".*" "~/.bak.emacs/auto/" t)))
 
 ;; esc quits like vim - nice evil mode stuff
 (defun minibuffer-keyboard-quit ()
