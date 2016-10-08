@@ -1,0 +1,3 @@
+* My magical dotfiles
+
+NTS: Plop these in /usr/local/src
