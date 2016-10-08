@@ -5,8 +5,8 @@ keysym Caps_Lock = Escape
 add Lock = Caps_Lock
 
 ! Remap right alt to shift
-keycode 108 = Shift_R
-add Shift = Shift_R
+!keycode 108 = Shift_R
+!add Shift = Shift_R
 
 ! Remap the right super key to Alt_GR/International key
-keycode 134 = ISO_Level3_Shift
+!keycode 134 = ISO_Level3_Shift

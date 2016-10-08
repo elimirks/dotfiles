@@ -56,7 +56,7 @@ colorscheme delek
 hi Search ctermfg=0 ctermbg=11
 
 hi ColorColumn ctermbg=233
-hi CursorLine cterm=none ctermbg=233
+hi CursorLine cterm=bold
 hi DbgBreakptLine ctermfg=none ctermbg=235
 hi DbgBreakptSign ctermbg=1
 
@@ -103,6 +103,7 @@ noremap <Leader>l <C-w>l
 noremap <Leader>; :
 
 " Bindings to help me be lazy
-noremap <Leader>bl :ls<CR>
+noremap <Leader>b :ls<CR>:b
 noremap <Leader>w :update<CR>
+noremap <Leader>e :edit 
 

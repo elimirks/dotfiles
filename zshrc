@@ -67,7 +67,7 @@ else  # Mac
 fi
 
 # Nice colors
-alias grep='grep --color=always'
+alias grep='grep -n --color=always'
 
 if [ `command -v grc` ]; then
 	# grc colors.. this is a very neat program
