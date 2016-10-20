@@ -51,6 +51,18 @@
 (setq org-pretty-entities t) ; Alows org to displayed UTF-8 chars like \alpha
 (setq org-startup-truncated nil)
 (setq org-src-fontify-natively t)
+
+;; Handy functions for starting and stopping dropbox (e.g. mostly used for Orgzly)
+;; On the Linux lab computers at UTM, we have a disk quota so this is a hack fix :)
+(defun eli/dropbox-start ()
+  (interactive)
+  (if (eq nil (file-exists-p "/virtual/mireckie/dropbox/.dropbox-dist"))
+      (call-process-shell-command "(python ~/.emacs.d/dropbox.py start -i&)")
+    (call-process-shell-command "(python ~/.emacs.d/dropbox.py start&)")))
+(defun eli/dropbox-stop ()
+  (interactive)
+  (call-process-shell-command "python ~/.emacs.d/dropbox.py stop&"))
+
 ;; Disable the annoying audible bell
 (setq visible-bell 1)
 
