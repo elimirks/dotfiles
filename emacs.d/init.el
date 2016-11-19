@@ -69,6 +69,12 @@
 ;; Theme
 (load-theme 'spolsky t)
 (set-face-attribute 'default nil :height 100)
+;; When in terminal
+(unless (display-graphic-p) 
+  (setq nlinum-format "%d ")
+  (add-to-list 'default-frame-alist '(background-color . "color-16"))
+  (custom-set-faces
+   '(linum ((t (:background "color-16" :foreground "#9fc59f"))))))
 
 (use-package rainbow-delimiters
   :config
@@ -78,8 +84,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(powerline-evil-normal-face
-   ((t (:inherit powerline-evil-base-face :background "dark green"))))
+ '(powerline-evil-normal-face ((t (:inherit powerline-evil-base-face :background "dark green"))))
  '(rainbow-delimiters-depth-1-face ((t (:foreground "firebrick"))))
  '(rainbow-delimiters-depth-2-face ((t (:foreground "dark magenta"))))
  '(rainbow-delimiters-depth-3-face ((t (:foreground "orange red"))))
@@ -107,31 +112,43 @@
 	(define-key evil-normal-state-map (kbd "<down>")
       'eshell-next-matching-input-from-input))
 
+;; For leader bindings
+(use-package general)
 ;; Base evil package
 (use-package evil
+  :demand
   :init
   ;; Unbind <C-u> for evil mode'
   (setq evil-want-C-u-scroll t)
   :config
   (evil-mode t)
-  ;; Move up and down through wrapped lines
-  ;(define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
-  ;(define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
-                                        ; Put the cursor in newly created panes
-                                        ;(setq evil-split-window-below t)
-                                        ;(setq evil-vsplit-window-right t)
-	; Automatically opens ido after :e
-  (define-key evil-ex-map "e " 'ido-find-file)
-	(eshell-bindings))
 
-;; evil leader key
-(use-package evil-leader
-  :config
-  (evil-leader/set-leader "<SPC>") ; Bind leader to space
-  (setq evil-leader/in-all-states 1)
-  (global-evil-leader-mode)
-  (evil-leader/set-key
-	  ; Set leader bindings here
+  ;; Put the cursor in newly created panes
+  ;;(setq evil-split-window-below t)
+  ;;(setq evil-vsplit-window-right t)
+
+  ;; Automatically opens ido after :e
+  (define-key evil-ex-map "e " 'ido-find-file)
+  (eshell-bindings)
+  
+  (general-create-definer bind-leader
+                          :keymaps 'global
+                          :states '(normal emacs)
+                          :prefix "SPC")
+
+  :general
+  (:states 'motion
+           "k" 'evil-previous-visual-line
+           "j" 'evil-next-visual-line)
+  (:states 'operator
+           "k" 'evil-previous-line
+           "j" 'evil-next-line)
+  
+
+  (:states 'normal
+           "C-z"  (lambda () (interactive)  (when (eq (display-graphic-p) nil) (suspend-frame))))
+
+  (bind-leader
     "w" 'save-buffer
     "k" 'kill-this-buffer
     "e" 'eshell
@@ -245,4 +262,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(package-selected-packages
+   (quote
+    (markdown-mode org-bullets nlinum-relative evil-org evil-magit which-key magit ido-complete-space-or-hyphen smex ido-ubiquitous powerline-evil powerline evil-surround evil-leader evil rainbow-delimiters use-package))))
