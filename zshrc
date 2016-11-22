@@ -179,3 +179,6 @@ bindkey "\e[3~" delete-char
 export PATH="$PATH:$HOME/bin"
 export EDITOR='vim'
 
+# This will break on unsupported systems... but who the fuck doesn't have 256?
+export TERM="xterm-256color"
+
