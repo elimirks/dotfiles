@@ -64,7 +64,7 @@
   (call-process-shell-command "python ~/.emacs.d/dropbox.py stop&"))
 
 ;; Disable the annoying audible bell
-(setq visible-bell 1)
+(setq visible-bell nil)
 
 ;; Theme
 (load-theme 'spolsky t)
