@@ -83,6 +83,12 @@ if [ `command -v grc` ]; then
 	alias configure='grc ./configure'
 fi
 
+if [ `command -v emacs` ]; then
+    alias ed="emacs -nw"
+else
+    alias ed="vim"
+fi
+
 # Crazy, short, and cool core util additions
 
 function cl { cd $@ && ls }
