@@ -79,6 +79,10 @@
 (use-package powerline
   :ensure t
   :config
+  ;; For terminal
+  (setq powerline-utf-8-separator-left #x0020)
+  (setq powerline-utf-8-separator-right #x0020)
+  ;; For the nice GUI
   (setq powerline-default-separator (if (display-graphic-p) 'slant
                                       nil))
   (air--powerline-default-theme))

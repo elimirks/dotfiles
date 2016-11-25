@@ -123,6 +123,8 @@
   :config
   (evil-mode t)
 
+  ;; Make asterisk search for dash-included-words
+  (setq-default evil-symbol-word-search t)
   ;; Put the cursor in newly created panes
   ;;(setq evil-split-window-below t)
   ;;(setq evil-vsplit-window-right t)
