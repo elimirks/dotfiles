@@ -250,3 +250,7 @@
   :mode ("\\.\\(m\\(ark\\)?down\\|md\\)$" . markdown-mode)
   :config)
    #+end_src
+** Prolog
+   #+begin_src emacs-lisp :tangle yes
+(eval-after-load 'prolog '(define-key prolog-mode-map [(backtab)] 'ediprolog-dwim))
+   #+end_src
