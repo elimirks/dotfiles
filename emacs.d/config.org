@@ -32,7 +32,7 @@
 (scroll-bar-mode -1) ; Hide scrollbars
 (menu-bar-mode -1) ; Hide menu bar
 (show-paren-mode t) ; Highlights matching parenthesis
-(setq visible-bell nil) ; Disable the annoying audible bell
+(setq ring-bell-function 'ignore) ; Disable ALL bells! They suck!
 ;(electric-pair-mode t) ; Add closing pairs automatically
 (setq initial-scratch-message "") ; No scratch text
 (fset 'yes-or-no-p 'y-or-n-p) ; y/n instead of yes/no
@@ -243,6 +243,8 @@
 (setq org-pretty-entities t) ; Alows org to displayed UTF-8 chars like \alpha
 (setq org-startup-truncated nil)
 (setq org-src-fontify-natively t)
+
+(setq org-ellipsis " ⤵")
    #+end_src
 ** Markdown
    #+begin_src emacs-lisp :tangle yes
@@ -252,5 +254,9 @@
    #+end_src
 ** Prolog
    #+begin_src emacs-lisp :tangle yes
-(eval-after-load 'prolog '(define-key prolog-mode-map [(backtab)] 'ediprolog-dwim))
+     (add-to-list 'auto-mode-alist '("\\.pro\\'" . prolog-mode))
+     (add-hook 'prolog-mode-hook
+               (lambda ()
+                 (local-set-key (kbd "C-c C-c") 'prolog-compile-file)
+                 (local-set-key (kbd "<backtab>") 'ediprolog-dwim)))
    #+end_src
