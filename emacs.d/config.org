@@ -152,57 +152,58 @@
 * Evil Mode
 ** Load and configure evil with general
    #+begin_src emacs-lisp :tangle yes
-;; For leader bindings
-(use-package general)
-;; Base evil package
-(use-package evil
-  :demand
-  :init
-  ;; Unbind <C-u> for evil mode'
-  (setq evil-want-C-u-scroll t)
-  :config
-  (evil-mode t)
+     ;; For leader bindings
+     (use-package general)
+     ;; Base evil package
+     (use-package evil
+       :demand
+       :init
+       ;; Unbind <C-u> for evil mode'
+       (setq evil-want-C-u-scroll t)
+       :config
+       (evil-mode t)
 
-  ;; Make asterisk search for dash-included-words
-  (setq-default evil-symbol-word-search t)
-  ;; Put the cursor in newly created panes
-  ;;(setq evil-split-window-below t)
-  ;;(setq evil-vsplit-window-right t)
+       ;; Make asterisk search for dash-included-words
+       (setq-default evil-symbol-word-search t)
+       ;; Put the cursor in newly created panes
+       ;;(setq evil-split-window-below t)
+       ;;(setq evil-vsplit-window-right t)
 
-  ;; Automatically opens ido after :e
-  (define-key evil-ex-map "e " 'ido-find-file)
-  (eshell-bindings)
-  
-  (general-create-definer bind-leader
-                          :keymaps 'global
-                          :states '(normal emacs)
-                          :prefix "SPC")
+       ;; Automatically opens ido after :e
+       (define-key evil-ex-map "e " 'ido-find-file)
+       (eshell-bindings)
+       
+       (general-create-definer bind-leader
+                               :keymaps 'global
+                               :states '(normal emacs)
+                               :prefix "SPC")
 
-  :general
-  (:states 'motion
-           "k" 'evil-previous-visual-line
-           "j" 'evil-next-visual-line)
-  (:states 'operator
-           "k" 'evil-previous-line
-           "j" 'evil-next-line)
-  
+       :general
+       (:states 'motion
+                "k" 'evil-previous-visual-line
+                "j" 'evil-next-visual-line)
+       (:states 'operator
+                "k" 'evil-previous-line
+                "j" 'evil-next-line)
+       
 
-  (:states 'normal
-           "C-z"  (lambda () (interactive)  (when (eq (display-graphic-p) nil) (suspend-frame))))
+       (:states 'normal
+                "C-z"  (lambda () (interactive)  (when (eq (display-graphic-p) nil) (suspend-frame))))
 
-  (bind-leader
-    "w" 'save-buffer
-    "k" 'kill-this-buffer
-    "e" 'eshell
-    "t" '(lambda () (interactive) (ansi-term "/usr/bin/zsh"))
-    "g" 'magit-status
-    "m" 'ido-switch-buffer
-    "c" 'recompile))
+       (bind-leader
+         "w" 'save-buffer
+         "k" 'kill-this-buffer
+         "e" 'eshell
+         "t" '(lambda () (interactive) (ansi-term "/usr/bin/zsh"))
+         "g" 'magit-status
+         "m" 'ido-switch-buffer
+         "c" 'recompile
+         "a" 'org-agenda))
 
-;; Tpope's surround
-(use-package evil-surround
-  :config
-  (global-evil-surround-mode 1))
+     ;; Tpope's surround
+     (use-package evil-surround
+       :config
+       (global-evil-surround-mode 1))
    #+end_src
 ** Make esc quit like vim
    #+begin_src emacs-lisp :tangle yes
@@ -231,20 +232,28 @@
 * Language Modes
 ** Org
    #+begin_src emacs-lisp :tangle yes
-;; Vim bindings for org mode
-(use-package evil-org
-  :config
-  (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode)))
+     ;; Better looking org headers
+     (use-package org-bullets
+       :config
+       (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
-;; Better looking org headers
-(use-package org-bullets
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-(setq org-pretty-entities t) ; Alows org to displayed UTF-8 chars like \alpha
-(setq org-startup-truncated nil)
-(setq org-src-fontify-natively t)
+     (setq
+      org-pretty-entities t ; Alows org to displayed UTF-8 chars like \alpha
+      org-startup-truncated nil
+      org-src-fontify-natively t
+      org-agenda-files '("~/Dropbox/Notes/everything.org")
+      org-src-window-setup 'current-window
+      org-ellipsis " ⤵")
 
-(setq org-ellipsis " ⤵")
+     (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+     (global-set-key "\C-cl" 'org-store-link)
+     ;; To enable an agenda hotkey
+     (global-set-key "\C-ca" 'org-agenda)
+     (global-set-key "\C-cb" 'org-iswitchb)
+
+     ;; Match those tagged with :inbox:, are not scheduled, are not DONE.
+     (setq org-agenda-custom-commands
+           `(("n" "[n]on deadlined tasks" tags "-DEADLINE={.+}/!+TODO|+STARTED|+WAITING")))
    #+end_src
 ** Markdown
    #+begin_src emacs-lisp :tangle yes
