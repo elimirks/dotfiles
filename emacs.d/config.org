@@ -22,25 +22,29 @@
    #+end_src
 ** Essential Settings
    #+begin_src emacs-lisp :tangle yes
-; For ansi-term n' stuff
-(setq explicit-shell-file-name
-      (if (file-readable-p "/usr/bin/zsh") "/usr/bin/zsh" "/bin/bash"))
-(setq inhibit-splash-screen t ; No welcome screen
-      inhibit-startup-message t
-      inhibit-startup-echo-area-message t)
-(tool-bar-mode -1) ; No toolbar
-(scroll-bar-mode -1) ; Hide scrollbars
-(menu-bar-mode -1) ; Hide menu bar
-(show-paren-mode t) ; Highlights matching parenthesis
-(setq ring-bell-function 'ignore) ; Disable ALL bells! They suck!
-;(electric-pair-mode t) ; Add closing pairs automatically
-(setq initial-scratch-message "") ; No scratch text
-(fset 'yes-or-no-p 'y-or-n-p) ; y/n instead of yes/no
-; No tabs use spaces
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 4)
-(defvaralias 'c-basic-offset 'tab-width)
-(defvaralias 'cperl-indent-level 'tab-width)
+     ;; For ansi-term n' stuff
+     (setq explicit-shell-file-name
+           (if (file-readable-p "/usr/bin/zsh") "/usr/bin/zsh" "/bin/bash"))
+     (setq inhibit-splash-screen t ; No welcome screen
+           inhibit-startup-message t
+           inhibit-startup-echo-area-message t)
+     (tool-bar-mode -1) ; No toolbar
+     (scroll-bar-mode -1) ; Hide scrollbars
+     (menu-bar-mode -1) ; Hide menu bar
+     (show-paren-mode t) ; Highlights matching parenthesis
+     (setq ring-bell-function 'ignore) ; Disable ALL bells! They suck!
+     ;(electric-pair-mode t) ; Add closing pairs automatically
+     (setq initial-scratch-message "") ; No scratch text
+     (fset 'yes-or-no-p 'y-or-n-p) ; y/n instead of yes/no
+     ; No tabs use spaces
+     (setq-default indent-tabs-mode nil)
+     (setq-default tab-width 4)
+     (defvaralias 'c-basic-offset 'tab-width)
+     (defvaralias 'cperl-indent-level 'tab-width)
+
+     ;; Default browser for links
+     (setq browse-url-browser-function 'browse-url-generic
+           browse-url-generic-program "google-chrome")
    #+end_src
 ** Backup Options
    #+begin_src emacs-lisp :tangle yes
@@ -102,25 +106,33 @@
 ** Misc plugins
    Git plugin that makes life easy.
    #+begin_src emacs-lisp :tangle yes
-(use-package magit)
-;; Vim bindings for magit
-(use-package evil-magit)
+     (use-package magit)
+     ;; Vim bindings for magit
+     (use-package evil-magit)
    #+end_src
    
    Shows help dialogs for keybindings
    #+begin_src emacs-lisp :tangle yes
-(use-package which-key
-  :config
-  (which-key-mode))
+     (use-package which-key
+       :config
+       (which-key-mode))
    #+end_src
    
    Relative line numbers n' stuff
    #+begin_src emacs-lisp :tangle yes
-(use-package nlinum-relative
-  :config
-  (setq nlinum-relative-redisplay-delay 0)
-  (nlinum-relative-setup-evil)
-  (add-hook 'prog-mode-hook 'nlinum-relative-mode))
+     (use-package nlinum-relative
+       :config
+       (setq nlinum-relative-redisplay-delay 0)
+       (nlinum-relative-setup-evil)
+       (add-hook 'prog-mode-hook 'nlinum-relative-mode))
+   #+end_src
+** Handy functions   
+   Used to reload this config:
+   #+begin_src emacs-lisp :tangle yes
+     (defun eli/load-init ()
+       "Reloads init file"
+       (interactive)
+       (load-file "~/.emacs.d/init.el"))
    #+end_src
 * Theme
 ** Configure a nice theme
@@ -250,10 +262,23 @@
      ;; To enable an agenda hotkey
      (global-set-key "\C-ca" 'org-agenda)
      (global-set-key "\C-cb" 'org-iswitchb)
-
+   #+end_src
+   
+   These settings are for Org Agenda.
+   #+begin_src emacs-lisp :tangle yes
      ;; Match those tagged with :inbox:, are not scheduled, are not DONE.
      (setq org-agenda-custom-commands
-           `(("n" "[n]on deadlined tasks" tags "-DEADLINE={.+}/!+TODO|+STARTED|+WAITING")))
+           `(("d" "non-[d]eadlined tasks"
+              tags "-DEADLINE={.+}/!+TODO|+STARTED|+WAITING -SCHEDULED={.+}/!+TODO|+STARTED|+WAITING")))
+
+     ;; Make the agenda schedule prettier
+     (setq org-agenda-prefix-format
+           '((agenda . " %i %-12t% s %-9(car (org-get-outline-path))")
+             (timeline . "  % s")
+             (todo . " %i %-12:c")
+             (tags . " %i %-12:c")
+             (search . " %i %-12:c")))
+
    #+end_src
 ** Markdown
    #+begin_src emacs-lisp :tangle yes
