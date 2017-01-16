@@ -22,6 +22,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(org-scheduled ((t (:foreground "magenta"))))
+ '(org-scheduled-today ((t (:foreground "magenta"))))
  '(powerline-evil-normal-face ((t (:inherit powerline-evil-base-face :background "dark green"))))
  '(rainbow-delimiters-depth-1-face ((t (:foreground "firebrick"))))
  '(rainbow-delimiters-depth-2-face ((t (:foreground "dark magenta"))))

@@ -72,36 +72,16 @@
   (call-process-shell-command "python ~/.emacs.d/dropbox.py stop&"))
    #+end_src
 ** Nice Completion
+   Helm - a nice minibuffer / completion / etc framework
    #+begin_src emacs-lisp :tangle yes
-(use-package ido
-    :init
-    (defun my-ido-keys ()
-        "Has tab cycle through the matches"
-        (define-key ido-completion-map [tab]
-          'ido-next-match)
-        (define-key ido-completion-map (kbd "C-c C-k")
-          'ido-kill-buffer-at-head))
-    (add-hook 'ido-setup-hook #'my-ido-keys)
-    :config
-    (setq ido-enable-flex-matching t) ; Similar to fuzzy matching
-    (setq ido-everywhere t)
-    (ido-mode 1))
-
-;; Use ido everywhere possible
-(use-package ido-ubiquitous
-  :config
-  (ido-ubiquitous-mode 1))
-
-;; Nicer Completion in M-x
-(use-package smex
-  :config
-  (global-set-key (kbd "M-x") 'smex)
-  (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-  ;; This is your old M-x.
-  (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command))
-
-;; Intelligently chooses between a space or hyphen when using ido
-(use-package ido-complete-space-or-hyphen)
+     (use-package helm
+       :config
+       (require 'helm-config)
+       (helm-mode 1)
+       (global-set-key (kbd "M-x") 'helm-M-x)
+       (setq helm-M-x-fuzzy-match t) ; Fuzzy M-x matching
+       (setq helm-split-window-in-side-p t) ; Make helm split on the bottom edge
+       )
    #+end_src
 ** Misc plugins
    Git plugin that makes life easy.
@@ -120,13 +100,14 @@
    
    Relative line numbers n' stuff
    #+begin_src emacs-lisp :tangle yes
-     (use-package nlinum-relative
-       :config
-       (setq nlinum-relative-redisplay-delay 0)
-       (nlinum-relative-setup-evil)
-       (add-hook 'prog-mode-hook 'nlinum-relative-mode))
+          (use-package nlinum-relative
+            :config
+            (setq nlinum-relative-redisplay-delay 0)
+            (nlinum-relative-setup-evil)
+            (add-hook 'matlab-mode-hook 'nlinum-relative-mode)
+            (add-hook 'prog-mode-hook 'nlinum-relative-mode))
    #+end_src
-** Handy functions   
+** Handy functions
    Used to reload this config:
    #+begin_src emacs-lisp :tangle yes
      (defun eli/load-init ()
@@ -181,8 +162,8 @@
        ;;(setq evil-split-window-below t)
        ;;(setq evil-vsplit-window-right t)
 
-       ;; Automatically opens ido after :e
-       (define-key evil-ex-map "e " 'ido-find-file)
+       ;; Automatically opens helm after :e
+       (define-key evil-ex-map "e " 'helm-find-files)
        (eshell-bindings)
        
        (general-create-definer bind-leader
@@ -208,9 +189,10 @@
          "e" 'eshell
          "t" '(lambda () (interactive) (ansi-term "/usr/bin/zsh"))
          "g" 'magit-status
-         "m" 'ido-switch-buffer
+         "m" 'helm-mini
          "c" 'recompile
          "a" 'org-agenda
+         "s" 'ispell
          "l" 'org-timeline))
 
      ;; Tpope's surround
@@ -274,7 +256,7 @@
 
      ;; Make the agenda schedule prettier
      (setq org-agenda-prefix-format
-           '((agenda . " %i %-12t% s %-9(car (org-get-outline-path))")
+           '((agenda . " %i %-12t% s %b\n                           ")
              (timeline . "  % s")
              (todo . " %i %-12:c")
              (tags . " %i %-12:c")
