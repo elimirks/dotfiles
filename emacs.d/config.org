@@ -210,7 +210,8 @@
          "g" 'magit-status
          "m" 'ido-switch-buffer
          "c" 'recompile
-         "a" 'org-agenda))
+         "a" 'org-agenda
+         "l" 'org-timeline))
 
      ;; Tpope's surround
      (use-package evil-surround
@@ -266,7 +267,7 @@
    
    These settings are for Org Agenda.
    #+begin_src emacs-lisp :tangle yes
-     ;; Match those tagged with :inbox:, are not scheduled, are not DONE.
+     ;; Match those tagged with, are not scheduled/deadlined, are not DONE.
      (setq org-agenda-custom-commands
            `(("d" "non-[d]eadlined tasks"
               tags "-DEADLINE={.+}/!+TODO|+STARTED|+WAITING -SCHEDULED={.+}/!+TODO|+STARTED|+WAITING")))
@@ -279,6 +280,10 @@
              (tags . " %i %-12:c")
              (search . " %i %-12:c")))
 
+     (setq org-agenda-start-day "-3d")
+     (setq org-agenda-span 30)
+     (setq org-agenda-show-all-dates nil) ; Omit empty days in the agenda
+     (setq org-deadline-warning-days 0) ; Disable pre-warnings
    #+end_src
 ** Markdown
    #+begin_src emacs-lisp :tangle yes
@@ -293,4 +298,27 @@
                (lambda ()
                  (local-set-key (kbd "C-c C-c") 'prolog-compile-file)
                  (local-set-key (kbd "<backtab>") 'ediprolog-dwim)))
+   #+end_src
+** DocViewMode
+   This mode is for document viewing, such as PDFs.
+
+   #+begin_src emacs-lisp :tangle yes
+     ;; Evil mode caused the document to blink - this fixes it
+     (evil-set-initial-state 'doc-view-mode 'emacs)
+     (add-hook 'doc-view-mode-hook
+               (lambda ()
+                 (set (make-local-variable 'evil-emacs-state-cursor) (list nil))))
+   #+end_src
+** Matlab
+   #+begin_src emacs-lisp :tangle yes
+     (use-package matlab-mode
+       :config
+       (autoload 'matlab-mode "matlab" "Matlab Editing Mode" t)
+       (add-to-list
+        'auto-mode-alist
+        '("\\.m$" . matlab-mode))
+       (setq matlab-indent-function t)
+       (setq matlab-shell-command "matlab")
+       ;; elisp setup for matlab-mode:
+       (setq matlab-shell-command-switches (list "-nodesktop")))
    #+end_src
