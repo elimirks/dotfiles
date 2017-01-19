@@ -238,13 +238,16 @@
       org-src-fontify-natively t
       org-agenda-files '("~/Dropbox/Notes/everything.org")
       org-src-window-setup 'current-window
-      org-ellipsis " ⤵")
+      org-ellipsis " ⤵"
+      ;; Makes inline latex previews bigger
+      org-format-latex-options (plist-put org-format-latex-options :scale 1.7))
 
      (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
      (global-set-key "\C-cl" 'org-store-link)
      ;; To enable an agenda hotkey
      (global-set-key "\C-ca" 'org-agenda)
      (global-set-key "\C-cb" 'org-iswitchb)
+
    #+end_src
    
    These settings are for Org Agenda.
@@ -304,3 +307,4 @@
        ;; elisp setup for matlab-mode:
        (setq matlab-shell-command-switches (list "-nodesktop")))
    #+end_src
+   
