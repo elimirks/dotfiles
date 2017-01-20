@@ -75,13 +75,27 @@
    Helm - a nice minibuffer / completion / etc framework
    #+begin_src emacs-lisp :tangle yes
      (use-package helm
+       :bind
+       (("M-x" . helm-M-x)
+        ("C-x C-f" . helm-find-files)
+        ("C-x b" . helm-buffers-list)
+        :map helm-map
+        ("C-i" . helm-next-line)
+        :map helm-find-files-map
+        ("<RET>" . elimirks/helm-return-find-file))
        :config
        (require 'helm-config)
        (helm-mode 1)
        (global-set-key (kbd "M-x") 'helm-M-x)
        (setq helm-M-x-fuzzy-match t) ; Fuzzy M-x matching
-       (setq helm-split-window-in-side-p t) ; Make helm split on the bottom edge
-       )
+       (setq helm-split-window-in-side-p t)) ; Make helm split on the bottom edge
+
+     ;; For using the enter key in helm
+     (defun elimirks/helm-return-find-file ()
+       (interactive)
+       (if (file-directory-p (helm-get-selection))
+           (helm-execute-persistent-action)
+         (helm-maybe-exit-minibuffer)))
    #+end_src
 ** Misc plugins
    Git plugin that makes life easy.
@@ -226,6 +240,7 @@
    #+end_src
 * Language Modes
 ** Org
+   Basic Org mode settings
    #+begin_src emacs-lisp :tangle yes
      ;; Better looking org headers
      (use-package org-bullets
@@ -265,8 +280,12 @@
              (tags . " %i %-12:c")
              (search . " %i %-12:c")))
 
-     (setq org-agenda-start-day "-3d")
-     (setq org-agenda-span 30)
+     ;; Hide DONE items
+     (setq org-agenda-skip-scheduled-if-done t
+           org-agenda-skip-deadline-if-done t)
+     ;; Set a 30 day span, instead of a week view
+     (setq org-agenda-start-day "-3d"
+           org-agenda-span 30)
      (setq org-agenda-show-all-dates nil) ; Omit empty days in the agenda
      (setq org-deadline-warning-days 0) ; Disable pre-warnings
    #+end_src
@@ -305,6 +324,6 @@
        (setq matlab-indent-function t)
        (setq matlab-shell-command "matlab")
        ;; elisp setup for matlab-mode:
-       (setq matlab-shell-command-switches (list "-nodesktop")))
+       (setq matlab-shell-command-switches (list "-nodesktop" "-nosplash")))
    #+end_src
    
