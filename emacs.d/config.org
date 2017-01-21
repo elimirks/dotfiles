@@ -79,8 +79,6 @@
        (("M-x" . helm-M-x)
         ("C-x C-f" . helm-find-files)
         ("C-x b" . helm-buffers-list)
-        :map helm-map
-        ("C-i" . helm-next-line)
         :map helm-find-files-map
         ("<RET>" . elimirks/helm-return-find-file))
        :config
@@ -96,6 +94,20 @@
        (if (file-directory-p (helm-get-selection))
            (helm-execute-persistent-action)
          (helm-maybe-exit-minibuffer)))
+   #+end_src
+   
+   Company mode for autocompletion
+   #+begin_src emacs-lisp :tangle yes
+     (use-package company
+       :init
+       (global-company-mode)
+       :config
+       (setq company-idle-delay 0) ; Delay to complete
+       (setq company-minimum-prefix-length 1)
+       (setq company-selection-wrap-around t) ; Loops around suggestions
+
+       (define-key company-active-map [backtab] 'company-select-previous)
+       (define-key company-active-map [tab] 'company-select-next))
    #+end_src
 ** Misc plugins
    Git plugin that makes life easy.
@@ -327,3 +339,31 @@
        (setq matlab-shell-command-switches (list "-nodesktop" "-nosplash")))
    #+end_src
    
+** C/C++
+   #+begin_src emacs-lisp :tangle yes
+     (require 'cc-mode)
+
+     (use-package irony
+       :config
+       (add-hook 'c++-mode-hook 'irony-mode)
+       (add-hook 'c-mode-hook 'irony-mode)
+       (add-hook 'objc-mode-hook 'irony-mode)
+
+       ;; replace the `completion-at-point' and `complete-symbol' bindings in
+       ;; irony-mode's buffers by irony-mode's function
+       (defun my-irony-mode-hook ()
+         (define-key irony-mode-map [remap completion-at-point]
+           'irony-completion-at-point-async)
+         (define-key irony-mode-map [remap complete-symbol]
+           'irony-completion-at-point-async))
+       (add-hook 'irony-mode-hook 'my-irony-mode-hook)
+       (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
+
+     (use-package company-irony)
+     (use-package company-irony-c-headers)
+
+     (eval-after-load 'company
+       '(add-to-list 'company-backends
+                     '(company-irony-c-headers company-irony)))
+   #+end_src
+
