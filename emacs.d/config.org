@@ -266,6 +266,8 @@
       org-agenda-files '("~/Dropbox/Notes/everything.org")
       org-src-window-setup 'current-window
       org-ellipsis " ⤵"
+      ;; Allows custom inline image sizes
+      org-image-actual-width nil
       ;; Makes inline latex previews bigger
       org-format-latex-options (plist-put org-format-latex-options :scale 1.7))
 
@@ -274,7 +276,6 @@
      ;; To enable an agenda hotkey
      (global-set-key "\C-ca" 'org-agenda)
      (global-set-key "\C-cb" 'org-iswitchb)
-
    #+end_src
    
    These settings are for Org Agenda.
@@ -300,6 +301,8 @@
            org-agenda-span 30)
      (setq org-agenda-show-all-dates nil) ; Omit empty days in the agenda
      (setq org-deadline-warning-days 0) ; Disable pre-warnings
+     ;; Hide the time grid by default
+     (setq org-agenda-use-time-grid nil)
    #+end_src
 ** Markdown
    #+begin_src emacs-lisp :tangle yes
