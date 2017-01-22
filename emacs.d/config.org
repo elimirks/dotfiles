@@ -304,6 +304,19 @@
      ;; Hide the time grid by default
      (setq org-agenda-use-time-grid nil)
    #+end_src
+   
+   Settings for exporting to LaTeX
+   #+begin_src emacs-lisp :tangle yes
+     (require 'ox-latex)
+     (add-to-list 'org-latex-packages-alist '("" "minted"))
+     (setq org-latex-listings 'minted)
+
+     (setq org-latex-pdf-process
+           '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+             "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+             "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+
+   #+end_src
 ** Markdown
    #+begin_src emacs-lisp :tangle yes
 (use-package markdown-mode
