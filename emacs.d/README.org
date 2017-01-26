@@ -105,6 +105,7 @@
        (setq company-idle-delay 0) ; Delay to complete
        (setq company-minimum-prefix-length 1)
        (setq company-selection-wrap-around t) ; Loops around suggestions
+       (setq company-global-modes '(not org-mode)) ; Disable autocomplete in org
 
        (define-key company-active-map [backtab] 'company-select-previous)
        (define-key company-active-map [tab] 'company-select-next))
@@ -250,73 +251,78 @@
 ;; (~/.emacs.d/lisp/init-powerline.el)
 (require 'init-powerline)
    #+end_src
+* Org
+  Basic Org mode settings
+  #+begin_src emacs-lisp :tangle yes
+    ;; Better looking org headers
+    (use-package org-bullets
+      :config
+      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+    (setq
+     org-pretty-entities t ; Alows org to displayed UTF-8 chars like \alpha
+     org-startup-truncated nil
+     org-src-fontify-natively t
+     org-agenda-files '("~/Dropbox/Notes/everything.org")
+     org-src-window-setup 'current-window
+     org-ellipsis " ⤵"
+     ;; Allows custom inline image sizes
+     org-image-actual-width nil
+     ;; Makes inline latex previews bigger
+     org-format-latex-options (plist-put org-format-latex-options :scale 1.7))
+
+    (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+    (global-set-key "\C-cl" 'org-store-link)
+    ;; To enable an agenda hotkey
+    (global-set-key "\C-ca" 'org-agenda)
+    (global-set-key "\C-cb" 'org-iswitchb)
+  #+end_src
+  
+  These settings are for Org Agenda.
+  #+begin_src emacs-lisp :tangle yes
+    ;; Match those tagged with, are not scheduled/deadlined, are not DONE.
+    (setq org-agenda-custom-commands
+          `(("d" "non-[d]eadlined tasks"
+             tags "-DEADLINE={.+}/!+TODO|+STARTED|+WAITING -SCHEDULED={.+}/!+TODO|+STARTED|+WAITING")))
+
+    ;; Make the agenda schedule prettier
+    (setq org-agenda-prefix-format
+          '((agenda . " %i %-12t% s %b\n                           ")
+            (timeline . "  % s")
+            (todo . " %i %-12:c")
+            (tags . " %i %-12:c")
+            (search . " %i %-12:c")))
+
+    ;; Hide DONE items
+    (setq org-agenda-skip-scheduled-if-done t
+          org-agenda-skip-deadline-if-done t)
+    ;; Set a 30 day span, instead of a week view
+    (setq org-agenda-start-day "-3d"
+          org-agenda-span 30)
+    (setq org-agenda-show-all-dates nil) ; Omit empty days in the agenda
+    (setq org-deadline-warning-days 0) ; Disable pre-warnings
+    ;; Hide the time grid by default
+    (setq org-agenda-use-time-grid nil)
+
+    ;; Dank calendar package
+    (use-package calfw
+      :config
+      (require 'calfw-org))
+  #+end_src
+  
+  Settings for exporting to LaTeX
+  #+begin_src emacs-lisp :tangle yes
+    (require 'ox-latex)
+    (add-to-list 'org-latex-packages-alist '("" "minted"))
+    (setq org-latex-listings 'minted)
+
+    (setq org-latex-pdf-process
+          '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+            "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+            "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+
+  #+end_src
 * Language Modes
-** Org
-   Basic Org mode settings
-   #+begin_src emacs-lisp :tangle yes
-     ;; Better looking org headers
-     (use-package org-bullets
-       :config
-       (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-
-     (setq
-      org-pretty-entities t ; Alows org to displayed UTF-8 chars like \alpha
-      org-startup-truncated nil
-      org-src-fontify-natively t
-      org-agenda-files '("~/Dropbox/Notes/everything.org")
-      org-src-window-setup 'current-window
-      org-ellipsis " ⤵"
-      ;; Allows custom inline image sizes
-      org-image-actual-width nil
-      ;; Makes inline latex previews bigger
-      org-format-latex-options (plist-put org-format-latex-options :scale 1.7))
-
-     (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-     (global-set-key "\C-cl" 'org-store-link)
-     ;; To enable an agenda hotkey
-     (global-set-key "\C-ca" 'org-agenda)
-     (global-set-key "\C-cb" 'org-iswitchb)
-   #+end_src
-   
-   These settings are for Org Agenda.
-   #+begin_src emacs-lisp :tangle yes
-     ;; Match those tagged with, are not scheduled/deadlined, are not DONE.
-     (setq org-agenda-custom-commands
-           `(("d" "non-[d]eadlined tasks"
-              tags "-DEADLINE={.+}/!+TODO|+STARTED|+WAITING -SCHEDULED={.+}/!+TODO|+STARTED|+WAITING")))
-
-     ;; Make the agenda schedule prettier
-     (setq org-agenda-prefix-format
-           '((agenda . " %i %-12t% s %b\n                           ")
-             (timeline . "  % s")
-             (todo . " %i %-12:c")
-             (tags . " %i %-12:c")
-             (search . " %i %-12:c")))
-
-     ;; Hide DONE items
-     (setq org-agenda-skip-scheduled-if-done t
-           org-agenda-skip-deadline-if-done t)
-     ;; Set a 30 day span, instead of a week view
-     (setq org-agenda-start-day "-3d"
-           org-agenda-span 30)
-     (setq org-agenda-show-all-dates nil) ; Omit empty days in the agenda
-     (setq org-deadline-warning-days 0) ; Disable pre-warnings
-     ;; Hide the time grid by default
-     (setq org-agenda-use-time-grid nil)
-   #+end_src
-   
-   Settings for exporting to LaTeX
-   #+begin_src emacs-lisp :tangle yes
-     (require 'ox-latex)
-     (add-to-list 'org-latex-packages-alist '("" "minted"))
-     (setq org-latex-listings 'minted)
-
-     (setq org-latex-pdf-process
-           '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-             "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-             "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-
-   #+end_src
 ** Markdown
    #+begin_src emacs-lisp :tangle yes
 (use-package markdown-mode
@@ -383,3 +389,7 @@
                      '(company-irony-c-headers company-irony)))
    #+end_src
 
+** Blarb
+   #+begin_src emacs-lisp :tangle yes
+     (require 'blarb-mode)
+   #+end_src

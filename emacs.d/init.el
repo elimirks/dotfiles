@@ -5,7 +5,7 @@
 ; |_____||_||_||_|  |_| \__,_| \___||___/
 
 ;; The Org config is where all the magic happens:
-(org-babel-load-file "~/.emacs.d/config.org")
+(org-babel-load-file "~/.emacs.d/README.org")
 
 ;; NTS: don't put anything except custom set stuff in this config
 
