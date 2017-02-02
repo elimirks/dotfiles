@@ -278,6 +278,12 @@
     (global-set-key "\C-cb" 'org-iswitchb)
   #+end_src
   
+  Custom Org Keybindings
+  #+begin_src emacs-lisp :tangle yes
+    (define-key evil-normal-state-map (kbd "M-h") 'org-metaleft)
+    (define-key evil-normal-state-map (kbd "M-s") 'org-metaright)
+  #+end_src
+  
   These settings are for Org Agenda.
   #+begin_src emacs-lisp :tangle yes
     ;; Match those tagged with, are not scheduled/deadlined, are not DONE.
