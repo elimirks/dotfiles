@@ -134,6 +134,14 @@
             (add-hook 'matlab-mode-hook 'nlinum-relative-mode)
             (add-hook 'prog-mode-hook 'nlinum-relative-mode))
    #+end_src
+   
+   Editor config, for consistent project code styles
+   #+begin_src emacs-lisp :tangle yes
+     (use-package editorconfig
+       :ensure t
+       :config
+       (editorconfig-mode 1))
+   #+end_src
 ** Handy functions
    Used to reload this config:
    #+begin_src emacs-lisp :tangle yes
