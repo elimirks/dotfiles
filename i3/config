@@ -128,7 +128,7 @@ bindsym XF86Display exec "xrandr | grep -E '(VGA1 connected 1920|VGA1 disconnect
 bindsym $mod+Tab exec "~/code/sh/translate_zenity.sh de:en"
 bindsym $mod+Shift+Tab exec "~/code/sh/translate_zenity.sh en:de"
 # In case xmodmap barfs, have an easy shortcut
-bindsym Scroll_Lock exec "cd ~/code/c/PinkyCtrls/; ./s2cctl restart"
+bindsym Scroll_Lock exec "cd ~/code/cplusplus/PinkyCtrls/; ./s2cctl restart"
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -162,6 +162,10 @@ bar {
 	status_command i3status -c ~/.i3/i3status.conf
 	position top
 	font pango:DejaVu Sans Mono 10
+	# Hide the bar. Show with $mod
+	mode hide
+	hidden_state hide
+	modifier $mod
 }
 
 # Hide window titles
@@ -211,8 +215,8 @@ mode "mousekeys" {
     # Left Click
     bindsym u exec xdotool click 1
 
-    # Middle Click
-	bindsym e exec xdotool click 2
+		# Middle Click
+		bindsym e exec xdotool click 2
 
     # Right Click
     bindsym o exec xdotool click 3
