@@ -71,8 +71,8 @@
   (interactive)
   (call-process-shell-command "python ~/.emacs.d/dropbox.py stop&"))
    #+end_src
-** Nice Completion
-   Helm - a nice minibuffer / completion / etc framework
+** Plugins
+   [[https://github.com/emacs-helm/helm][Helm]]. A nice minibuffer / completion / etc framework
    #+begin_src emacs-lisp :tangle yes
      (use-package helm
        :bind
@@ -96,7 +96,7 @@
          (helm-maybe-exit-minibuffer)))
    #+end_src
    
-   Company mode for autocompletion
+   [[https://www.emacswiki.org/emacs/CompanyMode][Company Mode]]. For autocompletion
    #+begin_src emacs-lisp :tangle yes
      (use-package company
        :init
@@ -110,22 +110,22 @@
        (define-key company-active-map [backtab] 'company-select-previous)
        (define-key company-active-map [tab] 'company-select-next))
    #+end_src
-** Misc plugins
-   Git plugin that makes life easy.
+
+   [[https://www.emacswiki.org/emacs/Magit][Magit]]. Git plugin that makes life easy.
    #+begin_src emacs-lisp :tangle yes
      (use-package magit)
      ;; Vim bindings for magit
      (use-package evil-magit)
    #+end_src
    
-   Shows help dialogs for keybindings
+   [[https://github.com/justbur/emacs-which-key][Which Key]]. Shows help dialogs for keybindings
    #+begin_src emacs-lisp :tangle yes
      (use-package which-key
        :config
        (which-key-mode))
    #+end_src
    
-   Relative line numbers n' stuff
+   [[https://github.com/CodeFalling/nlinum-relative][Nlinum Relative]]. Relative line numbers n' stuff
    #+begin_src emacs-lisp :tangle yes
           (use-package nlinum-relative
             :config
@@ -135,12 +135,21 @@
             (add-hook 'prog-mode-hook 'nlinum-relative-mode))
    #+end_src
    
-   Editor config, for consistent project code styles
+   [[https://github.com/editorconfig/editorconfig-emacs][EditorConfig]]. For consistent project code styles
    #+begin_src emacs-lisp :tangle yes
      (use-package editorconfig
        :ensure t
        :config
        (editorconfig-mode 1))
+   #+end_src
+   
+   [[https://www.emacswiki.org/emacs/DelightedModes][Delight.]] Makes the toolbar mode display more of a "delight"
+   #+begin_src emacs-lisp :tangle yes
+     (use-package delight
+       :config
+       (delight '((undo-tree-mode "" undo-tree)
+                  (editorconfig-mode "" editorconfig)
+                  (auto-revert-mode "" autorevert))))
    #+end_src
 ** Handy functions
    Used to reload this config:
@@ -225,8 +234,9 @@
          "t" '(lambda () (interactive) (ansi-term "/usr/bin/zsh"))
          "g" 'magit-status
          "m" 'helm-mini
-         "c" 'recompile
+         "r" 'recompile
          "a" 'org-agenda
+         "c" 'cfw:open-org-calendar
          "s" 'ispell
          "l" 'org-timeline))
 
@@ -260,7 +270,7 @@
 (require 'init-powerline)
    #+end_src
 * Org
-  Basic Org mode settings
+** Basic
   #+begin_src emacs-lisp :tangle yes
     ;; Better looking org headers
     (use-package org-bullets
@@ -295,8 +305,7 @@
     (define-key evil-normal-state-map (kbd "M-s") 'org-metaright)
     (define-key evil-normal-state-map (kbd "M-e") 'org-latex-export-to-pdf)
   #+end_src
-  
-  These settings are for Org Agenda.
+** Agenda
   #+begin_src emacs-lisp :tangle yes
     ;; Match those tagged with, are not scheduled/deadlined, are not DONE.
     (setq org-agenda-custom-commands
@@ -321,13 +330,32 @@
     (setq org-deadline-warning-days 0) ; Disable pre-warnings
     ;; Hide the time grid by default
     (setq org-agenda-use-time-grid nil)
-
-    ;; Dank calendar package
+  #+end_src
+** Calendar
+  #+begin_src emacs-lisp :tangle yes
     (use-package calfw
       :config
-      (require 'calfw-org))
+      (require 'calfw-org)
+     
+      ;; Nicer Unicode characters
+      (setq cfw:fchar-junction ?╋
+            cfw:fchar-vertical-line ?┃
+            cfw:fchar-horizontal-line ?━
+            cfw:fchar-left-junction ?┣
+            cfw:fchar-right-junction ?┫
+            cfw:fchar-top-junction ?┯
+            cfw:fchar-top-left-corner ?┏
+            cfw:fchar-top-right-corner ?┓)
+
+      ;; Deutsch format
+      (setq calendar-month-name-array
+            ["Januar" "Februar" "März"      "April"   "Mai"      "Juni"
+             "Juli"   "August"  "September" "Oktober" "November" "Dezember"])
+      (setq calendar-day-name-array
+            ["Sonntag" "Montag" "Dienstag" "Mittwoch" "Donnerstag" "Freitag" "Samstag"])
+      (setq calendar-week-start-day 1))
   #+end_src
-  
+** LaTeX
   Settings for exporting to LaTeX
   #+begin_src emacs-lisp :tangle yes
     (require 'ox-latex)
