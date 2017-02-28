@@ -151,6 +151,18 @@
                   (editorconfig-mode "" editorconfig)
                   (auto-revert-mode "" autorevert))))
    #+end_src
+
+   [[https://julien.danjou.info/projects/emacs-packages#rainbow-mode][Rainbow Mode]]. Highlights colors (~#ffffff~ syntax)
+   See [[http://stackoverflow.com/questions/16048231/how-to-enable-a-non-global-minor-mode-by-default-on-emacs-startup][this StackOverflow post]] for how to enable it on a per-major-mode basis.
+   #+begin_src emacs-lisp :tangle yes
+     (use-package rainbow-mode)
+
+     ; Enable for all programming modes
+     (add-hook 'prog-mode-hook 'my-css-mode-hook)
+     (defun my-css-mode-hook ()
+       (rainbow-mode 1))
+
+   #+end_src
 ** Handy functions
    Used to reload this config:
    #+begin_src emacs-lisp :tangle yes
