@@ -451,3 +451,12 @@
    #+begin_src emacs-lisp :tangle yes
      (require 'blarb-mode)
    #+end_src
+** CSV
+   #+begin_src emacs-lisp :tangle yes
+     (use-package csv-mode
+       :mode ("\\.csv$" . csv-mode)
+       :config
+       (add-hook 'csv-mode-hook
+                 (lambda () (define-key csv-mode-map (kbd "C-c C-c") (defun csv-align-visible (&optional arg) "Align visible fields" (interactive "P") (csv-align-fields nil (window-start) (window-end)))))))
+   #+end_src
+   
