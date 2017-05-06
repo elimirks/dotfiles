@@ -67,7 +67,7 @@ then
 else
 	read -p "Set up $HOME/.tmux.conf? (y/n) " yesorno
 	case "$yesorno" in
-		y) ln -s "$DIR/.tmux.conf" "$HOME/.tmux.conf" ;;
+		y) ln -s "$DIR/tmux.conf" "$HOME/.tmux.conf" ;;
 		*) echo "Skipping $HOME/.tmux.conf" ;;
 	esac
 fi
