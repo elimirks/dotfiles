@@ -83,3 +83,15 @@ else
 	esac
 fi
 
+if [ -e "$HOME/.config/git/config" ]
+then
+	echo $HOME/.config/git/config already exists... skipping
+else
+	read -p "Set up $HOME/.config/git/config? (y/n) " yesorno
+	case "$yesorno" in
+		y) mkdir -p "$HOME/.config/git/" && \
+		   ln -s "$DIR/gitconfig" "$HOME/.config/git/config" ;;
+		*) echo "Skipping $HOME/.config/git/config" ;;
+	esac
+fi
+

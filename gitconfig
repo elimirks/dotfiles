@@ -1,0 +1,5 @@
+[pull]
+	rebase = true
+[alias]
+	l = log --graph --pretty='%C(yellow)%h %C(green)%cn %C(blue)%ci %C(reset)%n        %s'
+	s = status
