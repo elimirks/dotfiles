@@ -2,5 +2,8 @@
 	path = i3/i3lock-fancy
 	url = https://github.com/meskarune/i3lock-fancy.git
 [submodule "PinkyCtrls"]
-	path = PinkyCtrls
+	path = packages/PinkyCtrls
 	url = https://github.com/elimirks/PinkyCtrls
+[submodule "packages/translate-shell"]
+	path = packages/translate-shell
+	url = https://github.com/soimort/translate-shell

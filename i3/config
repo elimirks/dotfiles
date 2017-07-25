@@ -9,6 +9,7 @@
 #
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
+set $DOTFILES /usr/local/src/dotfiles
 set $mod Mod4
 
 # Font for window titles. Will also be used by the bar unless a different font
@@ -137,10 +138,10 @@ bindsym XF86AudioPrev exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer
 # Toggle between VGA and laptop displays
 bindsym XF86Display exec "xrandr | grep -E '(VGA1 connected 1920|VGA1 disconnected)' && ~/.screenlayout/laptoponly.sh || ~/.screenlayout/vgaonly.sh"
 
-bindsym $mod+Tab exec "~/code/sh/translate_zenity.sh de:en"
-bindsym $mod+Shift+Tab exec "~/code/sh/translate_zenity.sh en:de"
+bindsym $mod+Tab exec "$DOTFILES/bin/translate_zenity.sh de:en"
+bindsym $mod+Shift+Tab exec "$DOTFILES/bin/translate_zenity.sh en:de"
 # In case xmodmap barfs, have an easy shortcut
-bindsym Scroll_Lock exec "cd ~/code/cplusplus/PinkyCtrls/; ./s2cctl restart"
+bindsym Scroll_Lock exec "cd $DOTFILES/packages/PinkyCtrls/; ./s2cctl restart"
 
 # resize window (you can also use the mouse for that)
 mode "resize" {

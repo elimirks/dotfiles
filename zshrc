@@ -1,3 +1,5 @@
+source $HOME/.profile
+
 # COLURZ!!!
 
 txtblk='\e[0;30m' # Black - Regular
@@ -36,7 +38,6 @@ txtrst='\e[0m'    # Text Reset
 
 # Set up the prompt
 
-
 setopt histignorealldups sharehistory
 
 # What does this do?
@@ -58,63 +59,6 @@ PROMPT_USER_HOST_TIME="%F{$pc['user']}%n %F{$pc['host']}%m%F{$pc['time']} %T%f"
 PROMPT="$PROMPT_USER_HOST_TIME $PROMPT_STATUS %F{$pc['pwd']}%~
 %F{$pc['prom']}%# %F{$pc['com']}"
 setopt promptsubst
-
-
-if [[ `uname` == 'Linux' ]]; then
-	alias ls='ls --color=always'
-else  # Mac
-	alias ls='ls -G'
-fi
-
-# Nice colors
-alias grep='grep -n --color=always'
-
-if [ `command -v grc` ]; then
-	# grc colors.. this is a very neat program
-	alias ping='grc ping'
-	alias traceroute='grc traceroute'
-	alias gcc='grc gcc'
-	alias make='grc make'
-	alias netstat='grc netstat'
-	alias diff='grc diff'
-	alias last='grc last'
-	alias ldap='grc ldap'
-	alias cvs='grc cvs'
-	alias configure='grc ./configure'
-fi
-
-if [ `command -v emacs` ]; then
-    alias ed="emacs -nw"
-else
-    alias ed="vim"
-fi
-
-# Crazy, short, and cool core util additions
-
-function cl { cd $@ && ls }
-function mkc { mkdir $@ && cd $1 }
-alias ll='ls -l'
-alias la='ls -la'
-
-alias ..="cd .. && ls"
-alias ...="cd ../.. && ls"
-alias ....="cd ../../.. && ls"
-alias .....="cd ../../../.. && ls"
-
-# Colorify man
-function man() {
-	env \
-		LESS_TERMCAP_mb=$(printf "\e[1;31m") \
-		LESS_TERMCAP_md=$(printf "\e[1;31m") \
-		LESS_TERMCAP_me=$(printf "\e[0m") \
-		LESS_TERMCAP_se=$(printf "\e[0m") \
-		LESS_TERMCAP_so=$(printf "\e[1;44;33m") \
-		LESS_TERMCAP_ue=$(printf "\e[0m") \
-		LESS_TERMCAP_us=$(printf "\e[1;32m") \
-			man "$@"
-}
-
-
 
 # Vim style
 bindkey -v
@@ -159,6 +103,22 @@ zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
 # Fancy prompt stuff
 
+# Colorify man
+function man() {
+	env \
+		LESS_TERMCAP_mb=$(printf "\e[1;31m") \
+		LESS_TERMCAP_md=$(printf "\e[1;31m") \
+		LESS_TERMCAP_me=$(printf "\e[0m") \
+		LESS_TERMCAP_se=$(printf "\e[0m") \
+		LESS_TERMCAP_so=$(printf "\e[1;44;33m") \
+		LESS_TERMCAP_ue=$(printf "\e[0m") \
+		LESS_TERMCAP_us=$(printf "\e[1;32m") \
+			man "$@"
+}
+
+function cl() { cd $@ && ls }
+function mkc() { mkdir $@ && cd $1 }
+
 function preexec() {
 	echo
 }
@@ -180,11 +140,4 @@ fi
 bindkey "\e[7~" beginning-of-line
 bindkey "\e[8~" end-of-line
 bindkey "\e[3~" delete-char
-
-# Environment
-export PATH="$PATH:$HOME/bin"
-export EDITOR='vim'
-
-# This will break on unsupported systems... but who the fuck doesn't have 256?
-export TERM="xterm-256color"
 
