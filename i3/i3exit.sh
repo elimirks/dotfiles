@@ -1,6 +1,6 @@
 #!/bin/sh
 lock() {
-    ~/.i3/i3lock-fancy/lock
+    $DOTFILES_DIR/packages/i3lock-fancy/lock
 }
 
 case "$1" in

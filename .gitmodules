@@ -1,7 +1,7 @@
-[submodule "i3/i3lock-fancy"]
-	path = i3/i3lock-fancy
+[submodule "packages/i3lock-fancy"]
+	path = packages/i3lock-fancy
 	url = https://github.com/meskarune/i3lock-fancy.git
-[submodule "PinkyCtrls"]
+[submodule "packages/PinkyCtrls"]
 	path = packages/PinkyCtrls
 	url = https://github.com/elimirks/PinkyCtrls
 [submodule "packages/translate-shell"]
