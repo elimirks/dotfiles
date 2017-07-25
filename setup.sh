@@ -7,6 +7,12 @@ cd packages/PinkyCtrls; make; cd -; echo
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo -e Linking dotfiles at \"$DIR\" "\n"
 
+# .profile is required
+echo "Setting up $HOME/.profile"
+SOURCE_CMD="export DOTFILES_DIR=$DIR; source $DIR/profile"
+sed -i -- "/^.*#ELIDOTFILES$/d" $HOME/.profile
+echo "$SOURCE_CMD #ELIDOTFILES" >> "$HOME/.profile"
+
 # If the current shell is not set to zsh
 if [[ "$(getent passwd $USER | cut -d: -f7)" = *"zsh"* ]]
 then
@@ -28,18 +34,6 @@ else
 fi
 
 # Actual dotfile linking
-
-if [ -e "$HOME/.profile" ]
-then
-	echo $HOME/.profile already exists... skipping
-else
-	read -p "Set up $HOME/.profile? (y/n) " yesorno
-	case "$yesorno" in
-		y) echo "export DOTFILES_DIR=$DIR; source $DIR/profile" > "$HOME/.profile" ;;
-		*) echo "Skipping $HOME/.profile" ;;
-	esac
-fi
-
 
 if [ -e "$HOME/.bashrc" ]
 then
