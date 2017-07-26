@@ -4,15 +4,6 @@
 git submodule update --init --recursive
 cd packages/PinkyCtrls; make; cd -; echo
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-echo -e Linking dotfiles at \"$DIR\" "\n"
-
-# .profile is required
-echo "Setting up $HOME/.profile"
-SOURCE_CMD="export DOTFILES_DIR=$DIR; source $DIR/profile"
-sed -i -- "/^.*#ELIDOTFILES$/d" $HOME/.profile
-echo "$SOURCE_CMD #ELIDOTFILES" >> "$HOME/.profile"
-
 DEPENDENCIES="zsh bash emacs tmux vim git"
 DEPENDENCIES+=" gawk" # For translate-shell
 
@@ -47,26 +38,25 @@ fi
 
 # Actual dotfile linking
 
-if [ -e "$HOME/.bashrc" ]
-then
-	echo $HOME/.bashrc already exists... skipping
-else
-	read -p "Set up $HOME/.bashrc? (y/n) " yesorno
-	case "$yesorno" in
-		y) echo "source $DIR/bashrc" > "$HOME/.bashrc" ;;
-		*) echo "Skipping $HOME/.bashrc" ;;
-	esac
-fi
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+echo -e Linking dotfiles to \"$DIR\" "\n"
 
-if [ -e "$HOME/.zshrc" ]
-then
-	echo $HOME/.zshrc already exists... skipping
-else
-	read -p "Set up $HOME/.zshrc? (y/n) " yesorno
-	case "$yesorno" in
-		y) echo "source $DIR/zshrc" > "$HOME/.zshrc" ;;
-		*) echo "Skipping $HOME/.zshrc" ;;
-	esac
+read -p "Set up shells? (y/n) " yesorno
+if [ "x$yesorno" = "xy" ]; then
+	echo "Setting up $HOME/.profile"
+	sed -i -- "/^.*#ELIDOTFILES$/d" $HOME/.profile
+	SOURCE_CMD="export DOTFILES_DIR=$DIR; source $DIR/profile"
+	echo "$SOURCE_CMD #ELIDOTFILES" >> "$HOME/.profile"
+
+	echo "Setting up $HOME/.bashrc"
+	sed -i -- "/^.*#ELIDOTFILES$/d" $HOME/.bashrc
+	SOURCE_CMD="source $DIR/bashrc"
+	echo "$SOURCE_CMD #ELIDOTFILES" >> "$HOME/.bashrc"
+
+	echo "Setting up $HOME/.zshrc"
+	sed -i -- "/^.*#ELIDOTFILES$/d" $HOME/.zshrc
+	SOURCE_CMD="source $DIR/zshrc"
+	echo "$SOURCE_CMD #ELIDOTFILES" >> "$HOME/.zshrc"
 fi
 
 if [ -e "$HOME/.emacs.d" ]
