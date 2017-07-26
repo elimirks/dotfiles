@@ -1,11 +1,8 @@
 #!/bin/bash
 
-# Pull various dotfile submodules
-git submodule update --init --recursive
-cd packages/PinkyCtrls; make; cd -; echo
-
 DEPENDENCIES="zsh bash emacs tmux vim git"
 DEPENDENCIES+=" gawk" # For translate-shell
+DEPENDENCIES+=" libxtst-dev" # For PinkCtrls
 
 echo "Installing $DEPENDENCIES"
 if uname -v | grep -qE "(Ubuntu|Debian)"; then
@@ -15,6 +12,10 @@ elif uname -v | grep -qE "Arch"; then
 else
 	echo "Unrecognized distro. Please install dependencies manually."
 fi
+
+echo "Pulling and building git based dependencies"
+git submodule update --init --recursive
+cd packages/PinkyCtrls; make; cd -; echo
 
 # If the current shell is not set to zsh
 if [[ "$(getent passwd $USER | cut -d: -f7)" = *"zsh"* ]]
