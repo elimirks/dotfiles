@@ -13,6 +13,18 @@ SOURCE_CMD="export DOTFILES_DIR=$DIR; source $DIR/profile"
 sed -i -- "/^.*#ELIDOTFILES$/d" $HOME/.profile
 echo "$SOURCE_CMD #ELIDOTFILES" >> "$HOME/.profile"
 
+DEPENDENCIES="zsh bash emacs tmux vim git"
+DEPENDENCIES+=" gawk" # For translate-shell
+
+echo "Installing $DEPENDENCIES"
+if uname -v | grep -qE "(Ubuntu|Debian)"; then
+	sudo apt-get install $DEPENDENCIES
+elif uname -v | grep -qE "Arch"; then
+	sudo pacman -S $DEPENDENCIES
+else
+	echo "Unrecognized distro. Please install dependencies manually."
+fi
+
 # If the current shell is not set to zsh
 if [[ "$(getent passwd $USER | cut -d: -f7)" = *"zsh"* ]]
 then
