@@ -163,6 +163,13 @@
        (rainbow-mode 1))
 
    #+end_src
+
+   [[https://www.emacswiki.org/emacs/nameses][Nameses]]. For managing multiple desktops
+   #+begin_src emacs-lisp :tangle yes
+     (require 'desktop)
+     (require 'nameses)
+     (setq nameses-ido-mode nil)
+   #+end_src
 ** Handy functions
    Used to reload this config:
    #+begin_src emacs-lisp :tangle yes
@@ -240,6 +247,9 @@
                 "C-z"  (lambda () (interactive)  (when (eq (display-graphic-p) nil) (suspend-frame))))
 
        (bind-leader
+         "dl" 'nameses-load
+         "ds" 'nameses-save
+         "dr" 'nameses-reset
          "w" 'save-buffer
          "k" 'kill-this-buffer
          "e" 'eshell
