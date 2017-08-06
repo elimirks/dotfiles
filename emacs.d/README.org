@@ -260,6 +260,7 @@
          "a" 'org-agenda
          "c" 'cfw:open-org-calendar
          "s" 'ispell
+         "x" 'helm-M-x
          "l" 'org-timeline))
 
      ;; Tpope's surround
