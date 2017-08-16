@@ -1,21 +1,38 @@
 #!/bin/bash
 
-DEPENDENCIES="zsh bash emacs tmux vim git"
-DEPENDENCIES+=" gawk" # For translate-shell
-DEPENDENCIES+=" libxtst-dev" # For PinkCtrls
+# Set to 1 to set up GUI stuff (like i3)
+HAS_GUI=1
+
+DEPENDENCIES=
+UBUNTU_DEPENDENCIES=
+ARCH_DEPENDENCIES=
+
+DEPENDENCIES+="zsh zsh-syntax-highlighting bash emacs tmux vim git"
+
+if [ HAS_GUI -eq 1 ]; then
+ 	# For PinkCtrls
+	UBUNTU_DEPENDENCIES+=" libxtst-dev"
+	ARCH_DEPENDENCIES+=" libxtst"
+
+	DEPENDENCIES+=" gawk" # For translate-shell
+	DEPENDENCIES+=" i3-wm"
+fi
 
 echo "Installing $DEPENDENCIES"
-if uname -v | grep -qE "(Ubuntu|Debian)"; then
-	sudo apt-get install $DEPENDENCIES
-elif uname -v | grep -qE "Arch"; then
-	sudo pacman -S $DEPENDENCIES
+if cat /etc/os-release | grep -qE "(Ubuntu|Debian)"; then
+	sudo apt-get install $DEPENDENCIES $UBUNTU_DEPENDENCIES
+elif cat /etc/os-release | grep -qE "Arch"; then
+	sudo pacman -S $DEPENDENCIES $ARCH_DEPENDENCIES
 else
 	echo "Unrecognized distro. Please install dependencies manually."
 fi
 
 echo "Pulling and building git based dependencies"
 git submodule update --init --recursive
-cd packages/PinkyCtrls; make; cd -; echo
+
+if [ HAS_GUI -eq 1 ]; then
+	cd packages/PinkyCtrls; make; cd -; echo
+fi
 
 # If the current shell is not set to zsh
 if [[ "$(getent passwd $USER | cut -d: -f7)" = *"zsh"* ]]
