@@ -343,6 +343,10 @@
             (tags . " %i %-12:c")
             (search . " %i %-12:c")))
 
+    (setq org-todo-keywords
+          '((sequence "TODO" "STARTED" "WAITING" "|" "DONE")))
+
+
     ;; Hide DONE items
     (setq org-agenda-skip-scheduled-if-done t
           org-agenda-skip-deadline-if-done t)
