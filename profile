@@ -15,6 +15,7 @@ else  # Proboblay a Mac
 	alias ls='ls -G'
 fi
 
+alias o='xdg-open'
 alias ll='ls -l'
 alias la='ls -la'
 
