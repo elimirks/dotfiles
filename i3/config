@@ -30,6 +30,7 @@ floating_modifier $mod
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
 bindsym $mod+backslash exec emacs
+bindsym $mod+Escape exec "qutebrowser --backend webengine"
 
 # kill focused window
 bindsym $mod+Shift+colon kill

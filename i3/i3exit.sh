@@ -11,8 +11,8 @@ case "$1" in
         i3-msg exit
         ;;
     suspend)
-				#lock&
-				#sleep 1
+				lock&
+				sleep 1
         sudo pm-suspend
 				sleep 10
 				xmodmap /home/elijah/.Xmodmap
