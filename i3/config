@@ -126,9 +126,9 @@ bindsym $mod+Shift+greater exec "i3-nagbar -t warning -m 'You pressed the exit s
 bindsym XF86Sleep exec "~/.i3/i3exit.sh suspend"
 bindsym XF86ScreenSaver exec "~/.i3/i3exit.sh lock"
 
-bindsym XF86AudioRaiseVolume exec "amixer -D pulse sset Master 5%+"
-bindsym XF86AudioLowerVolume exec "amixer -D pulse sset Master 5%-"
-bindsym XF86AudioMute exec "amixer -D pulse set Master 1+ toggle"
+bindsym XF86AudioRaiseVolume exec "amixer sset Master 5%+"
+bindsym XF86AudioLowerVolume exec "amixer sset Master 5%-"
+bindsym XF86AudioMute exec "amixer set Master 1+ toggle"
 bindsym Print exec "import -window root ~/Pictures/Screenshot_`date +%A_%B_%d_%H:%M:%S`.png"
 
 # For spotify
@@ -247,6 +247,9 @@ mode "mousekeys" {
 }
 
 bindsym $mod+BackSpace mode "mousekeys"
+
+# I have a playlist named this on Spotify, so I need a key for it ;)
+bindsym XF86Launch1 exec "xdotool key U30C4"
 
 # Default workspace should be 7, not 1
 #exec i3-msg workspace 7:web
