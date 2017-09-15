@@ -3,6 +3,11 @@
 [alias]
 	l = log --graph --pretty='%C(yellow)%h %C(green)%cn %C(blue)%ci %C(reset)%n        %s'
 	s = status
+	c = commit
+	co = checkout
+	b = branch
+	pl = pull
+	ph = push
 [user]
 	email = elimirks@gmail.com
 	name = Elijah Mirecki

@@ -141,3 +141,6 @@ bindkey "\e[7~" beginning-of-line
 bindkey "\e[8~" end-of-line
 bindkey "\e[3~" delete-char
 
+# Reverse search binding
+bindkey '^R' history-incremental-pattern-search-backward
+
