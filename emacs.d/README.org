@@ -1,3 +1,4 @@
+
 * Base
 ** Package Management
    #+begin_src emacs-lisp :tangle yes
@@ -142,15 +143,6 @@
        :config
        (editorconfig-mode 1))
    #+end_src
-   
-   [[https://www.emacswiki.org/emacs/DelightedModes][Delight.]] Makes the toolbar mode display more of a "delight"
-   #+begin_src emacs-lisp :tangle yes
-     (use-package delight
-       :config
-       (delight '((undo-tree-mode "" undo-tree)
-                  (editorconfig-mode "" editorconfig)
-                  (auto-revert-mode "" autorevert))))
-   #+end_src
 
    [[https://julien.danjou.info/projects/emacs-packages#rainbow-mode][Rainbow Mode]]. Highlights colors (~#ffffff~ syntax)
    See [[http://stackoverflow.com/questions/16048231/how-to-enable-a-non-global-minor-mode-by-default-on-emacs-startup][this StackOverflow post]] for how to enable it on a per-major-mode basis.
@@ -169,6 +161,27 @@
      (require 'desktop)
      (require 'nameses)
      (setq nameses-ido-mode nil)
+   #+end_src
+   
+   [[https://www.emacswiki.org/emacs/DelightedModes][Delight.]] Makes the toolbar mode display more of a "delight"
+   #+begin_src emacs-lisp :tangle yes
+     (use-package delight
+       :config
+       (delight '((undo-tree-mode "" undo-tree)
+                  (which-key-mode "" which-key)
+                  (helm-mode "" helm)
+                  (editorconfig-mode "" editorconfig)
+                  (auto-revert-mode "" autorevert))))
+   #+end_src
+   
+   [[https://github.com/cyrus-and/zoom][Zoom.]] Zooms current pane!
+   #+begin_src emacs-lisp :tangle yes
+     (use-package zoom
+       :config
+       (custom-set-variables
+        '(zoom-mode t)
+        ; Golden ratio! Beaut.
+        '(zoom-size '(0.618 . 0.618))))
    #+end_src
 ** Handy functions
    Used to reload this config:
@@ -253,7 +266,10 @@
          "w" 'save-buffer
          "k" 'kill-this-buffer
          "e" 'eshell
-         "t" '(lambda () (interactive) (ansi-term "/usr/bin/zsh"))
+         "tt" '(lambda () (interactive) (helm-gtags-find-tag (thing-at-point 'symbol)))
+         "tr" '(lambda () (interactive) (helm-gtags-find-rtag (thing-at-point 'symbol)))
+         "tp" '(lambda () (interactive) (helm-gtags-pop-stack))
+         "ts" '(lambda () (interactive) (helm-gtags-show-stack))
          "g" 'magit-status
          "m" 'helm-mini
          "r" 'recompile
@@ -291,6 +307,17 @@
    #+begin_src emacs-lisp :tangle yes
 ;; (~/.emacs.d/lisp/init-powerline.el)
 (require 'init-powerline)
+   #+end_src
+** Keybindings
+   #+begin_src emacs-lisp :tangle yes
+     (define-key evil-normal-state-map (kbd "<up>")
+       'evil-window-up)
+     (define-key evil-normal-state-map (kbd "<down>")
+       'evil-window-down)
+     (define-key evil-normal-state-map (kbd "<left>")
+       'evil-window-left)
+     (define-key evil-normal-state-map (kbd "<right>")
+       'evil-window-right)
    #+end_src
 * Org
 ** Basic
@@ -332,7 +359,7 @@
   #+begin_src emacs-lisp :tangle yes
     ;; Match those tagged with, are not scheduled/deadlined, are not DONE.
     (setq org-agenda-custom-commands
-          `(("d" "non-[d]eadlined tasks"
+          '(("d" "non-[d]eadlined tasks"
              tags "-DEADLINE={.+}/!+TODO|+STARTED|+WAITING -SCHEDULED={.+}/!+TODO|+STARTED|+WAITING")))
 
     ;; Make the agenda schedule prettier
@@ -345,7 +372,6 @@
 
     (setq org-todo-keywords
           '((sequence "TODO" "STARTED" "WAITING" "|" "DONE")))
-
 
     ;; Hide DONE items
     (setq org-agenda-skip-scheduled-if-done t
@@ -438,30 +464,10 @@
    #+begin_src emacs-lisp :tangle yes
      (require 'cc-mode)
 
-     (use-package irony
-       :config
-       (add-hook 'c++-mode-hook 'irony-mode)
-       (add-hook 'c-mode-hook 'irony-mode)
-       (add-hook 'objc-mode-hook 'irony-mode)
-
-       ;; replace the `completion-at-point' and `complete-symbol' bindings in
-       ;; irony-mode's buffers by irony-mode's function
-       (defun my-irony-mode-hook ()
-         (define-key irony-mode-map [remap completion-at-point]
-           'irony-completion-at-point-async)
-         (define-key irony-mode-map [remap complete-symbol]
-           'irony-completion-at-point-async))
-       (add-hook 'irony-mode-hook 'my-irony-mode-hook)
-       (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
-
-     (use-package company-irony)
-     (use-package company-irony-c-headers)
-
      (eval-after-load 'company
        '(add-to-list 'company-backends
-                     '(company-irony-c-headers company-irony)))
+                     '(company-backends company-gtags)))
    #+end_src
-
 ** Blarb
    #+begin_src emacs-lisp :tangle yes
      (require 'blarb-mode)
@@ -475,3 +481,7 @@
                  (lambda () (define-key csv-mode-map (kbd "C-c C-c") (defun csv-align-visible (&optional arg) "Align visible fields" (interactive "P") (csv-align-fields nil (window-start) (window-end)))))))
    #+end_src
    
+** ERC
+   #+begin_src emacs-lisp :tangle yes
+     (setq erc-hide-list '("JOIN" "PART" "QUIT"))
+   #+end_src
