@@ -1,10 +1,9 @@
-
 * Base
 ** Package Management
    #+begin_src emacs-lisp :tangle yes
 (require 'package)
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")
+                         ;("marmalade" . "http://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.org/packages/")))
 (setq package-enable-at-startup nil)
 (package-initialize)
@@ -218,6 +217,64 @@
   :config
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
    #+end_src
+** Pretty symbols
+*** Global
+    #+BEGIN_SRC emacs-lisp :tangle yes
+      (defun eli/pretty-symbol-push-default ()
+        (push '("!=" . ?≠) prettify-symbols-alist)
+        (push '("<=" . ?≤) prettify-symbols-alist)
+        (push '(">=" . ?≥) prettify-symbols-alist)
+        (push '("=>" . ?⇒) prettify-symbols-alist))
+    #+END_SRC
+    
+    #+BEGIN_SRC emacs-lisp :tangle yes
+      (mapc
+       (lambda (hook)
+         (add-hook 'hook (lambda () (eli/pretty-symbol-push-default))))
+       '(c-mode))
+    #+END_SRC
+*** C & C++
+    #+BEGIN_SRC emacs-lisp :tangle yes
+      (mapc
+       (lambda (hook)
+         (add-hook 'hook (lambda ()
+                           (eli/pretty-symbol-push-default)
+                           (push '("NULL"     . ?∅) prettify-symbols-alist)
+                           (push '("||"       . ?∨) prettify-symbols-alist)
+                           (push '("&&"       . ?∧) prettify-symbols-alist)
+                           (push '("!"        . ?¬) prettify-symbols-alist)
+                           (prettify-symbols-mode t))))
+         '(c-mode c++-mode))
+    #+END_SRC
+*** Python
+    #+BEGIN_SRC emacs-lisp :tangle yes
+      (add-hook 'python-mode-hook
+                (lambda ()
+                  (eli/pretty-symbol-push-default)
+                  (push '("def"      . ?ƒ) prettify-symbols-alist)
+                  (push '("sum"      . ?Σ) prettify-symbols-alist)
+                  (push '("**2"      . ?²) prettify-symbols-alist)
+                  (push '("**3"      . ?³) prettify-symbols-alist)
+                  (push '("None"     . ?∅) prettify-symbols-alist)
+                  (push '("in"       . ?∈) prettify-symbols-alist)
+                  (push '("not in"   . ?∉) prettify-symbols-alist)
+                  (push '("or"       . ?∨) prettify-symbols-alist)
+                  (push '("and"      . ?∧) prettify-symbols-alist)
+                  (push '("not"      . ?¬) prettify-symbols-alist)
+                  (push '("math.pi"  . ?π) prettify-symbols-alist)
+                  (prettify-symbols-mode t)))
+    #+END_SRC
+*** Lisp
+    #+BEGIN_SRC emacs-lisp :tangle yes
+      (add-hook 'emacs-lisp-mode-hook
+                (lambda ()
+                  (eli/pretty-symbol-push-default)
+                  (push '("lambda"   . ?λ) prettify-symbols-alist)
+                  (push '("defun"    . ?ƒ) prettify-symbols-alist)
+                  (push '("defmacro" . ?μ) prettify-symbols-alist)
+                  (push '("defvar"   . ?ν) prettify-symbols-alist)
+                  (prettify-symbols-mode t)))
+    #+END_SRC
 * Evil Mode
 ** Load and configure evil with general
    #+begin_src emacs-lisp :tangle yes
