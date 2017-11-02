@@ -3,7 +3,7 @@
    #+begin_src emacs-lisp :tangle yes
 (require 'package)
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                         ;("marmalade" . "http://marmalade-repo.org/packages/")
+                         ("marmalade" . "http://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.org/packages/")))
 (setq package-enable-at-startup nil)
 (package-initialize)
@@ -541,4 +541,10 @@
 ** ERC
    #+begin_src emacs-lisp :tangle yes
      (setq erc-hide-list '("JOIN" "PART" "QUIT"))
+   #+end_src
+** Python
+   #+begin_src emacs-lisp :tangle yes
+     (defun eli/python-mode-hook ()
+       (add-to-list 'company-backends 'company-jedi)
+       (define-key python-mode-map (kbd "C-c C-d") 'jedi:show-doc))
    #+end_src
