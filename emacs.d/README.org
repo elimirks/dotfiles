@@ -497,16 +497,17 @@
    #+end_src
 ** Matlab
    #+begin_src emacs-lisp :tangle yes
-     (use-package matlab-mode
-       :config
-       (autoload 'matlab-mode "matlab" "Matlab Editing Mode" t)
-       (add-to-list
-        'auto-mode-alist
-        '("\\.m$" . matlab-mode))
-       (setq matlab-indent-function t)
-       (setq matlab-shell-command "matlab")
-       ;; elisp setup for matlab-mode:
-       (setq matlab-shell-command-switches (list "-nodesktop" "-nosplash")))
+     (add-to-list 'custom-theme-load-path "~/.emacs.d/lisp/matlab-emacs")
+     (load-library "matlab-load")
+     (matlab-cedet-setup)
+     (autoload 'matlab-mode "matlab" "Matlab Editing Mode" t)
+     (add-to-list
+      'auto-mode-alist
+      '("\\.m$" . matlab-mode))
+     (setq matlab-indent-function t)
+     (setq matlab-shell-command "matlab")
+     ;; elisp setup for matlab-mode:
+     (setq matlab-shell-command-switches (list "-nodesktop" "-nosplash"))
    #+end_src
 ** C/C++
    #+begin_src emacs-lisp :tangle yes
