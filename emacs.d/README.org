@@ -276,10 +276,8 @@
                   (prettify-symbols-mode t)))
     #+END_SRC
 * Evil Mode
-** Load and configure evil with general
+** Load and configure evil
    #+begin_src emacs-lisp :tangle yes
-     ;; For leader bindings
-     (use-package general)
      ;; Base evil package
      (use-package evil
        :demand
@@ -297,44 +295,37 @@
 
        ;; Automatically opens helm after :e
        (define-key evil-ex-map "e " 'helm-find-files)
-       (eshell-bindings)
-       
-       (general-create-definer bind-leader
-                               :keymaps 'global
-                               :states '(normal emacs)
-                               :prefix "SPC")
+       (eshell-bindings))
 
-       :general
-       (:states 'motion
-                "k" 'evil-previous-visual-line
-                "j" 'evil-next-visual-line)
-       (:states 'operator
-                "k" 'evil-previous-line
-                "j" 'evil-next-line)
-       
-
-       (:states 'normal
-                "C-z"  (lambda () (interactive)  (when (eq (display-graphic-p) nil) (suspend-frame))))
-
-       (bind-leader
-         "dl" 'nameses-load
-         "ds" 'nameses-save
-         "dr" 'nameses-reset
-         "w" 'save-buffer
-         "k" 'kill-this-buffer
-         "e" 'eshell
-         "tt" '(lambda () (interactive) (helm-gtags-find-tag (thing-at-point 'symbol)))
-         "tr" '(lambda () (interactive) (helm-gtags-find-rtag (thing-at-point 'symbol)))
-         "tp" '(lambda () (interactive) (helm-gtags-pop-stack))
-         "ts" '(lambda () (interactive) (helm-gtags-show-stack))
-         "g" 'magit-status
-         "m" 'helm-mini
-         "r" 'recompile
-         "a" 'org-agenda
-         "c" 'cfw:open-org-calendar
-         "s" 'ispell
-         "x" 'helm-M-x
-         "l" 'org-timeline))
+     ; For leader bindings
+     (use-package evil-leader
+       :commands (evil-leader-mode)
+       :ensure evil-leader
+       :demand evil-leader
+       :init
+       (global-evil-leader-mode)
+       :config
+       (progn
+         (evil-leader/set-leader "<SPC>")
+         (evil-leader/set-key
+          "dl" 'nameses-load
+          "ds" 'nameses-save
+          "dr" 'nameses-reset
+          "w" 'save-buffer
+          "k" 'kill-this-buffer
+          "e" 'eshell
+          "tt" '(lambda () (interactive) (helm-gtags-find-tag (thing-at-point 'symbol)))
+          "tr" '(lambda () (interactive) (helm-gtags-find-rtag (thing-at-point 'symbol)))
+          "tp" '(lambda () (interactive) (helm-gtags-pop-stack))
+          "ts" '(lambda () (interactive) (helm-gtags-show-stack))
+          "g" 'magit-status
+          "m" 'helm-mini
+          "r" 'recompile
+          "a" 'org-agenda
+          "c" 'cfw:open-org-calendar
+          "s" 'ispell
+          "x" 'helm-M-x
+          "l" 'org-timeline)))
 
      ;; Tpope's surround
      (use-package evil-surround
@@ -443,6 +434,7 @@
   #+end_src
 ** Calendar
   #+begin_src emacs-lisp :tangle yes
+    (use-package calfw-org)
     (use-package calfw
       :config
       (require 'calfw-org)
@@ -516,7 +508,6 @@
        ;; elisp setup for matlab-mode:
        (setq matlab-shell-command-switches (list "-nodesktop" "-nosplash")))
    #+end_src
-   
 ** C/C++
    #+begin_src emacs-lisp :tangle yes
      (require 'cc-mode)
