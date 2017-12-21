@@ -276,10 +276,8 @@
                   (prettify-symbols-mode t)))
     #+END_SRC
 * Evil Mode
-** Load and configure evil with general
+** Load and configure evil
    #+begin_src emacs-lisp :tangle yes
-     ;; For leader bindings
-     (use-package general)
      ;; Base evil package
      (use-package evil
        :demand
@@ -445,6 +443,7 @@
   #+end_src
 ** Calendar
   #+begin_src emacs-lisp :tangle yes
+    (use-package calfw-org)
     (use-package calfw
       :config
       (require 'calfw-org)
@@ -519,7 +518,6 @@
      ;; elisp setup for matlab-mode:
      (setq matlab-shell-command-switches (list "-nodesktop" "-nosplash"))
    #+end_src
-   
 ** C/C++
    #+begin_src emacs-lisp :tangle yes
      (require 'cc-mode)
