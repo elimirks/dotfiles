@@ -9,7 +9,7 @@ ARCH_DEPENDENCIES=
 
 DEPENDENCIES+="zsh zsh-syntax-highlighting bash emacs tmux vim git"
 
-if [ HAS_GUI -eq 1 ]; then
+if [ $HAS_GUI -eq 1 ]; then
  	# For PinkCtrls
 	UBUNTU_DEPENDENCIES+=" libxtst-dev"
 	ARCH_DEPENDENCIES+=" libxtst"
@@ -30,7 +30,7 @@ fi
 echo "Pulling and building git based dependencies"
 git submodule update --init --recursive
 
-if [ HAS_GUI -eq 1 ]; then
+if [ $HAS_GUI -eq 1 ]; then
 	cd packages/PinkyCtrls; make; cd -; echo
 fi
 
