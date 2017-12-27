@@ -221,7 +221,8 @@
 *** Global
     #+BEGIN_SRC emacs-lisp :tangle yes
       (defun eli/pretty-symbol-push-default ()
-        (push '("!=" . ?≠) prettify-symbols-alist)
+        (push '("!=" . ?≢) prettify-symbols-alist)
+        (push '("==" . ?≡) prettify-symbols-alist)
         (push '("<=" . ?≤) prettify-symbols-alist)
         (push '(">=" . ?≥) prettify-symbols-alist)
         (push '("=>" . ?⇒) prettify-symbols-alist))
