@@ -99,8 +99,6 @@
    [[https://www.emacswiki.org/emacs/CompanyMode][Company Mode]]. For autocompletion
    #+begin_src emacs-lisp :tangle yes
      (use-package company
-       :init
-       (global-company-mode)
        :config
        (setq company-idle-delay 0) ; Delay to complete
        (setq company-minimum-prefix-length 1)
@@ -516,9 +514,24 @@
    #+begin_src emacs-lisp :tangle yes
      (require 'cc-mode)
 
+     (use-package company-irony)
+     (use-package irony)
+     (use-package flycheck)
+
      (eval-after-load 'company
-       '(add-to-list 'company-backends
-                     '(company-backends company-gtags)))
+       '(add-to-list 'company-backends 'company-irony))
+
+     (eval-after-load 'flycheck
+       '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+
+     (defun eli/c-type-mode-hook ()
+       (irony-mode)
+       (company-mode)
+       (flycheck-mode))
+
+     (add-hook 'c++-mode-hook 'eli/c-type-mode-hook)
+     (add-hook 'c-mode-hook 'eli/c-type-mode-hook)
+     (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
    #+end_src
 ** Blarb
    #+begin_src emacs-lisp :tangle yes
@@ -539,7 +552,8 @@
    #+end_src
 ** Python
    #+begin_src emacs-lisp :tangle yes
-     (defun eli/python-mode-hook ()
-       (add-to-list 'company-backends 'company-jedi)
-       (define-key python-mode-map (kbd "C-c C-d") 'jedi:show-doc))
+     (add-hook 'python-mode-hook
+               (lambda ()
+                 (add-to-list 'company-backends 'company-jedi)
+                 (define-key python-mode-map (kbd "C-c C-d") 'jedi:show-doc)))
    #+end_src
