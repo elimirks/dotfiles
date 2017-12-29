@@ -186,9 +186,7 @@
      (use-package zoom
        :config
        (custom-set-variables
-        '(zoom-mode t)
-        ; Golden ratio! Beaut.
-        '(zoom-size '(0.618 . 0.618))))
+        '(zoom-size '(0.8 . 0.8))))
    #+end_src
 ** Handy functions
    Used to reload this config:
@@ -342,6 +340,7 @@
         "c" 'cfw:open-org-calendar
         "s" 'ispell
         "x" 'helm-M-x
+        "z" 'zoom
         "l" 'org-timeline))
 
      ;; Tpope's surround
