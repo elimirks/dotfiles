@@ -573,3 +573,11 @@
      (with-eval-after-load 'flycheck
        (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
    #+end_src
+** Webz
+   #+begin_src emacs-lisp :tangle yes
+     (use-package web-mode
+       :config
+       (add-to-list
+        'auto-mode-alist
+        '("\\.tsx$" . web-mode)))
+   #+end_src
