@@ -202,52 +202,6 @@ for_window [title="xmessage"] floating enable
 # Float Matlab figure windows
 for_window [title="^Figure \d+$"] floating enable
 
-# i3 Mousekeys
-mode "mousekeys" {
-    # set your three speeds here
-    set $slow 5
-    set $quick 50
-    set $fast 300
-
-    # Mouse movement (slow/fine-tuned) -- arrow keys
-    bindsym h exec xdotool mousemove_relative -- -$slow 0
-    bindsym t exec xdotool mousemove_relative 0 $slow
-    bindsym n exec xdotool mousemove_relative -- 0 -$slow
-    bindsym s exec xdotool mousemove_relative $slow 0
-
-    # Mouse movement (quicker) -- arrow keys
-    bindsym Control+h exec xdotool mousemove_relative -- -$quick 0
-    bindsym Control+t exec xdotool mousemove_relative 0 $quick
-    bindsym Control+n exec xdotool mousemove_relative -- 0 -$quick
-    bindsym Control+s exec xdotool mousemove_relative $quick 0
-
-    # Mouse movement (fast) -- arrow keys
-    bindsym Shift+Control+h exec xdotool mousemove_relative -- -$fast 0
-    bindsym Shift+Control+t exec xdotool mousemove_relative 0 $fast
-    bindsym Shift+Control+n exec xdotool mousemove_relative -- 0 -$fast
-    bindsym Shift+Control+s exec xdotool mousemove_relative $fast 0
-
-    # Left Click
-    bindsym u exec xdotool click 1
-
-		# Middle Click
-		bindsym e exec xdotool click 2
-
-    # Right Click
-    bindsym o exec xdotool click 3
-
-    # Left Click-and-drag
-    bindsym p exec xdotool mousedown 1
-
-    # Left Drag release
-    bindsym period exec xdotool mouseup 1
-
-    # return to normal keybindings -- IMPORTANT!!
-    bindsym Escape mode "default"
-}
-
-bindsym $mod+BackSpace mode "mousekeys"
-
 # I have a playlist named this on Spotify, so I need a key for it ;)
 bindsym XF86Launch1 exec "xdotool key U30C4"
 
