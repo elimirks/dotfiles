@@ -201,7 +201,7 @@
    #+begin_src emacs-lisp :tangle yes
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 (load-theme 'spolsky t)
-(set-face-attribute 'default nil :height 100)
+(set-face-attribute 'default nil :height 110)
 ;; When in terminal
 (unless (display-graphic-p) 
   (setq nlinum-format "%d ")
@@ -580,4 +580,14 @@
        (add-to-list
         'auto-mode-alist
         '("\\.tsx$" . web-mode)))
+   #+end_src
+** ECMAScript
+   #+begin_src emacs-lisp :tangle yes
+     (use-package flycheck-flow
+       :config
+       (add-hook 'javascript-mode-hook 'flycheck-mode))
+     (use-package company-flow
+       :config
+       (eval-after-load 'company
+         '(add-to-list 'company-backends 'company-flow)))
    #+end_src

@@ -23,7 +23,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (web-mode tide ggtags helm-rtags rtags gtags markdown-mode org-bullets nlinum-relative evil-org evil-magit which-key magit ido-complete-space-or-hyphen smex ido-ubiquitous powerline-evil powerline evil-surround evil-leader evil rainbow-delimiters use-package)))
+    (eslint-fix general web-mode tide ggtags helm-rtags rtags gtags markdown-mode org-bullets nlinum-relative evil-org evil-magit which-key magit ido-complete-space-or-hyphen smex ido-ubiquitous powerline-evil powerline evil-surround evil-leader evil rainbow-delimiters use-package)))
  '(zoom-size (quote (0.8 . 0.8))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

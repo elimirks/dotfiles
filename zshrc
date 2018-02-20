@@ -128,10 +128,18 @@ function precmd() {
 	echo -ne "$txtrst"
 }
 
-ZSH_SYNTAX_PATH=/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-if [ -e $ZSH_SYNTAX_PATH ]; then
-	source $ZSH_SYNTAX_PATH
-fi
+function source_if_exists() {
+  if [ -e "$1" ]; then
+    source "$1"
+		return 0
+  fi
+	return 1
+}
+
+source_if_exists /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh || \
+    source_if_exists /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# Computer specific scripts
 if [ -d $HOME/.zsh ]; then
 	source $HOME/.zsh/*
 fi
