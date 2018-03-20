@@ -22,6 +22,8 @@
    #+end_src
 ** Essential Settings
    #+begin_src emacs-lisp :tangle yes
+     (server-start)
+     (setq ispell-program-name "/usr/local/bin/ispell")
      ;; For ansi-term n' stuff
      (setq explicit-shell-file-name
            (if (file-readable-p "/usr/bin/zsh") "/usr/bin/zsh" "/bin/bash"))

@@ -10,12 +10,13 @@ export TERM="xterm-256color"
 # Crazy, short, and cool util additions
 
 if [ `uname` = 'Linux' ]; then
-	alias ls='ls --color=always'
+    alias ls='ls --color=always'
+    alias o='xdg-open'
 else  # Proboblay a Mac
-	alias ls='ls -G'
+    alias ls='ls -G'
+    alias o='open'
 fi
 
-alias o='xdg-open'
 alias ll='ls -l'
 alias la='ls -la'
 
@@ -42,7 +43,7 @@ if [ `command -v grc` ]; then
 fi
 
 if [ `command -v emacs` ]; then
-    alias ed="emacs -nw"
+    alias ed="emacsclient -nw"
 else
     alias ed="vim"
 fi
