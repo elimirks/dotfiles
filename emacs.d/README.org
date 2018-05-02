@@ -137,12 +137,19 @@
    
    [[https://github.com/CodeFalling/nlinum-relative][Nlinum Relative]]. Relative line numbers n' stuff
    #+begin_src emacs-lisp :tangle yes
-          (use-package nlinum-relative
-            :config
-            (setq nlinum-relative-redisplay-delay 0)
-            (nlinum-relative-setup-evil)
-            (add-hook 'matlab-mode-hook 'nlinum-relative-mode)
-            (add-hook 'prog-mode-hook 'nlinum-relative-mode))
+     (if (version< "26.0.50" emacs-version)
+         (progn
+           (add-hook 'prog-mode-hook
+                     '(lambda ()
+                        (display-line-numbers-mode t)
+                        (setq display-line-numbers 'relative))))
+         (progn
+             (use-package nlinum-relative
+             :config
+             (nlinum-relative-setup-evil)
+             (setq nlinum-relative-redisplay-delay 0.25)
+             (setq nlinum-relative-current-symbol "")
+             (add-hook 'prog-mode-hook 'nlinum-relative-mode))))
    #+end_src
    
    [[https://github.com/editorconfig/editorconfig-emacs][EditorConfig]]. For consistent project code styles
