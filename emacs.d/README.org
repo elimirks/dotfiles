@@ -565,6 +565,7 @@
    #+end_src
 ** Python
    #+begin_src emacs-lisp :tangle yes
+     (setq python-shell-interpreter "/usr/local/bin/python3")
      (add-hook 'python-mode-hook
                (lambda ()
                  (add-to-list 'company-backends 'company-jedi)
@@ -592,4 +593,18 @@
        :config
        (eval-after-load 'company
          '(add-to-list 'company-backends 'company-flow)))
+   #+end_src
+   
+** C#
+   #+begin_src emacs-lisp :tangle yes
+     (use-package omnisharp
+       :after company
+       :config
+       (setq omnisharp-server-executable-path "/usr/local/omnisharp/run.sh")
+       (add-hook 'csharp-mode-hook 'omnisharp-mode)
+       (add-to-list 'company-backends 'company-omnisharp)
+
+       :bind
+       (:map omnisharp-mode-map
+             ("C-c C-c" . omnisharp-run-code-action-refactoring)))
    #+end_src
