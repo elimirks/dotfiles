@@ -336,7 +336,7 @@
         "dr" 'nameses-reset
         "w" 'save-buffer
         "k" 'kill-this-buffer
-        "e" 'eshell
+        "e" 'gnus
         "tt" 'eli/helm-gtags-find-tag-at-point
         "tr" 'eli/helm-gtags-find-rtag-at-point
         "tp" 'helm-gtags-pop-stack
@@ -604,6 +604,7 @@
    
 ** C#
    #+begin_src emacs-lisp :tangle yes
+     (use-package csharp-mode)
      (use-package omnisharp
        :after company
        :config
@@ -615,3 +616,39 @@
        (:map omnisharp-mode-map
              ("C-c C-c" . omnisharp-run-code-action-refactoring)))
    #+end_src
+* Apps
+** Gnus
+   #+begin_src emacs-lisp :tangle yes
+     (use-packages gnus)
+
+     (setq user-mail-address "elimirks@gmail.com"
+           user-full-name "Elijah Mirecki")
+
+     (setq gnus-select-method
+           '(nnimap "gmail"
+                (nnimap-address "imap.gmail.com")
+                (nnimap-server-port "imaps")
+                (nnimap-stream ssl)))
+
+     (setq gnus-posting-styles
+           `((".*"
+              (address "elimirks@gmail.com")
+              (name "Elijah Mirecki")
+              ("X-Message-SMTP-Method" "smtp smtp.gmail.com 587"))
+             ; Carpages.ca (work) email
+             ("^nnimap[+]rackspace*"
+              (address "elijah@carpages.ca")
+              (name "Elijah Mirecki")
+              ("X-Message-SMTP-Method" "smtp smtp.emailsrvr.com 25"))))
+
+     (add-to-list 'gnus-secondary-select-methods
+                  '(nnimap "rackspace"
+                           (nnimap-address "secure.emailsrvr.com")
+                           (nnimap-server-port 993)
+                           (nnimap-stream ssl)
+                           (nnir-search-engine imap)
+                           (nnmail-expiry-wait 90)))
+
+     (setq gnus-permanently-visible-groups ".*INBOX.*")
+   #+end_src
+    
