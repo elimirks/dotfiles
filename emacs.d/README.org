@@ -35,18 +35,23 @@
      (menu-bar-mode -1) ; Hide menu bar
      (show-paren-mode t) ; Highlights matching parenthesis
      (setq ring-bell-function 'ignore) ; Disable ALL bells! They suck!
-     ;(electric-pair-mode t) ; Add closing pairs automatically
+                                             ;(electric-pair-mode t) ; Add closing pairs automatically
      (setq initial-scratch-message "") ; No scratch text
      (fset 'yes-or-no-p 'y-or-n-p) ; y/n instead of yes/no
-     ; No tabs use spaces
+
+     ;; No tabs, use spaces
      (setq-default indent-tabs-mode nil)
      (setq-default tab-width 4)
      (defvaralias 'c-basic-offset 'tab-width)
      (defvaralias 'cperl-indent-level 'tab-width)
 
      ;; Default browser for links
-     (setq browse-url-browser-function 'browse-url-generic
-           browse-url-generic-program "google-chrome")
+     (setq 
+      browse-url-firefox-program (if (eq system-type 'darwin
+                                         "/Users/elijah/bin/firefox"
+                                         "firefox"))
+      browse-url-generic-program browse-url-firefox-program
+      browse-url-browser-function 'browse-url-generic)
    #+end_src
 ** Backup Options
    #+begin_src emacs-lisp :tangle yes
@@ -196,6 +201,22 @@
        :config
        (custom-set-variables
         '(zoom-size '(0.8 . 0.8))))
+   #+end_src
+
+   [[https://github.com/sshaw/copy-as-format][Copy As Format.]] Copies as Slack / Github / Etc formatted code blocks
+   #+begin_src emacs-lisp :tangle yes
+     (use-package copy-as-format)
+   #+end_src
+
+   [[https://github.com/jwiegley/alert][Alert.]] Used for sending alerts / notifications
+   
+   #+begin_src emacs-lisp :tangle yes
+     (use-package alert
+       :commands (alert)
+       :init
+       (setq alert-default-style (if (eq system-type 'darwin
+                                  'osx-notifier
+                                  'libnotify))))
    #+end_src
 ** Handy functions
    Used to reload this config:
@@ -510,16 +531,6 @@
                  (local-set-key (kbd "C-c C-c") 'prolog-compile-file)
                  (local-set-key (kbd "<backtab>") 'ediprolog-dwim)))
    #+end_src
-** DocViewMode
-   This mode is for document viewing, such as PDFs.
-
-   #+begin_src emacs-lisp :tangle yes
-     ;; Evil mode caused the document to blink - this fixes it
-     (evil-set-initial-state 'doc-view-mode 'emacs)
-     (add-hook 'doc-view-mode-hook
-               (lambda ()
-                 (set (make-local-variable 'evil-emacs-state-cursor) (list nil))))
-   #+end_src
 ** Matlab
    #+begin_src emacs-lisp :tangle yes
      (add-to-list 'custom-theme-load-path "~/.emacs.d/lisp/matlab-emacs")
@@ -566,10 +577,6 @@
                  (lambda () (define-key csv-mode-map (kbd "C-c C-c") (defun csv-align-visible (&optional arg) "Align visible fields" (interactive "P") (csv-align-fields nil (window-start) (window-end)))))))
    #+end_src
    
-** ERC
-   #+begin_src emacs-lisp :tangle yes
-     (setq erc-hide-list '("JOIN" "PART" "QUIT"))
-   #+end_src
 ** Python
    #+begin_src emacs-lisp :tangle yes
      (setq python-shell-interpreter "/usr/local/bin/python3")
@@ -619,36 +626,54 @@
 * Apps
 ** Gnus
    #+begin_src emacs-lisp :tangle yes
-     (use-packages gnus)
+     (use-package gnus
+       :config
+       (setq user-mail-address "elimirks@gmail.com"
+             user-full-name "Elijah Mirecki")
 
-     (setq user-mail-address "elimirks@gmail.com"
-           user-full-name "Elijah Mirecki")
+       (setq gnus-select-method
+             '(nnimap "gmail"
+                      (nnimap-address "imap.gmail.com")
+                      (nnimap-server-port "imaps")
+                      (nnimap-stream ssl)))
 
-     (setq gnus-select-method
-           '(nnimap "gmail"
-                (nnimap-address "imap.gmail.com")
-                (nnimap-server-port "imaps")
-                (nnimap-stream ssl)))
+       (setq gnus-posting-styles
+             `((".*"
+                (address "elimirks@gmail.com")
+                (name "Elijah Mirecki")
+                ("X-Message-SMTP-Method" "smtp smtp.gmail.com 587"))
+               ;; Carpages.ca (work) email
+               ("^nnimap[+]rackspace*"
+                (address "elijah@carpages.ca")
+                (name "Elijah Mirecki")
+                ("X-Message-SMTP-Method" "smtp smtp.emailsrvr.com 25"))))
 
-     (setq gnus-posting-styles
-           `((".*"
-              (address "elimirks@gmail.com")
-              (name "Elijah Mirecki")
-              ("X-Message-SMTP-Method" "smtp smtp.gmail.com 587"))
-             ; Carpages.ca (work) email
-             ("^nnimap[+]rackspace*"
-              (address "elijah@carpages.ca")
-              (name "Elijah Mirecki")
-              ("X-Message-SMTP-Method" "smtp smtp.emailsrvr.com 25"))))
+       (add-to-list 'gnus-secondary-select-methods
+                    '(nnimap "rackspace"
+                             (nnimap-address "secure.emailsrvr.com")
+                             (nnimap-server-port 993)
+                             (nnimap-stream ssl)
+                             (nnir-search-engine imap)
+                             (nnmail-expiry-wait 90)))
 
-     (add-to-list 'gnus-secondary-select-methods
-                  '(nnimap "rackspace"
-                           (nnimap-address "secure.emailsrvr.com")
-                           (nnimap-server-port 993)
-                           (nnimap-stream ssl)
-                           (nnir-search-engine imap)
-                           (nnmail-expiry-wait 90)))
-
-     (setq gnus-permanently-visible-groups ".*INBOX.*")
+       (setq gnus-permanently-visible-groups ".*INBOX.*"))
    #+end_src
     
+** DocViewMode
+   This mode is for document viewing, such as PDFs.
+
+   #+begin_src emacs-lisp :tangle yes
+     (use-package doc-view-mode
+       :config
+       ;; Evil mode caused the document to blink - this fixes it
+       (evil-set-initial-state 'doc-view-mode 'emacs)
+       (add-hook 'doc-view-mode-hook
+                 (lambda ()
+                   (set (make-local-variable 'evil-emacs-state-cursor) (list nil)))))
+   #+end_src
+** ERC
+   #+begin_src emacs-lisp :tangle yes
+     (use-package erc
+       :config
+       (setq erc-hide-list '("JOIN" "PART" "QUIT")))
+   #+end_src
