@@ -47,9 +47,9 @@
 
      ;; Default browser for links
      (setq 
-      browse-url-firefox-program (if (eq system-type 'darwin
+      browse-url-firefox-program (if (eq system-type 'darwin)
                                          "/Users/elijah/bin/firefox"
-                                         "firefox"))
+                                         "firefox")
       browse-url-generic-program browse-url-firefox-program
       browse-url-browser-function 'browse-url-generic)
    #+end_src
@@ -214,9 +214,9 @@
      (use-package alert
        :commands (alert)
        :init
-       (setq alert-default-style (if (eq system-type 'darwin
+       (setq alert-default-style (if (eq system-type 'darwin)
                                   'osx-notifier
-                                  'libnotify))))
+                                  'libnotify)))
    #+end_src
 ** Handy functions
    Used to reload this config:
@@ -663,13 +663,11 @@
    This mode is for document viewing, such as PDFs.
 
    #+begin_src emacs-lisp :tangle yes
-     (use-package doc-view-mode
-       :config
-       ;; Evil mode caused the document to blink - this fixes it
-       (evil-set-initial-state 'doc-view-mode 'emacs)
-       (add-hook 'doc-view-mode-hook
-                 (lambda ()
-                   (set (make-local-variable 'evil-emacs-state-cursor) (list nil)))))
+     ;; Evil mode caused the document to blink - this fixes it
+     (evil-set-initial-state 'doc-view-mode 'emacs)
+     (add-hook 'doc-view-mode-hook
+               (lambda ()
+                 (set (make-local-variable 'evil-emacs-state-cursor) (list nil))))
    #+end_src
 ** ERC
    #+begin_src emacs-lisp :tangle yes

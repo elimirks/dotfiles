@@ -21,9 +21,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(flycheck-javascript-flow-args nil)
+ '(org-agenda-files (quote ("~/Dropbox/Notes/everything.org")))
  '(package-selected-packages
    (quote
-    (omnisharp csharp-mode love-minor-mode eslint-fix general web-mode tide ggtags helm-rtags rtags gtags markdown-mode org-bullets nlinum-relative evil-org evil-magit which-key magit ido-complete-space-or-hyphen smex ido-ubiquitous powerline-evil powerline evil-surround evil-leader evil rainbow-delimiters use-package)))
+    (doc-view-mode gnus-desktop-notify copy-as-format slack flow-minor-mode arduino-mode omnisharp csharp-mode love-minor-mode eslint-fix general web-mode tide ggtags helm-rtags rtags gtags markdown-mode org-bullets nlinum-relative evil-org evil-magit which-key magit ido-complete-space-or-hyphen smex ido-ubiquitous powerline-evil powerline evil-surround evil-leader evil rainbow-delimiters use-package)))
  '(send-mail-function (quote smtpmail-send-it))
  '(zoom-size (quote (0.8 . 0.8))))
 (custom-set-faces
