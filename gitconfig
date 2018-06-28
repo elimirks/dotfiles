@@ -8,6 +8,9 @@
 	b = branch
 	pl = pull
 	ph = push
+	d = diff
+	a = add
+	u = add -u
 [user]
 	email = elimirks@gmail.com
 	name = Elijah Mirecki
