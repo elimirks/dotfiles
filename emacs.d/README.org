@@ -25,8 +25,7 @@
      (server-start)
      (setq ispell-program-name "/usr/local/bin/ispell")
      ;; For ansi-term n' stuff
-     (setq explicit-shell-file-name
-           (if (file-readable-p "/usr/bin/zsh") "/usr/bin/zsh" "/bin/bash"))
+     (setq explicit-shell-file-name "/bin/bash")
      (setq inhibit-splash-screen t ; No welcome screen
            inhibit-startup-message t
            inhibit-startup-echo-area-message t)
@@ -52,6 +51,8 @@
                                          "firefox")
       browse-url-generic-program browse-url-firefox-program
       browse-url-browser-function 'browse-url-generic)
+
+     (setq exec-path (append exec-path '("/usr/local/bin")))
    #+end_src
 ** Backup Options
    #+begin_src emacs-lisp :tangle yes
@@ -552,16 +553,15 @@
      (use-package helm-gtags)
      (use-package company-irony
        :config
-       (eval-after-load 'company
-         '(add-to-list 'company-backends 'company-irony)))
+       (add-hook 'irony-mode-hook (lambda ()
+                                    (add-to-list 'company-backends 'company-irony))))
      (use-package flycheck-irony
        :config
-       (eval-after-load 'flycheck
-         '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup)))
+       (add-hook 'irony-mode-hook 'flycheck-irony-setup))
      (use-package irony
        :config
-       (add-hook 'c++-mode-hook 'irony-mode)
-       (add-hook 'c-mode-hook 'irony-mode)
+       ;(add-hook 'c++-mode-hook 'irony-mode)
+       ;(add-hook 'c-mode-hook 'irony-mode)
        (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
    #+end_src
 ** Blarb
@@ -590,13 +590,26 @@
      (with-eval-after-load 'flycheck
        (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
    #+end_src
-** Webz
+** Web
    #+begin_src emacs-lisp :tangle yes
      (use-package web-mode
-       :config
-       (add-to-list
-        'auto-mode-alist
-        '("\\.tsx$" . web-mode)))
+       :init
+       (add-to-list 'auto-mode-alist '("\\.tsx$" . web-mode)))
+   #+end_src
+** PHP
+   #+begin_src emacs-lisp :tangle yes
+     (use-package php-mode
+       :init
+       (add-to-list 'auto-mode-alist '("\\.php$" . web-mode))
+       (add-to-list 'auto-mode-alist '("\\.inc" . web-mode)))
+
+     (use-package php-extras
+       :init
+       (add-hook 'php-mode-hook
+                 (lambda ()
+                   (set (make-local-variable 'company-backends)
+                        '((php-extras-company company-dabbrev-code) company-capf company-files))
+                   (setq company-dabbrev-downcase nil))))
    #+end_src
 ** ECMAScript
    #+begin_src emacs-lisp :tangle yes
