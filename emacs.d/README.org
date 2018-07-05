@@ -52,7 +52,7 @@
       browse-url-generic-program browse-url-firefox-program
       browse-url-browser-function 'browse-url-generic)
 
-     (setq exec-path (append exec-path '("/usr/local/bin")))
+     (add-to-list 'exec-path "/usr/local/bin")
    #+end_src
 ** Backup Options
    #+begin_src emacs-lisp :tangle yes
@@ -611,7 +611,7 @@
                         '((php-extras-company company-dabbrev-code) company-capf company-files))
                    (setq company-dabbrev-downcase nil))))
    #+end_src
-** ECMAScript
+** JavaScript
    #+begin_src emacs-lisp :tangle yes
      (use-package flycheck-flow
        :config
@@ -669,9 +669,25 @@
                              (nnir-search-engine imap)
                              (nnmail-expiry-wait 90)))
 
-       (setq gnus-permanently-visible-groups ".*INBOX.*"))
+       (setq gnus-permanently-visible-groups ".*INBOX.*")
+
+       ;; Display attachment images inline
+       (add-to-list 'mm-attachment-override-types "image/.*"))
+
+     ;; "Big Brother DataBase", for address book
+     (use-package bbdb
+       :init
+       (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
+       ;; Disable helm for creating BBDB entries - It caused annoying completion issues
+       (add-to-list 'helm-completing-read-handlers-alist
+                    '(bbdb-create . nil))
+       :config
+       (bbdb-insinuate-message)
+       (setq
+        bbdb-always-add-address t
+        bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook
+        bbdb-ignore-some-messages-alist '(( "From" . "no.?reply\\|DAEMON\\|daemon\\|facebookmail\\|twitter"))))
    #+end_src
-    
 ** DocViewMode
    This mode is for document viewing, such as PDFs.
 
