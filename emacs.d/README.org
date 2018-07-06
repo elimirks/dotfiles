@@ -219,6 +219,14 @@
                                   'osx-notifier
                                   'libnotify)))
    #+end_src
+
+   [[https://github.com/syohex/emacs-quickrun][Quickrun.]] Used for running a single buffer in an isolated environment
+   
+   #+begin_src emacs-lisp :tangle yes
+     (use-package quickrun
+       :config
+       (add-hook 'quickrun--mode-hook 'turn-off-evil-mode))
+   #+end_src
 ** Handy functions
    Used to reload this config:
    #+begin_src emacs-lisp :tangle yes
@@ -372,7 +380,8 @@
         "s" 'ispell
         "x" 'helm-M-x
         "z" 'zoom
-        "l" 'org-timeline))
+        "l" 'org-timeline
+        "q" 'quickrun))
 
      ;; Tpope's surround
      (use-package evil-surround
@@ -600,8 +609,8 @@
    #+begin_src emacs-lisp :tangle yes
      (use-package php-mode
        :init
-       (add-to-list 'auto-mode-alist '("\\.php$" . web-mode))
-       (add-to-list 'auto-mode-alist '("\\.inc" . web-mode)))
+       (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+       (add-to-list 'auto-mode-alist '("\\.inc" . php-mode)))
 
      (use-package php-extras
        :init
@@ -684,6 +693,7 @@
        :config
        (bbdb-insinuate-message)
        (setq
+        bbdb-file "~/Dropbox/Notes/bbdb"
         bbdb-always-add-address t
         bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook
         bbdb-ignore-some-messages-alist '(( "From" . "no.?reply\\|DAEMON\\|daemon\\|facebookmail\\|twitter"))))
