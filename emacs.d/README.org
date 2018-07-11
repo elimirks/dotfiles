@@ -614,11 +614,9 @@
 
      (use-package php-extras
        :init
-       (add-hook 'php-mode-hook
-                 (lambda ()
-                   (set (make-local-variable 'company-backends)
-                        '((php-extras-company company-dabbrev-code) company-capf company-files))
-                   (setq company-dabbrev-downcase nil))))
+       (add-hook 'php-mode-hook (lambda ()
+                                  (php-extras-eldoc-documentation-function)
+                                  (auto-complete-mode -1))))
    #+end_src
 ** JavaScript
    #+begin_src emacs-lisp :tangle yes
@@ -714,3 +712,47 @@
        :config
        (setq erc-hide-list '("JOIN" "PART" "QUIT")))
    #+end_src
+** Slack
+   #+begin_src emacs-lisp :tangle yes
+     (use-package slack
+       :commands (slack-start)
+       :init
+       (setq slack-buffer-emojify t) ;; if you want to enable emoji, default nil
+       (setq slack-prefer-current-team t)
+       :config
+
+       ;; Disable company mode - it messes with Slack
+       (add-hook 'slack-mode-hook (lambda () (company-mode -1)))
+
+       (evil-define-key 'normal slack-info-mode-map
+         ",u" 'slack-room-update-messages)
+       (evil-define-key 'normal slack-mode-map
+         ",c" 'slack-buffer-kill
+         ",ra" 'slack-message-add-reaction
+         ",rr" 'slack-message-remove-reaction
+         ",rs" 'slack-message-show-reaction-users
+         ",pl" 'slack-room-pins-list
+         ",pa" 'slack-message-pins-add
+         ",pr" 'slack-message-pins-remove
+         ",mm" 'slack-message-write-another-buffer
+         ",me" 'slack-message-edit
+         ",md" 'slack-message-delete
+         ",u" 'slack-room-update-messages
+         ",2" 'slack-message-embed-mention
+         ",3" 'slack-message-embed-channel
+         "\C-n" 'slack-buffer-goto-next-message
+         "\C-p" 'slack-buffer-goto-prev-message)
+       (evil-define-key 'normal slack-edit-message-mode-map
+         ",k" 'slack-message-cancel-edit
+         ",s" 'slack-message-send-from-buffer
+         ",2" 'slack-message-embed-mention
+         ",3" 'slack-message-embed-channel))
+   #+end_src
+
+
+* Footer
+  
+  #+begin_src emacs-lisp :tangle yes
+    ;; For PC specific things, such as passwords
+    (require 'user)
+  #+end_src

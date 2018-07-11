@@ -6,3 +6,6 @@ games/
 tramp
 nameses-sessions/
 network-security.data
+lisp/user.el
+emojis/
+ac-comphist.dat
