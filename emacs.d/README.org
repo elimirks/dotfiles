@@ -93,8 +93,9 @@
        (require 'helm-config)
        (helm-mode 1)
        (global-set-key (kbd "M-x") 'helm-M-x)
-       (setq helm-M-x-fuzzy-match t) ; Fuzzy M-x matching
-       (setq helm-split-window-in-side-p t)) ; Make helm split on the bottom edge
+       (setq helm-M-x-fuzzy-match t         ; Fuzzy M-x matching
+             helm-buffer-max-length nil     ; Don't limit the filename length
+             helm-split-window-in-side-p t)) ; Make helm split on the bottom edge
 
      ;; For using the enter key in helm
      (defun elimirks/helm-return-find-file ()
@@ -148,7 +149,8 @@
            (add-hook 'prog-mode-hook
                      '(lambda ()
                         (display-line-numbers-mode t)
-                        (setq display-line-numbers 'relative))))
+                        (setq display-line-numbers 'relative
+                              display-line-numbers-width 1))))
          (progn
              (use-package nlinum-relative
              :config
@@ -377,7 +379,12 @@
         "r" 'recompile
         "a" 'org-agenda
         "c" 'cfw:open-org-calendar
-        "s" 'ispell
+        "ss" 'slack-start
+        "sis" 'slack-im-select
+        "sio" 'slack-im-open
+        "sil" 'slack-im-list-update
+        "scs" 'slack-channel-select
+        "sco" 'slack-channel-join
         "x" 'helm-M-x
         "z" 'zoom
         "l" 'org-timeline
@@ -422,6 +429,8 @@
        'evil-window-left)
      (define-key evil-normal-state-map (kbd "<right>")
        'evil-window-right)
+     (define-key evil-normal-state-map (kbd "M-o")
+       'other-window)
    #+end_src
 * Org
 ** Basic
@@ -643,6 +652,11 @@
        (:map omnisharp-mode-map
              ("C-c C-c" . omnisharp-run-code-action-refactoring)))
    #+end_src
+
+** YAML
+   #+begin_src emacs-lisp :tangle yes
+     (use-package yaml-mode)
+   #+end_src
 * Apps
 ** Gnus
    #+begin_src emacs-lisp :tangle yes
@@ -724,6 +738,10 @@
        ;; Disable company mode - it messes with Slack
        (add-hook 'slack-mode-hook (lambda () (company-mode -1)))
 
+       ;; Disable helm for file uploads - it get stuck in a loop :/
+       (add-to-list 'helm-completing-read-handlers-alist
+                    '(slack-file-upload . nil))
+
        (evil-define-key 'normal slack-info-mode-map
          ",u" 'slack-room-update-messages)
        (evil-define-key 'normal slack-mode-map
@@ -748,11 +766,19 @@
          ",2" 'slack-message-embed-mention
          ",3" 'slack-message-embed-channel))
    #+end_src
+** MultiTerm
+   #+begin_src emacs-lisp :tangle yes
+     (use-package multi-term
+       :config
+       (evil-define-key 'normal term-mode-map
+         (kbd "RET") 'term-send-return)
 
-
+       (setq multi-term-program "/bin/zsh"))
+   #+end_src
 * Footer
   
   #+begin_src emacs-lisp :tangle yes
     ;; For PC specific things, such as passwords
     (require 'user)
   #+end_src
+  
