@@ -195,6 +195,7 @@
                   (which-key-mode "" which-key)
                   (helm-mode "" helm)
                   (editorconfig-mode "" editorconfig)
+                  (rainbow-mode)
                   (auto-revert-mode "" autorevert))))
    #+end_src
    
@@ -735,10 +736,14 @@
        (setq slack-prefer-current-team t)
        :config
 
-       ;; Disable company mode - it messes with Slack
-       (add-hook 'slack-mode-hook (lambda () (company-mode -1)))
+       ;; Only use Slack company completion to avoid annoying word completion
+       (make-local-variable 'company-backends)
+       (setq company-backends '((company-slack-backend)))
 
-       ;; Disable helm for file uploads - it get stuck in a loop :/
+       (flycheck-mode -1)
+       (company-mode -1)
+
+       ;; Disable helm for file uploads - it gets stuck in a loop :/
        (add-to-list 'helm-completing-read-handlers-alist
                     '(slack-file-upload . nil))
 
@@ -774,11 +779,9 @@
          (kbd "RET") 'term-send-return)
 
        (setq multi-term-program "/bin/zsh"))
-   #+end_src
+   #+end_src;; For PC specific things, such as passwords
 * Footer
-  
-  #+begin_src emacs-lisp :tangle yes
-    ;; For PC specific things, such as passwords
+   #+begin_src emacs-lisp :tangle yes
     (require 'user)
-  #+end_src
+   #+end_src
   
