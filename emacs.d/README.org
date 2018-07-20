@@ -396,29 +396,10 @@
        :config
        (global-evil-surround-mode 1))
    #+end_src
-** Make esc quit like vim
-   #+begin_src emacs-lisp :tangle yes
-(defun minibuffer-keyboard-quit ()
-  "Abort recursive edit.
-    In Delete Selection mode, if the mark is active, just deactivate it;
-    then it takes a second \\[keyboard-quit] to abort the minibuffer."
-  (interactive)
-  (if (and delete-selection-mode transient-mark-mode mark-active)
-      (setq deactivate-mark  t)
-    (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
-    (abort-recursive-edit)))
-(define-key evil-normal-state-map [escape] 'keyboard-quit)
-(define-key evil-visual-state-map [escape] 'keyboard-quit)
-(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
-   #+end_src
 ** External config for powerline and evil powerline
    #+begin_src emacs-lisp :tangle yes
-;; (~/.emacs.d/lisp/init-powerline.el)
-(require 'init-powerline)
+     ;; (~/.emacs.d/lisp/init-powerline.el)
+     (require 'init-powerline)
    #+end_src
 ** Keybindings
    #+begin_src emacs-lisp :tangle yes
@@ -740,8 +721,10 @@
        (make-local-variable 'company-backends)
        (setq company-backends '((company-slack-backend)))
 
-       (flycheck-mode -1)
-       (company-mode -1)
+       (add-hook 'slack-mode-hook
+                 '(lambda ()
+                    (flycheck-mode -1)
+                    (company-mode -1))))
 
        ;; Disable helm for file uploads - it gets stuck in a loop :/
        (add-to-list 'helm-completing-read-handlers-alist
