@@ -66,19 +66,6 @@
 ; Backup in one place. Flat, no tree structure
 (setq auto-save-file-name-transforms '((".*" "~/.bak.emacs/auto/" t)))
    #+end_src
-** Dropbox Plugin
-   Handy functions for starting and stopping dropbox (e.g. mostly used for Orgzly)
-   On the Linux lab computers at UTM, we have a disk quota so this is a hack fix :)
-   #+begin_src emacs-lisp :tangle yes
-(defun eli/dropbox-start ()
-  (interactive)
-  (if (eq nil (file-exists-p "/virtual/mireckie/dropbox/.dropbox-dist"))
-      (call-process-shell-command "(python ~/.emacs.d/dropbox.py start -i&)")
-    (call-process-shell-command "(python ~/.emacs.d/dropbox.py start&)")))
-(defun eli/dropbox-stop ()
-  (interactive)
-  (call-process-shell-command "python ~/.emacs.d/dropbox.py stop&"))
-   #+end_src
 ** Plugins
    [[https://github.com/emacs-helm/helm][Helm]]. A nice minibuffer / completion / etc framework
    #+begin_src emacs-lisp :tangle yes
@@ -230,13 +217,24 @@
        :config
        (add-hook 'quickrun--mode-hook 'turn-off-evil-mode))
    #+end_src
+
+   [[https://github.com/myrkr/dictionary-el][Dictionary.]] For word lookups.
+   
+   #+begin_src emacs-lisp :tangle yes
+     (use-package dictionary)
+   #+end_src
 ** Handy functions
-   Used to reload this config:
    #+begin_src emacs-lisp :tangle yes
      (defun eli/load-init ()
-       "Reloads init file"
+       "Reloads init file (and therefore, README.org)"
        (interactive)
        (load-file "~/.emacs.d/init.el"))
+
+     (defun eli/append-semicolon ()
+       "Appends a semicolon to the end of a line."
+       (interactive)
+       (end-of-line)
+       (insert-char ?\;))
    #+end_src
 * Theme
 ** Configure a nice theme
@@ -340,9 +338,9 @@
        (eshell-bindings)
 
        (general-create-definer bind-leader
-                               :keymaps 'global
-                               :states '(normal emacs)
-                               :prefix "SPC")
+         :keymaps 'global
+         :states '(normal emacs)
+         :prefix "SPC")
 
        (general-define-key
         :states 'motion
@@ -362,34 +360,37 @@
           (helm-gtags-find-tag (thing-at-point 'symbol)))
        (defun eli/helm-gtags-find-rtag-at-point () (interactive)
           (helm-gtags-find-rtag (thing-at-point 'symbol)))
-           
+
        (bind-leader
-        "dl" 'nameses-load
-        "ds" 'nameses-save
-        "dr" 'nameses-reset
-        "w" 'save-buffer
-        "k" 'kill-this-buffer
-        "e" 'gnus
-        "tt" 'eli/helm-gtags-find-tag-at-point
-        "tr" 'eli/helm-gtags-find-rtag-at-point
-        "tp" 'helm-gtags-pop-stack
-        "ts" 'helm-gtags-show-stack
-        "f" 'helm-flycheck
-        "g" 'magit-status
-        "m" 'helm-mini
-        "r" 'recompile
-        "a" 'org-agenda
-        "c" 'cfw:open-org-calendar
-        "ss" 'slack-start
-        "sis" 'slack-im-select
-        "sio" 'slack-im-open
-        "sil" 'slack-im-list-update
-        "scs" 'slack-channel-select
-        "sco" 'slack-channel-join
-        "x" 'helm-M-x
-        "z" 'zoom
-        "l" 'org-timeline
-        "q" 'quickrun))
+         "a" 'org-agenda
+         "c" 'cfw:open-org-calendar
+         "dl" 'dictionary-lookup-definition
+         "ds" 'dictionary-search
+         "e" 'gnus
+         "f" 'helm-flycheck
+         "g" 'magit-status
+         "k" 'kill-this-buffer
+         "l" 'org-timeline
+         "m" 'helm-mini
+         "nl" 'nameses-load
+         "nr" 'nameses-reset
+         "ns" 'nameses-save
+         "q" 'quickrun
+         "r" 'recompile
+         "sco" 'slack-channel-join
+         "scs" 'slack-channel-select
+         "sil" 'slack-im-list-update
+         "sio" 'slack-im-open
+         "sis" 'slack-im-select
+         "ss" 'slack-start
+         "tp" 'helm-gtags-pop-stack
+         "tr" 'eli/helm-gtags-find-rtag-at-point
+         "ts" 'helm-gtags-show-stack
+         "tt" 'eli/helm-gtags-find-tag-at-point
+         "w" 'save-buffer
+         "x" 'helm-M-x
+         "z" 'zoom
+         ";" 'eli/append-semicolon))
 
      ;; Tpope's surround
      (use-package evil-surround
@@ -413,6 +414,10 @@
        'evil-window-right)
      (define-key evil-normal-state-map (kbd "M-o")
        'other-window)
+     (define-key evil-normal-state-map (kbd ":")
+       '(lambda () 
+          (interactive)
+          (evil-ex "")))
    #+end_src
 * Org
 ** Basic
@@ -724,7 +729,7 @@
        (add-hook 'slack-mode-hook
                  '(lambda ()
                     (flycheck-mode -1)
-                    (company-mode -1))))
+                    (company-mode -1)))
 
        ;; Disable helm for file uploads - it gets stuck in a loop :/
        (add-to-list 'helm-completing-read-handlers-alist
