@@ -1,3 +1,4 @@
-* My magical dotfiles
+* My dotfiles
 
-NTS: Plop these in /usr/local/src
+  #+html: <p align="center"><a href="https://scifiinterfaces.com/wp-content/uploads/2013/06/typing.gif"><img src="https://scifiinterfaces.com/wp-content/uploads/2013/06/typing.gif"/></a></p>
+    

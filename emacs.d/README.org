@@ -178,12 +178,15 @@
    #+begin_src emacs-lisp :tangle yes
      (use-package delight
        :config
-       (delight '((undo-tree-mode "" undo-tree)
-                  (which-key-mode "" which-key)
-                  (helm-mode "" helm)
-                  (editorconfig-mode "" editorconfig)
+       (delight '((undo-tree-mode nil undo-tree)
+                  (which-key-mode nil which-key)
+                  (helm-mode nil helm)
+                  (editorconfig-mode nil editorconfig)
                   (rainbow-mode)
-                  (auto-revert-mode "" autorevert))))
+                  (evil-smartparens-mode nil evil-smartparens)
+                  (smartparens-mode nil smartparens)
+                  (smart-semicolon-mode nil smart-semicolon)
+                  (auto-revert-mode nil autorevert))))
    #+end_src
    
    [[https://github.com/cyrus-and/zoom][Zoom.]] Zooms current pane!
@@ -223,18 +226,32 @@
    #+begin_src emacs-lisp :tangle yes
      (use-package dictionary)
    #+end_src
+   
+   [[https://github.com/Fuco1/smartparens][Smartparens.]] Sane automatic parens.
+   
+   #+begin_src emacs-lisp :tangle yes
+     (use-package smartparens
+       :config
+       (autopair-global-mode 1))
+
+     (use-package evil-smartparens
+       :config
+       (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
+   #+end_src
+
+   [[https://github.com/iquiw/smart-semicolon][Smartsemicolon.]] Sane semicolons.
+
+   #+begin_src emacs-lisp :tangle yes
+     (use-package smart-semicolon
+       :config
+       (add-hook 'c-mode-common-hook #'smart-semicolon-mode))
+   #+end_src
 ** Handy functions
    #+begin_src emacs-lisp :tangle yes
      (defun eli/load-init ()
        "Reloads init file (and therefore, README.org)"
        (interactive)
        (load-file "~/.emacs.d/init.el"))
-
-     (defun eli/append-semicolon ()
-       "Appends a semicolon to the end of a line."
-       (interactive)
-       (end-of-line)
-       (insert-char ?\;))
    #+end_src
 * Theme
 ** Configure a nice theme
@@ -389,8 +406,7 @@
          "tt" 'eli/helm-gtags-find-tag-at-point
          "w" 'save-buffer
          "x" 'helm-M-x
-         "z" 'zoom
-         ";" 'eli/append-semicolon))
+         "z" 'zoom))
 
      ;; Tpope's surround
      (use-package evil-surround
@@ -767,9 +783,11 @@
          (kbd "RET") 'term-send-return)
 
        (setq multi-term-program "/bin/zsh"))
-   #+end_src;; For PC specific things, such as passwords
+   #+end_src
+
 * Footer
    #+begin_src emacs-lisp :tangle yes
-    (require 'user)
+     ;; For PC specific things, such as passwords
+     (require 'user)
    #+end_src
   
