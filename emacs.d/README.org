@@ -617,6 +617,70 @@
        :init
        (add-to-list 'auto-mode-alist '("\\.tsx$" . web-mode)))
    #+end_src
+   
+   Some functions for more easily narrowing script and style tags in web mode.
+   
+   #+begin_src emacs-lisp :tangle yes
+     ;; Based on a gist by ceving: https://gist.github.com/ceving/7ba174960b9dd3516fff
+
+     (defun eli/narrow-to-html-style ()
+       "Narrow a HTML buffer to the style part and switch to css-mode."
+       (interactive)
+       (widen)
+       (goto-char (point-min))
+       (re-search-forward "<style")
+       (forward-line 1)
+       (beginning-of-line)
+       (let ((b (point)))
+         (re-search-forward "</style>")
+         (beginning-of-line)
+         (let ((e (point)))
+           (narrow-to-region b e)
+           (css-mode))))
+
+     (defun eli/narrow-to-html-script ()
+       "Narrow a HTML buffer to the script part and switch to js-mode."
+       (interactive)
+       (widen)
+       (goto-char (point-min))
+       (re-search-forward "<script")
+       (forward-line 1)
+       (beginning-of-line)
+       (let ((b (point)))
+         (re-search-forward "</script>")
+         (beginning-of-line)
+         (let ((e (point)))
+           (narrow-to-region b e)
+           (js-mode))))
+
+     (defun eli/widen-to-html ()
+       "Widen a HTML buffer and reenable web-mode."
+       (interactive)
+       (widen)
+       (web-mode))
+
+     (defun eli/html-smart-narrow ()
+       "Intelligently narrow or widen an HTML script or style tag."
+       (interactive)
+
+       (let ((lang (web-mode-language-at-pos (point))))
+
+         (cond ((string= 'web-mode major-mode)
+                (cond ((string= lang "javascript") (eli/narrow-to-html-script))
+                      ((string= lang "css") (eli/narrow-to-html-style))))
+               ((string= 'js-mode major-mode)
+                  (eli/widen-to-html))
+               ((string= 'css-mode major-mode)
+                (when (string= lang "css")
+                  (eli/widen-to-html))))))
+
+     (defun eli/bind-html-smart-narrow ()
+       (local-set-key (kbd "C-x n SPC") 'eli/html-smart-narrow))
+
+     (add-hook 'web-mode-hook 'eli/bind-html-smart-narrow)
+     (add-hook 'js-mode-hook 'eli/bind-html-smart-narrow)
+     (add-hook 'css-mode-hook 'eli/bind-html-smart-narrow)
+   #+end_src
 ** PHP
    #+begin_src emacs-lisp :tangle yes
      (use-package php-mode
