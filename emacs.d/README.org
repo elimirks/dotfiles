@@ -1,24 +1,24 @@
 * Base
 ** Package Management
    #+begin_src emacs-lisp :tangle yes
-(require 'package)
-(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.org/packages/")))
-(setq package-enable-at-startup nil)
-(package-initialize)
+     (require 'package)
+     (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                              ("marmalade" . "http://marmalade-repo.org/packages/")
+                              ("melpa" . "http://melpa.org/packages/")))
+     (setq package-enable-at-startup nil)
+     (package-initialize)
 
-;; Specifies local directory to load packages from
-(let ((default-directory  "~/.emacs.d/lisp/"))
-  (normal-top-level-add-to-load-path '("."))
-  (normal-top-level-add-subdirs-to-load-path))
+     ;; Specifies local directory to load packages from
+     (let ((default-directory  "~/.emacs.d/lisp/"))
+       (normal-top-level-add-to-load-path '("."))
+       (normal-top-level-add-subdirs-to-load-path))
 
-;; Package manager
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-(require 'use-package)
-(setq use-package-always-ensure t) ; Always ensure package is downloaded
+     ;; Package manager
+     (unless (package-installed-p 'use-package)
+       (package-refresh-contents)
+       (package-install 'use-package))
+     (require 'use-package)
+     (setq use-package-always-ensure t) ; Always ensure package is downloaded
    #+end_src
 ** Essential Settings
    #+begin_src emacs-lisp :tangle yes
@@ -45,9 +45,7 @@
      (defvaralias 'cperl-indent-level 'tab-width)
 
      ;; Default browser for links
-     (setq 
-      browse-url-firefox-program (if (eq system-type 'darwin)
-                                         "/Users/elijah/bin/firefox"
+     (s              "/Users/elijah/bin/firefox"
                                          "firefox")
       browse-url-generic-program browse-url-firefox-program
       browse-url-browser-function 'browse-url-generic)
@@ -56,15 +54,15 @@
    #+end_src
 ** Backup Options
    #+begin_src emacs-lisp :tangle yes
-(setq backup-by-copying t) ; Stop shinanigans with links
-(setq backup-directory-alist '((".*" . "~/.bak.emacs/backup/")))
-; Creates auto directory if it doesn't already exist
-(if (eq nil (file-exists-p "~/.bak.emacs/"))
-    (make-directory "~/.bak.emacs/"))
-(if (eq nil (file-exists-p "~/.bak.emacs/auto"))
-    (make-directory "~/.bak.emacs/auto"))
-; Backup in one place. Flat, no tree structure
-(setq auto-save-file-name-transforms '((".*" "~/.bak.emacs/auto/" t)))
+     (setq backup-by-copying t) ; Stop shinanigans with links
+     (setq backup-directory-alist '((".*" . "~/.bak.emacs/backup/")))
+     ; Creates auto directory if it doesn't already exist
+     (if (eq nil (file-exists-p "~/.bak.emacs/"))
+         (make-directory "~/.bak.emacs/"))
+     (if (eq nil (file-exists-p "~/.bak.emacs/auto"))
+         (make-directory "~/.bak.emacs/auto"))
+     ; Backup in one place. Flat, no tree structure
+     (setq auto-save-file-name-transforms '((".*" "~/.bak.emacs/auto/" t)))
    #+end_src
 ** Plugins
    [[https://github.com/emacs-helm/helm][Helm]]. A nice minibuffer / completion / etc framework
@@ -258,29 +256,29 @@
 * Theme
 ** Configure a nice theme
    #+begin_src emacs-lisp :tangle yes
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-(load-theme 'spolsky t)
-(set-face-attribute 'default nil :height 110)
-;; When in terminal
-(unless (display-graphic-p) 
-  (setq nlinum-format "%d ")
-  (add-to-list 'default-frame-alist '(background-color . "color-16"))
-  (custom-set-faces
-   '(linum ((t (:background "color-16" :foreground "#9fc59f"))))))
+     (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+     (load-theme 'spolsky t)
+     (set-face-attribute 'default nil :height 110)
+     ;; When in terminal
+     (unless (display-graphic-p) 
+       (setq nlinum-format "%d ")
+       (add-to-list 'default-frame-alist '(background-color . "color-16"))
+       (custom-set-faces
+        '(linum ((t (:background "color-16" :foreground "#9fc59f"))))))
    #+end_src
 ** Nice eshell evil bindings
    #+begin_src emacs-lisp :tangle yes
-(defun eshell-bindings ()
-    (define-key evil-normal-state-map (kbd "<up>")
-      'eshell-previous-matching-input-from-input)
-    (define-key evil-normal-state-map (kbd "<down>")
-      'eshell-next-matching-input-from-input))
+     (defun eshell-bindings ()
+         (define-key evil-normal-state-map (kbd "<up>")
+           'eshell-previous-matching-input-from-input)
+         (define-key evil-normal-state-map (kbd "<down>")
+           'eshell-next-matching-input-from-input))
    #+end_src
 ** Fancy rainbox parens to sooth my eyes
    #+begin_src emacs-lisp :tangle yes
-(use-package rainbow-delimiters
-  :config
-  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+     (use-package rainbow-delimiters
+       :config
+       (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
    #+end_src
 ** Pretty symbols
 *** Global
@@ -439,42 +437,42 @@
    #+end_src
 * Org
 ** Basic
-  #+begin_src emacs-lisp :tangle yes
-    ;; Better looking org headers
-    (use-package org-bullets
-      :config
-      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+   #+begin_src emacs-lisp :tangle yes
+     ;; Better looking org headers
+     (use-package org-bullets
+       :config
+       (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
-    (setq
-     org-pretty-entities t ; Alows org to displayed UTF-8 chars like \alpha
-     org-startup-truncated nil
-     org-src-fontify-natively t
-     org-agenda-files '("~/Dropbox/Notes/everything.org")
-     org-src-window-setup 'current-window
-     org-ellipsis " ⤵"
-     ;; Allows custom inline image sizes
-     org-image-actual-width nil
-     ;; Makes inline latex previews bigger
-     org-format-latex-options (plist-put org-format-latex-options :scale 1.7)
-     org-export-latex-table-caption-above nil
-     org-latex-table-caption-above nil
-     org-latex-caption-above nil)
+     (setq
+      org-pretty-entities t ; Alows org to displayed UTF-8 chars like \alpha
+      org-startup-truncated nil
+      org-src-fontify-natively t
+      org-agenda-files '("~/Dropbox/Notes/everything.org")
+      org-src-window-setup 'current-window
+      org-ellipsis " ⤵"
+      ;; Allows custom inline image sizes
+      org-image-actual-width nil
+      ;; Makes inline latex previews bigger
+      org-format-latex-options (plist-put org-format-latex-options :scale 1.7)
+      org-export-latex-table-caption-above nil
+      org-latex-table-caption-above nil
+      org-latex-caption-above nil)
 
-    (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-    (global-set-key "\C-cl" 'org-store-link)
-    ;; To enable an agenda hotkey
-    (global-set-key "\C-ca" 'org-agenda)
-    (global-set-key "\C-cb" 'org-iswitchb)
-  #+end_src
+     (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+     (global-set-key "\C-cl" 'org-store-link)
+     ;; To enable an agenda hotkey
+     (global-set-key "\C-ca" 'org-agenda)
+     (global-set-key "\C-cb" 'org-iswitchb)
+   #+end_src
   
-  Custom Org Keybindings
-  #+begin_src emacs-lisp :tangle yes
+   Custom Org Keybindings
+   #+begin_src emacs-lisp :tangle yes
     (define-key evil-normal-state-map (kbd "M-h") 'org-metaleft)
     (define-key evil-normal-state-map (kbd "M-s") 'org-metaright)
     (define-key evil-normal-state-map (kbd "M-e") 'org-latex-export-to-pdf)
-  #+end_src
+   #+end_src
 ** Agenda
-  #+begin_src emacs-lisp :tangle yes
+   #+begin_src emacs-lisp :tangle yes
     ;; Match those tagged with, are not scheduled/deadlined, are not DONE.
     (setq org-agenda-custom-commands
           '(("d" "non-[d]eadlined tasks"
@@ -501,9 +499,9 @@
     (setq org-deadline-warning-days 0) ; Disable pre-warnings
     ;; Hide the time grid by default
     (setq org-agenda-use-time-grid nil)
-  #+end_src
+   #+end_src
 ** Calendar
-  #+begin_src emacs-lisp :tangle yes
+   #+begin_src emacs-lisp :tangle yes
     (use-package calfw-org)
     (use-package calfw
       :config
@@ -526,10 +524,10 @@
       (setq calendar-day-name-array
             ["Sonntag" "Montag" "Dienstag" "Mittwoch" "Donnerstag" "Freitag" "Samstag"])
       (setq calendar-week-start-day 1))
-  #+end_src
+   #+end_src
 ** LaTeX
-  Settings for exporting to LaTeX
-  #+begin_src emacs-lisp :tangle yes
+   Settings for exporting to LaTeX
+   #+begin_src emacs-lisp :tangle yes
     (require 'ox-latex)
     (add-to-list 'org-latex-packages-alist '("" "minted"))
     (setq org-latex-listings 'minted)
@@ -539,7 +537,7 @@
             "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
             "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 
-  #+end_src
+   #+end_src
 * Language Modes
 ** Markdown
    #+begin_src emacs-lisp :tangle yes
@@ -858,8 +856,8 @@
    #+end_src
 
 * Footer
-   #+begin_src emacs-lisp :tangle yes
+  #+begin_src emacs-lisp :tangle yes
      ;; For PC specific things, such as passwords
      (require 'user)
-   #+end_src
+  #+end_src
   
