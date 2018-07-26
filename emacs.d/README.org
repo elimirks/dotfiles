@@ -352,6 +352,9 @@
 * Evil Mode
 ** Load and configure evil
    #+begin_src emacs-lisp :tangle yes
+     ;; For defining the leader key
+     (use-package general)
+
      ;; Base evil package
      (use-package evil
        :demand
@@ -369,7 +372,6 @@
 
        ;; Automatically opens helm after :e
        (define-key evil-ex-map "e " 'helm-find-files)
-       (eshell-bindings)
 
        (general-create-definer bind-leader
          :keymaps 'global
