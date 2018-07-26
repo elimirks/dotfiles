@@ -74,7 +74,7 @@
         ("C-x C-f" . helm-find-files)
         ("C-x b" . helm-buffers-list)
         :map helm-find-files-map
-        ("<RET>" . elimirks/helm-return-find-file))
+        ("<RET>" . eli/helm-return-find-file))
        :config
        (require 'helm-config)
        (helm-mode 1)
@@ -84,7 +84,7 @@
              helm-split-window-in-side-p t)) ; Make helm split on the bottom edge
 
      ;; For using the enter key in helm
-     (defun elimirks/helm-return-find-file ()
+     (defun eli/helm-return-find-file ()
        (interactive)
        (if (file-directory-p (helm-get-selection))
            (helm-execute-persistent-action)
@@ -186,7 +186,7 @@
    #+begin_src emacs-lisp :tangle yes
      (use-package smartparens
        :config
-       (autopair-global-mode 1))
+       (smartparens-global-mode))
 
      (use-package evil-smartparens
        :config
@@ -622,7 +622,7 @@
        (add-to-list 'auto-mode-alist '("\\.tsx$" . web-mode))
        (add-hook 'web-mode-hook (lambda ()
                                   (display-line-numbers-mode)
-                                  (autopair-mode -1)))
+                                  (smartparens-mode -1)))
        :config
        (setq web-mode-enable-auto-closing t
              web-mode-enable-auto-indentation t))
@@ -848,6 +848,20 @@
          ",s" 'slack-message-send-from-buffer
          ",2" 'slack-message-embed-mention
          ",3" 'slack-message-embed-channel))
+   #+end_src
+   
+   Function to select a new team programatically
+
+   #+begin_src emacs-lisp :tangle yes
+     (defun eli/slack-change-to-team (team-name)
+       "Changes the current Slack team - nice for setting a default team in config"
+       (interactive)
+       (let ((team (slack-team-find-by-name team-name)))
+         (if team
+             (progn
+               (setq slack-current-team team)
+               (slack-team-connect team))
+           (message (concat "No such Slack team: " team-name)))))
    #+end_src
 ** MultiTerm
    #+begin_src emacs-lisp :tangle yes
