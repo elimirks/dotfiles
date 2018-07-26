@@ -178,7 +178,9 @@
    #+begin_src emacs-lisp :tangle yes
      (use-package delight
        :config
-       (delight '((undo-tree-mode nil undo-tree)
+       (delight '((company-mode "C " company)
+                  (flycheck-mode "F " flycheck)
+                  (undo-tree-mode nil undo-tree)
                   (which-key-mode nil which-key)
                   (helm-mode nil helm)
                   (editorconfig-mode nil editorconfig)
@@ -615,7 +617,13 @@
    #+begin_src emacs-lisp :tangle yes
      (use-package web-mode
        :init
-       (add-to-list 'auto-mode-alist '("\\.tsx$" . web-mode)))
+       (add-to-list 'auto-mode-alist '("\\.tsx$" . web-mode))
+       (add-hook 'web-mode-hook (lambda ()
+                                  (display-line-numbers-mode)
+                                  (autopair-mode -1)))
+       :config
+       (setq web-mode-enable-auto-closing t
+             web-mode-enable-auto-indentation t))
    #+end_src
    
    Some functions for more easily narrowing script and style tags in web mode.
