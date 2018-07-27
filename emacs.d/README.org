@@ -210,6 +210,23 @@
        (interactive)
        (load-file "~/.emacs.d/init.el"))
    #+end_src
+** Global keybindings
+*** Follow newly created windows, only when created manually
+   #+begin_src emacs-lisp :tangle yes
+     (defun eli/split-and-follow-horizontally ()
+       (interactive)
+       (split-window-below)
+       (balance-windows)
+       (other-window 1))
+     (global-set-key (kbd "C-x 2") 'eli/split-and-follow-horizontally)
+
+     (defun eli/split-and-follow-vertically ()
+       (interactive)
+       (split-window-right)
+       (balance-windows)
+       (other-window 1))
+     (global-set-key (kbd "C-x 3") 'eli/split-and-follow-vertically)
+   #+end_src
 * Aesthetics
 ** Configure a nice theme
    #+begin_src emacs-lisp :tangle yes
@@ -405,7 +422,8 @@
          "e" 'gnus
          "f" 'helm-flycheck
          "g" 'magit-status
-         "k" 'kill-this-buffer
+         "kr" 'helm-show-kill-ring
+         "kk" 'kill-this-buffer
          "l" 'org-timeline
          "m" 'helm-mini
          "nl" 'nameses-load
