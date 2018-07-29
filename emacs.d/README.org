@@ -23,7 +23,9 @@
 ** Essential Settings
    #+begin_src emacs-lisp :tangle yes
      (server-start)
-     (setq ispell-program-name "/usr/local/bin/ispell")
+     ;; MacOS has some trouble finding ispell
+     (when (eq system-type 'darwin)
+       (setq ispell-program-name "/usr/local/bin/ispell"))
      ;; For ansi-term n' stuff
      (setq explicit-shell-file-name "/bin/bash")
      (setq inhibit-splash-screen t ; No welcome screen
