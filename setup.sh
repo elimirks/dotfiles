@@ -1,18 +1,29 @@
 #!/bin/bash
 
-# Set to 1 to set up GUI stuff (like i3)
-HAS_GUI=1
+read -p "Set up GUI config? (y/n) " yesorno
+case "$yesorno" in
+	y) 
+		HAS_GUI=1
+		echo "Setting up GUI."
+	*)
+		HAS_GUI=0
+		echo "Not setting up GUI."
+		;;
+esac
 
 DEPENDENCIES=
-UBUNTU_DEPENDENCIES=
+DEBIAN_DEPENDENCIES=
 ARCH_DEPENDENCIES=
 
 DEPENDENCIES+="zsh zsh-syntax-highlighting bash emacs tmux vim git"
 
 if [ $HAS_GUI -eq 1 ]; then
  	# For PinkCtrls
-	UBUNTU_DEPENDENCIES+=" libxtst-dev"
+	DEBIANDEPENDENCIES+=" libxtst-dev"
 	ARCH_DEPENDENCIES+=" libxtst"
+
+	# For i3lock-fancy. I'm not sure what the package is called on Debian
+	ARCH_DEPENDENCIES+=" imagemagick"
 
 	DEPENDENCIES+=" gawk" # For translate-shell
 	DEPENDENCIES+=" i3-wm"
@@ -20,7 +31,7 @@ fi
 
 echo "Installing $DEPENDENCIES"
 if cat /etc/os-release | grep -qE "(Ubuntu|Debian)"; then
-	sudo apt-get install $DEPENDENCIES $UBUNTU_DEPENDENCIES
+	sudo apt-get install $DEPENDENCIES $DEBIAN_DEPENDENCIES
 elif cat /etc/os-release | grep -qE "Arch"; then
 	sudo pacman -S $DEPENDENCIES $ARCH_DEPENDENCIES
 else
