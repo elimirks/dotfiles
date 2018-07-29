@@ -5,6 +5,7 @@ case "$yesorno" in
 	y) 
 		HAS_GUI=1
 		echo "Setting up GUI."
+		;;
 	*)
 		HAS_GUI=0
 		echo "Not setting up GUI."
