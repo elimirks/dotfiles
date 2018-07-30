@@ -188,7 +188,10 @@
    #+begin_src emacs-lisp :tangle yes
      (use-package smartparens
        :config
-       (smartparens-global-mode))
+       ;; For a lot of modes, smartparens is super annoying :)
+       (mapc (lambda (hook) (smartparens-mode))
+             '(c-mode-hook c++-mode-hook js-mode-hook php-mode-hook lisp-mode-hook
+                           css-mode-hook python-mode-hook)))
 
      (use-package evil-smartparens
        :config
@@ -228,6 +231,10 @@
        (balance-windows)
        (other-window 1))
      (global-set-key (kbd "C-x 3") 'eli/split-and-follow-vertically)
+   #+end_src
+*** Convenient window switching
+   #+begin_src emacs-lisp :tangle yes
+     (global-set-key "\M-o" 'other-window)
    #+end_src
 * Aesthetics
 ** Configure a nice theme
@@ -322,20 +329,20 @@
 
    [[https://github.com/CodeFalling/nlinum-relative][Nlinum Relative]]. Relative line numbers n' stuff
    #+begin_src emacs-lisp :tangle yes
+     (defun eli/line-numbers-mode () (interactive)
+        (display-line-numbers-mode t)
+        (setq display-line-numbers 'relative
+              display-line-numbers-width 1))
+
      (if (version< "26.0.50" emacs-version)
-         (progn
-           (add-hook 'prog-mode-hook
-                     '(lambda ()
-                        (display-line-numbers-mode t)
-                        (setq display-line-numbers 'relative
-                              display-line-numbers-width 1))))
-         (progn
-             (use-package nlinum-relative
-             :config
-             (nlinum-relative-setup-evil)
-             (setq nlinum-relative-redisplay-delay 0.25)
-             (setq nlinum-relative-current-symbol "")
-             (add-hook 'prog-mode-hook 'nlinum-relative-mode))))
+         (mapc (lambda (hook) (add-hook hook 'eli/line-numbers-mode))
+               '(prog-mode-hook web-mode-hook))
+       (use-package nlinum-relative
+         :config
+         (nlinum-relative-setup-evil)
+         (setq nlinum-relative-redisplay-delay 0.25)
+         (setq nlinum-relative-current-symbol "")
+         (add-hook 'prog-mode-hook 'nlinum-relative-mode)))
    #+end_src
 
 ** Rainbow mode (highlight CSS style hex colors)
@@ -426,6 +433,7 @@
          "g" 'magit-status
          "kr" 'helm-show-kill-ring
          "kk" 'kill-this-buffer
+         "kw" 'kill-buffer-and-window
          "l" 'org-timeline
          "m" 'helm-mini
          "nl" 'nameses-load
@@ -459,8 +467,6 @@
    #+end_src
 ** Keybindings
    #+begin_src emacs-lisp :tangle yes
-     (define-key evil-normal-state-map (kbd "M-o")
-       'other-window)
      ;; Disable evil-ex initial auto-fill
      (define-key evil-normal-state-map (kbd ":")
        '(lambda () 
@@ -640,9 +646,7 @@
      (use-package web-mode
        :init
        (add-to-list 'auto-mode-alist '("\\.tsx$" . web-mode))
-       (add-hook 'web-mode-hook (lambda ()
-                                  (display-line-numbers-mode)
-                                  (smartparens-mode -1)))
+       (add-to-list 'auto-mode-alist '("\\.html\\.twig$" . web-mode))
        :config
        (setq web-mode-enable-auto-closing t
              web-mode-enable-auto-indentation t))
