@@ -59,12 +59,12 @@
    #+begin_src emacs-lisp :tangle yes
      (setq backup-by-copying t) ; Stop shinanigans with links
      (setq backup-directory-alist '((".*" . "~/.bak.emacs/backup/")))
-     ; Creates auto directory if it doesn't already exist
-     (if (eq nil (file-exists-p "~/.bak.emacs/"))
-         (make-directory "~/.bak.emacs/"))
-     (if (eq nil (file-exists-p "~/.bak.emacs/auto"))
-         (make-directory "~/.bak.emacs/auto"))
-     ; Backup in one place. Flat, no tree structure
+     ;; Creates auto directory if it doesn't already exist
+     (when (eq nil (file-exists-p "~/.bak.emacs/"))
+       (make-directory "~/.bak.emacs/"))
+     (when (eq nil (file-exists-p "~/.bak.emacs/auto"))
+       (make-directory "~/.bak.emacs/auto"))
+     ;; Backup in one place. Flat, no tree structure
      (setq auto-save-file-name-transforms '((".*" "~/.bak.emacs/auto/" t)))
    #+end_src
 ** Global Plugins
@@ -698,12 +698,11 @@
        (interactive)
 
        (let ((lang (web-mode-language-at-pos (point))))
-
          (cond ((string= 'web-mode major-mode)
                 (cond ((string= lang "javascript") (eli/narrow-to-html-script))
                       ((string= lang "css") (eli/narrow-to-html-style))))
                ((string= 'js-mode major-mode)
-                  (eli/widen-to-html))
+                (eli/widen-to-html))
                ((string= 'css-mode major-mode)
                 (when (string= lang "css")
                   (eli/widen-to-html))))))
@@ -881,10 +880,10 @@
        "Changes the current Slack team - nice for setting a default team in config"
        (interactive)
        (let ((team (slack-team-find-by-name team-name)))
-         (if team
-             (progn
-               (setq slack-current-team team)
-               (slack-team-connect team))
+         (when team
+           (progn
+             (setq slack-current-team team)
+             (slack-team-connect team))
            (message (concat "No such Slack team: " team-name)))))
    #+end_src
 ** MultiTerm
@@ -895,4 +894,18 @@
          (kbd "RET") 'term-send-return)
 
        (setq multi-term-program "/bin/zsh"))
+   #+end_src
+** REST Client
+
+   [[https://github.com/pashky/restclient.el][REST Client]]. A handy client for testing REST APIs
+
+   #+begin_src emacs-lisp :tangle yes
+     (use-package restclient
+       :init
+       (add-to-list 'auto-mode-alist '("\\.http$" . restclient-mode)))
+     (use-package restclient-helm)
+     (use-package company-restclient
+       :init
+       (add-hook 'restclient-mode-hook
+                 (lambda () (set (make-local-variable 'company-backends) (list 'company-restclient)))))
    #+end_src

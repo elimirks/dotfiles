@@ -1,5 +1,3 @@
-[pull]
-	rebase = true
 [alias]
 	l = log --graph --pretty='%C(yellow)%h %C(green)%cn %C(blue)%ci %C(reset)%n        %s'
 	s = status
@@ -11,6 +9,7 @@
 	d = diff
 	a = add
 	u = add -u
+	pr = pull --rebase
 [user]
 	email = elimirks@gmail.com
 	name = Elijah Mirecki
