@@ -214,6 +214,15 @@
        "Reloads init file (and therefore, README.org)"
        (interactive)
        (load-file "~/.emacs.d/init.el"))
+
+     (defun eli/url-hexify-region ()
+       "Convert the selectd region to a URL hexified string."
+       (interactive)
+       (let* ((bounds (cons (region-beginning) (region-end)))
+              (text   (buffer-substring-no-properties (car bounds) (cdr bounds))))
+         (when bounds
+           (delete-region (car bounds) (cdr bounds))
+           (insert (url-hexify-string text)))))
    #+end_src
 ** Global keybindings
 *** Follow newly created windows, only when created manually
@@ -902,7 +911,11 @@
    #+begin_src emacs-lisp :tangle yes
      (use-package restclient
        :init
-       (add-to-list 'auto-mode-alist '("\\.http$" . restclient-mode)))
+       (add-to-list 'auto-mode-alist '("\\.http$" . restclient-mode))
+       :config
+       (define-key restclient-mode-map (kbd "C-c C-e") 'eli/url-hexify-region)
+       (defconst restclient-method-url-regexp
+         "^\\(GET\\|POST\\|DELETE\\|PUT\\|HEAD\\|OPTIONS\\|PATCH\\|LINK\\|UNLINK\\) \\(.*\\)$"))
      (use-package restclient-helm)
      (use-package company-restclient
        :init
