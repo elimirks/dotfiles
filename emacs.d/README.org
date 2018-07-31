@@ -96,9 +96,8 @@
    [[https://www.emacswiki.org/emacs/CompanyMode][Company Mode]]. For autocompletion.
    #+begin_src emacs-lisp :tangle yes
      (use-package company
-       :init
-       (global-company-mode t)
        :config
+       (global-company-mode t)
        (setq company-idle-delay 0) ; Delay to complete
        (setq company-minimum-prefix-length 1)
        (setq company-selection-wrap-around t) ; Loops around suggestions
@@ -112,7 +111,7 @@
    #+begin_src emacs-lisp :tangle yes
      (use-package helm-flycheck)
      (use-package flycheck
-       :init
+       :config
        (global-flycheck-mode t))
    #+end_src
 
@@ -653,10 +652,9 @@
 ** Web
    #+begin_src emacs-lisp :tangle yes
      (use-package web-mode
-       :init
+       :config
        (add-to-list 'auto-mode-alist '("\\.tsx$" . web-mode))
        (add-to-list 'auto-mode-alist '("\\.html\\.twig$" . web-mode))
-       :config
        (setq web-mode-enable-auto-closing t
              web-mode-enable-auto-indentation t))
    #+end_src
@@ -726,12 +724,12 @@
 ** PHP
    #+begin_src emacs-lisp :tangle yes
      (use-package php-mode
-       :init
+       :config
        (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
        (add-to-list 'auto-mode-alist '("\\.inc" . php-mode)))
 
      (use-package php-extras
-       :init
+       :config
        (add-hook 'php-mode-hook (lambda ()
                                   (php-extras-eldoc-documentation-function)
                                   (auto-complete-mode -1))))
@@ -806,12 +804,11 @@
 
      ;; "Big Brother DataBase", for address book
      (use-package bbdb
-       :init
+       :config
        (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
        ;; Disable helm for creating BBDB entries - It caused annoying completion issues
        (add-to-list 'helm-completing-read-handlers-alist
                     '(bbdb-create . nil))
-       :config
        (bbdb-insinuate-message)
        (setq
         bbdb-file "~/Dropbox/Notes/bbdb"
@@ -910,15 +907,14 @@
 
    #+begin_src emacs-lisp :tangle yes
      (use-package restclient
-       :init
-       (add-to-list 'auto-mode-alist '("\\.http$" . restclient-mode))
        :config
+       (add-to-list 'auto-mode-alist '("\\.http$" . restclient-mode))
        (define-key restclient-mode-map (kbd "C-c C-e") 'eli/url-hexify-region)
        (defconst restclient-method-url-regexp
          "^\\(GET\\|POST\\|DELETE\\|PUT\\|HEAD\\|OPTIONS\\|PATCH\\|LINK\\|UNLINK\\) \\(.*\\)$"))
      (use-package restclient-helm)
      (use-package company-restclient
-       :init
+       :config
        (add-hook 'restclient-mode-hook
                  (lambda () (set (make-local-variable 'company-backends) (list 'company-restclient)))))
    #+end_src
