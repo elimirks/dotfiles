@@ -918,3 +918,12 @@
        (add-hook 'restclient-mode-hook
                  (lambda () (set (make-local-variable 'company-backends) (list 'company-restclient)))))
    #+end_src
+** xkcd
+   
+   Show the latest xkcd on startup.
+  
+   #+begin_src emacs-lisp :tangle yes
+     (use-package xkcd
+       :config
+       (xkcd))
+   #+end_src
