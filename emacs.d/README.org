@@ -331,6 +331,9 @@
                   (eli/pretty-symbol-push-default)
                   (push '("function" . ?ƒ) prettify-symbols-alist)
                   (push '("null"     . ?∅) prettify-symbols-alist)
+                  (push '("||"       . ?∨) prettify-symbols-alist)
+                  (push '("&&"       . ?∧) prettify-symbols-alist)
+                  (push '("!"        . ?¬) prettify-symbols-alist)
                   (prettify-symbols-mode t)))
     #+END_SRC
 ** Relative line numbers
@@ -764,6 +767,10 @@
    #+begin_src emacs-lisp :tangle yes
      (use-package yaml-mode)
    #+end_src
+** Bison
+   #+begin_src emacs-lisp :tangle yes
+     (use-package bison-mode)
+   #+end_src
 * Apps
 ** Gnus
    #+begin_src emacs-lisp :tangle yes
@@ -925,5 +932,10 @@
    #+begin_src emacs-lisp :tangle yes
      (use-package xkcd
        :config
+       (define-key xkcd-mode-map (kbd "C-c n") 'xkcd-next)
+       (define-key xkcd-mode-map (kbd "C-c p") 'xkcd-prev)
+       (define-key xkcd-mode-map (kbd "C-c r") 'xkcd-rand)
+       (define-key xkcd-mode-map (kbd "C-c a") 'xkcd-alt-text)
+       ;; Show on startup
        (xkcd))
    #+end_src
