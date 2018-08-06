@@ -386,6 +386,13 @@
                   (auto-revert-mode nil autorevert))))
    #+end_src
    
+** Nice unicode support
+   [[https://github.com/rolandwalker/unicode-fonts][Unicode Fonts.]] Add unicode support for some OSs.
+   #+begin_src emacs-lisp :tangle yes
+     (use-package unicode-fonts
+       :config
+       (unicode-fonts-setup))
+   #+end_src
 * Evil Mode
 ** Load and configure evil
    #+begin_src emacs-lisp :tangle yes
@@ -641,7 +648,8 @@
    
 ** Python
    #+begin_src emacs-lisp :tangle yes
-     (setq python-shell-interpreter "/usr/local/bin/python3")
+     (when (eq system-type 'darwin)
+       (setq python-shell-interpreter "/usr/local/bin/python3"))
      (add-hook 'python-mode-hook
                (lambda ()
                  (add-to-list 'company-backends 'company-jedi)
