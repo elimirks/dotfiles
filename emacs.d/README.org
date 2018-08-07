@@ -222,6 +222,18 @@
          (when bounds
            (delete-region (car bounds) (cdr bounds))
            (insert (url-hexify-string text)))))
+
+     (defun eli/gcd (first second)
+       "Return the gcd of the two given values."
+       (let ((remainder (mod first second)))
+         (if (eq remainder 0)
+             second
+           (eli/gcd second remainder))))
+
+     (defun eli/simplify-fraction (first second)
+       "Simplifies the given fraction using their GCD."
+       (let ((gcd (eli/gcd first second)))
+         (list (/ first gcd) (/ second gcd))))
    #+end_src
 ** Global keybindings
 *** Follow newly created windows, only when created manually
@@ -642,8 +654,10 @@
      (use-package csv-mode
        :mode ("\\.csv$" . csv-mode)
        :config
-       (add-hook 'csv-mode-hook
-                 (lambda () (define-key csv-mode-map (kbd "C-c C-c") (defun csv-align-visible (&optional arg) "Align visible fields" (interactive "P") (csv-align-fields nil (window-start) (window-end)))))))
+       (define-key csv-mode-map (kbd "C-c C-c")
+         (lambda ()
+           (interactive "P")
+           (csv-align-fields nil (window-start) (window-end)))))
    #+end_src
    
 ** Python
@@ -659,6 +673,9 @@
    #+begin_src emacs-lisp :tangle yes
      (with-eval-after-load 'flycheck
        (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+
+     (define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-buffer)
+     (define-key emacs-lisp-mode-map (kbd "C-c C-r") 'eval-region)
    #+end_src
 ** Web
    #+begin_src emacs-lisp :tangle yes
