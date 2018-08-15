@@ -261,6 +261,43 @@
    #+begin_src emacs-lisp :tangle yes
      (global-set-key "\M-o" 'other-window)
    #+end_src
+** Human language
+   Because sometimes I need to speak with humans.
+
+   #+begin_src emacs-lisp :tangle yes
+     (defun eli/add-insert-char-key (sequence char)
+       (global-set-key (kbd (concat "C-c l" sequence))
+                       `(lambda () (interactive) (insert-char ',char))))
+
+     ;; German
+     (eli/add-insert-char-key "\" a" ?ä)
+     (eli/add-insert-char-key "\" A" ?Ä)
+     (eli/add-insert-char-key "\" o" ?ö)
+     (eli/add-insert-char-key "\" O" ?Ö)
+     (eli/add-insert-char-key "\" u" ?ü)
+     (eli/add-insert-char-key "\" U" ?Ü)
+     (eli/add-insert-char-key "\" s" ?ß)
+
+     ;; Polish
+     (eli/add-insert-char-key ", a" ?ą)
+     (eli/add-insert-char-key ", A" ?Ą)
+     (eli/add-insert-char-key "/ c" ?ć)
+     (eli/add-insert-char-key "/ C" ?Ć)
+     (eli/add-insert-char-key ", e" ?ę)
+     (eli/add-insert-char-key ", E" ?Ę)
+     (eli/add-insert-char-key "/ l" ?ł)
+     (eli/add-insert-char-key ", L" ?Ł)
+     (eli/add-insert-char-key "/ n" ?ń)
+     (eli/add-insert-char-key "/ N" ?Ń)
+     (eli/add-insert-char-key "/ o" ?ó)
+     (eli/add-insert-char-key "/ O" ?Ó)
+     (eli/add-insert-char-key "/ s" ?ś)
+     (eli/add-insert-char-key "/ S" ?Ś)
+     (eli/add-insert-char-key "/ z" ?ź)
+     (eli/add-insert-char-key "/ Z" ?Ź)
+     (eli/add-insert-char-key ". z" ?ż)
+     (eli/add-insert-char-key ". Z" ?Ż)
+   #+end_src
 * Aesthetics
 ** Configure a nice theme
    #+begin_src emacs-lisp :tangle yes
@@ -549,7 +586,6 @@
       org-latex-caption-above nil)
 
      (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-     (global-set-key "\C-cl" 'org-store-link)
      ;; To enable an agenda hotkey
      (global-set-key "\C-ca" 'org-agenda)
      (global-set-key "\C-cb" 'org-iswitchb)
