@@ -411,12 +411,21 @@
        (unicode-fonts-setup))
    #+end_src
 
-** Line highlighting
-   #+begin_src emacs-lisp :tangle yes
-     (global-hl-line-mode)
-     (set-face-background 'hl-line "#222")
-     (set-face-underline 'hl-line nil)
-   #+end_src
+** Column & line highlighting
+*** Highlight current line
+    #+begin_src emacs-lisp :tangle yes
+      (global-hl-line-mode)
+      (set-face-background 'hl-line "#222")
+      (set-face-underline 'hl-line nil)
+    #+end_src
+*** Highlight 80th column
+    #+begin_src emacs-lisp :tangle yes
+      (use-package fill-column-indicator
+        :config
+        (setq fci-rule-color "#222")
+        ;; Display the column indicator in all programming modes
+        (add-hook 'prog-mode-hook 'fci-mode))
+    #+end_src
 * Evil Mode
 ** Load and configure evil
    #+begin_src emacs-lisp :tangle yes
