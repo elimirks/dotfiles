@@ -207,6 +207,11 @@
           (add-hook hook #'smart-semicolon-mode))
         '(c-mode-hook c++-mode-hook php-mode-hook js-mode-hook css-mode-hook)))
    #+end_src
+
+   [[https://github.com/syohex/emacs-helm-ag][Helm AG]]. Silver Searcher integration.
+   #+begin_src emacs-lisp :tangle yes
+     (use-package helm-ag)
+   #+end_src
 ** Handy functions
    #+begin_src emacs-lisp :tangle yes
      (defun eli/load-init ()
@@ -375,8 +380,8 @@
    #+begin_src emacs-lisp :tangle yes
      (use-package rainbow-mode
        :config
-       ;; Enable for all programming modes
-       (add-hook 'prog-mode-hook (lambda () (rainbow-mode 1))))
+       (mapc (lambda (hook) (add-hook hook (lambda () (rainbow-mode 1))))
+             '(emacs-lisp-mode-hook web-mode-hook css-mode-hook js-mode-hook)))
    #+end_src
 
 ** Delightful mode display
@@ -404,6 +409,13 @@
      (use-package unicode-fonts
        :config
        (unicode-fonts-setup))
+   #+end_src
+
+** Line highlighting
+   #+begin_src emacs-lisp :tangle yes
+     (global-hl-line-mode)
+     (set-face-background 'hl-line "#222")
+     (set-face-underline 'hl-line nil)
    #+end_src
 * Evil Mode
 ** Load and configure evil
@@ -461,6 +473,7 @@
          "e" 'gnus
          "f" 'helm-flycheck
          "g" 'magit-status
+         "hp" 'helm-ag-project-root
          "kr" 'helm-show-kill-ring
          "kk" 'kill-this-buffer
          "kw" 'kill-buffer-and-window
@@ -531,6 +544,11 @@
      ;; To enable an agenda hotkey
      (global-set-key "\C-ca" 'org-agenda)
      (global-set-key "\C-cb" 'org-iswitchb)
+
+     (with-eval-after-load 'org
+       (org-babel-do-load-languages
+        'org-babel-load-languages
+        '((python . t))))
    #+end_src
   
    Custom Org Keybindings
@@ -601,9 +619,9 @@
 * Language Modes
 ** Markdown
    #+begin_src emacs-lisp :tangle yes
-(use-package markdown-mode
-  :mode ("\\.\\(m\\(ark\\)?down\\|md\\)$" . markdown-mode)
-  :config)
+     (use-package markdown-mode
+       :mode ("\\.\\(m\\(ark\\)?down\\|md\\)$" . markdown-mode)
+       :config)
    #+end_src
 ** Prolog
    #+begin_src emacs-lisp :tangle yes
@@ -680,9 +698,8 @@
 ** Web
    #+begin_src emacs-lisp :tangle yes
      (use-package web-mode
+       :mode "\\.\\(tsx\\|html\\.twig\\)$"
        :config
-       (add-to-list 'auto-mode-alist '("\\.tsx$" . web-mode))
-       (add-to-list 'auto-mode-alist '("\\.html\\.twig$" . web-mode))
        (setq web-mode-enable-auto-closing t
              web-mode-enable-auto-indentation t))
    #+end_src
@@ -752,9 +769,7 @@
 ** PHP
    #+begin_src emacs-lisp :tangle yes
      (use-package php-mode
-       :config
-       (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
-       (add-to-list 'auto-mode-alist '("\\.inc" . php-mode)))
+       :mode "\\.\\(php\\|inc\\)$")
 
      (use-package php-extras
        :config
@@ -939,9 +954,9 @@
 
    #+begin_src emacs-lisp :tangle yes
      (use-package restclient
+       :bind (:map restclient-mode-map ("C-c C-e" . eli/url-hexify-region))
+       :mode ("\\.http$" . restclient-mode)
        :config
-       (add-to-list 'auto-mode-alist '("\\.http$" . restclient-mode))
-       (define-key restclient-mode-map (kbd "C-c C-e") 'eli/url-hexify-region)
        (defconst restclient-method-url-regexp
          "^\\(GET\\|POST\\|DELETE\\|PUT\\|HEAD\\|OPTIONS\\|PATCH\\|LINK\\|UNLINK\\) \\(.*\\)$"))
      (use-package restclient-helm)
@@ -956,11 +971,10 @@
   
    #+begin_src emacs-lisp :tangle yes
      (use-package xkcd
-       :config
-       (define-key xkcd-mode-map (kbd "C-c n") 'xkcd-next)
-       (define-key xkcd-mode-map (kbd "C-c p") 'xkcd-prev)
-       (define-key xkcd-mode-map (kbd "C-c r") 'xkcd-rand)
-       (define-key xkcd-mode-map (kbd "C-c a") 'xkcd-alt-text)
-       ;; Show on startup
-       (xkcd))
+       :if window-system
+       :bind (:map xkcd-mode-map
+                   ("C-c C-n" . xkcd-next)
+                   ("C-c C-p" . xkcd-prev)
+                   ("C-c C-r" . xkcd-rand)
+                   ("C-c C-a" . xkcd-alt-text)))
    #+end_src
