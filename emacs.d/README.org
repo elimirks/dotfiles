@@ -219,14 +219,46 @@
        (interactive)
        (load-file "~/.emacs.d/init.el"))
 
-     (defun eli/url-hexify-region ()
-       "Convert the selectd region to a URL hexified string."
+     (defun eli/replace-region-via-function (fun)
+       "Replace a selected region via the given function"
        (interactive)
        (let* ((bounds (cons (region-beginning) (region-end)))
               (text   (buffer-substring-no-properties (car bounds) (cdr bounds))))
          (when bounds
            (delete-region (car bounds) (cdr bounds))
-           (insert (url-hexify-string text)))))
+           (insert (funcall fun text)))))
+
+     (defun eli/url-hexify-region ()
+       "Convert the selectd region to a URL hexified string."
+       (interactive)
+       (eli/replace-region-via-function 'url-hexify-string))
+
+
+     (defun eli/binary-string-to-ascii (s)
+       "Convert a string such as '01100000' into an ascii character string"
+       (let ((len (length s))
+             (result 0))
+         (while (not (= len 0))
+           (setq result (+ result (if (string= (substring s 0 1) "1")
+                                      (lsh 1 (- len 1))
+                                    0)))
+           (setq s (substring s 1 nil))
+           (setq len (- len 1)))
+         (make-string 1 result)))
+
+     (defun eli/binary-strings-to-ascii-string (list)
+       "Convert a string list such as 01100000 01110000 into an ascii string"
+       (if (= 0 (length list))
+           ""
+         (concat (eli/binary-string-to-ascii (car list))
+                 (eli/binary-strings-to-ascii-string (cdr list)))))
+
+     (defun eli/convert-binary-string-region-to-ascii ()
+       "Convert a binary string region to a human readable string."
+       (interactive)
+       (eli/replace-region-via-function
+        '(lambda (text)
+           (eli/binary-strings-to-ascii-string (split-string text)))))
 
      (defun eli/gcd (first second)
        "Return the gcd of the two given values."
