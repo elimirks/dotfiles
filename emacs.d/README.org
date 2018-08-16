@@ -260,6 +260,31 @@
         '(lambda (text)
            (eli/binary-strings-to-ascii-string (split-string text)))))
 
+     (defun eli/char-to-binary-string (num)
+       "Converts a char to a binary string"
+       (let ((res "")
+             (count 8))
+         (while (> count 0)
+           (setq res (concat (if (= 1 (logand 1 num)) "1" "0") res))
+           (setq num (lsh num -1))
+           (setq count (- count 1)))
+         res))
+
+     (defun eli/string-to-binary-string (s)
+       "Converts a string to a binary representation string"
+       (if (= 0 (length s))
+           ""
+         (let ((head (string-to-char (substring s 0 1)))
+               (tail (substring s 1 nil)))
+         (concat (eli/char-to-binary-string head)
+                 " "
+                 (eli/string-to-binary-string tail)))))
+
+     (defun eli/string-region-to-binary-string ()
+       "Converts a region to a binary representation region"
+       (interactive)
+       (eli/replace-region-via-function 'eli/string-to-binary-string))
+
      (defun eli/gcd (first second)
        "Return the gcd of the two given values."
        (let ((remainder (mod first second)))
