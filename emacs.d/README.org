@@ -296,6 +296,28 @@
        "Simplifies the given fraction using their GCD."
        (let ((gcd (eli/gcd first second)))
          (list (/ first gcd) (/ second gcd))))
+
+     (defun eli/surround-fat-comment ()
+       "Surrounds a line of text with a 'fat comment'"
+       (interactive)
+       (let* ((line (thing-at-point 'line t))
+              (indent (current-indentation))
+              (comment-char (string-to-char comment-start))
+              (surround (concat
+                         (make-string indent ?\s)
+                         (make-string
+                          (- (length line) indent 1)
+                          comment-char))))
+         ;; Insert comment after
+         (end-of-line)
+         (open-line 1)
+         (forward-line)
+         (insert surround)
+         ;; Insert comment before
+         (forward-line -1)
+         (beginning-of-line)
+         (open-line 1)
+         (insert surround)))
    #+end_src
 ** Global keybindings
 *** Follow newly created windows, only when created manually
