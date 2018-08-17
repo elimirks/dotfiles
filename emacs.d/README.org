@@ -2,9 +2,10 @@
 ** Package Management
    #+begin_src emacs-lisp :tangle yes
      (require 'package)
-     (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                              ("marmalade" . "http://marmalade-repo.org/packages/")
-                              ("melpa" . "http://melpa.org/packages/")))
+     (setq package-archives
+           '(("gnu"       . "http://elpa.gnu.org/packages/")
+             ("marmalade" . "http://marmalade-repo.org/packages/")
+             ("melpa"     . "http://melpa.org/packages/")))
      (setq package-enable-at-startup nil)
      (package-initialize)
 
@@ -18,7 +19,7 @@
        (package-refresh-contents)
        (package-install 'use-package))
      (require 'use-package)
-     (setq use-package-always-ensure t) ; Always ensure package is downloaded
+     (setq use-package-always-ensure t) ; Ensure packages are downloaded
    #+end_src
 ** Essential Settings
    #+begin_src emacs-lisp :tangle yes
@@ -36,7 +37,7 @@
      (menu-bar-mode -1) ; Hide menu bar
      (show-paren-mode t) ; Highlights matching parenthesis
      (setq ring-bell-function 'ignore) ; Disable ALL bells! They suck!
-                                             ;(electric-pair-mode t) ; Add closing pairs automatically
+     ;;(electric-pair-mode t) ; Add closing pairs automatically
      (setq initial-scratch-message "") ; No scratch text
      (fset 'yes-or-no-p 'y-or-n-p) ; y/n instead of yes/no
 
@@ -81,9 +82,9 @@
        (require 'helm-config)
        (helm-mode 1)
        (global-set-key (kbd "M-x") 'helm-M-x)
-       (setq helm-M-x-fuzzy-match t         ; Fuzzy M-x matching
-             helm-buffer-max-length nil     ; Don't limit the filename length
-             helm-split-window-in-side-p t)) ; Make helm split on the bottom edge
+       (setq helm-M-x-fuzzy-match t          ; Fuzzy M-x matching
+             helm-buffer-max-length nil      ; Don't limit filename length
+             helm-split-window-in-side-p t)) ; Split on the bottom edge
 
      ;; For using the enter key in helm
      (defun eli/helm-return-find-file ()
@@ -100,8 +101,8 @@
        (global-company-mode t)
        (setq company-idle-delay 0) ; Delay to complete
        (setq company-minimum-prefix-length 1)
-       (setq company-selection-wrap-around t) ; Loops around suggestions
-       (setq company-global-modes '(not org-mode)) ; Disable autocomplete in org
+       (setq company-selection-wrap-around t)
+       (setq company-global-modes '(not org-mode)) ; Disable in org
 
        (define-key company-active-map [backtab] 'company-select-previous)
        (define-key company-active-map [tab] 'company-select-next))
@@ -189,8 +190,8 @@
        :config
        ;; For a lot of modes, smartparens is super annoying :)
        (mapc (lambda (hook) (smartparens-mode))
-             '(c-mode-hook c++-mode-hook js-mode-hook php-mode-hook lisp-mode-hook
-                           css-mode-hook python-mode-hook)))
+             '(c-mode-hook c++-mode-hook js-mode-hook php-mode-hook
+                           lisp-mode-hook css-mode-hook python-mode-hook)))
 
      (use-package evil-smartparens
        :config
@@ -205,7 +206,8 @@
        (mapc
         (lambda (hook)
           (add-hook hook #'smart-semicolon-mode))
-        '(c-mode-hook c++-mode-hook php-mode-hook js-mode-hook css-mode-hook)))
+        '(c-mode-hook c++-mode-hook php-mode-hook js-mode-hook
+                      css-mode-hook)))
    #+end_src
 
    [[https://github.com/syohex/emacs-helm-ag][Helm AG]]. Silver Searcher integration.
@@ -223,7 +225,9 @@
        "Replace a selected region via the given function"
        (interactive)
        (let* ((bounds (cons (region-beginning) (region-end)))
-              (text   (buffer-substring-no-properties (car bounds) (cdr bounds))))
+              (text   (buffer-substring-no-properties
+                       (car bounds)
+                       (cdr bounds))))
          (when bounds
            (delete-region (car bounds) (cdr bounds))
            (insert (funcall fun text)))))
@@ -247,7 +251,7 @@
          (make-string 1 result)))
 
      (defun eli/binary-strings-to-ascii-string (list)
-       "Convert a string list such as 01100000 01110000 into an ascii string"
+       "Convert string list such as 01100000 01110000 into an ascii string"
        (if (= 0 (length list))
            ""
          (concat (eli/binary-string-to-ascii (car list))
@@ -497,7 +501,8 @@
      (use-package rainbow-mode
        :config
        (mapc (lambda (hook) (add-hook hook (lambda () (rainbow-mode 1))))
-             '(emacs-lisp-mode-hook web-mode-hook css-mode-hook js-mode-hook)))
+             '(emacs-lisp-mode-hook web-mode-hook css-mode-hook
+                                    js-mode-hook)))
    #+end_src
 
 ** Delightful mode display
@@ -581,9 +586,12 @@
         "k" 'evil-previous-line
         "j" 'evil-next-line)
 
+       ;; Suspend nicely in terminal
        (general-define-key
         :states 'normal
-        "C-z"  (lambda () (interactive)  (when (eq (display-graphic-p) nil) (suspend-frame))))
+        "C-z"  (lambda () (interactive)
+                 (when (eq (display-graphic-p) nil)
+                   (suspend-frame))))
 
        (defun eli/helm-gtags-find-tag-at-point () (interactive)
           (helm-gtags-find-tag (thing-at-point 'symbol)))
@@ -637,8 +645,7 @@
    #+begin_src emacs-lisp :tangle yes
      ;; Disable evil-ex initial auto-fill
      (define-key evil-normal-state-map (kbd ":")
-       '(lambda () 
-          (interactive)
+       '(lambda () (interactive)
           (evil-ex "")))
    #+end_src
 * Org Mode
@@ -650,7 +657,7 @@
        (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
      (setq
-      org-pretty-entities t ; Alows org to displayed UTF-8 chars like \alpha
+      org-pretty-entities t ; Alows displaying UTF-8 chars like \alpha
       org-startup-truncated nil
       org-src-fontify-natively t
       org-agenda-files '("~/Dropbox/Notes/everything.org")
@@ -659,7 +666,8 @@
       ;; Allows custom inline image sizes
       org-image-actual-width nil
       ;; Makes inline latex previews bigger
-      org-format-latex-options (plist-put org-format-latex-options :scale 1.7)
+      org-format-latex-options (plist-put
+                                org-format-latex-options :scale 1.7)
       org-export-latex-table-caption-above nil
       org-latex-table-caption-above nil
       org-latex-caption-above nil)
@@ -677,38 +685,39 @@
   
    Custom Org Keybindings
    #+begin_src emacs-lisp :tangle yes
-    (define-key evil-normal-state-map (kbd "M-h") 'org-metaleft)
-    (define-key evil-normal-state-map (kbd "M-s") 'org-metaright)
-    (define-key evil-normal-state-map (kbd "M-e") 'org-latex-export-to-pdf)
+     (define-key evil-normal-state-map (kbd "M-h") 'org-metaleft)
+     (define-key evil-normal-state-map (kbd "M-s") 'org-metaright)
+     (define-key evil-normal-state-map (kbd "M-e") 'org-latex-export-to-pdf)
    #+end_src
 ** Agenda
    #+begin_src emacs-lisp :tangle yes
-    ;; Match those tagged with, are not scheduled/deadlined, are not DONE.
-    (setq org-agenda-custom-commands
-          '(("d" "non-[d]eadlined tasks"
-             tags "-DEADLINE={.+}/!+TODO|+STARTED|+WAITING -SCHEDULED={.+}/!+TODO|+STARTED|+WAITING")))
+     ;; Match those tagged with, are not scheduled/deadlined, are not DONE.
+     (setq org-agenda-custom-commands
+           '(("d" "non-[d]eadlined tasks"
+              tags (concat "-DEADLINE={.+}/!+TODO|+STARTED|+WAITING"
+                           " -SCHEDULED={.+}/!+TODO|+STARTED|+WAITING"))))
 
-    ;; Make the agenda schedule prettier
-    (setq org-agenda-prefix-format
-          '((agenda . " %i %-12t% s %b\n                           ")
-            (timeline . "  % s")
-            (todo . " %i %-12:c")
-            (tags . " %i %-12:c")
-            (search . " %i %-12:c")))
+     ;; Make the agenda schedule prettier
+     (setq org-agenda-prefix-format
+           '((agenda . " %i %-12t% s %b\n                           ")
+             (timeline . "  % s")
+             (todo . " %i %-12:c")
+             (tags . " %i %-12:c")
+             (search . " %i %-12:c")))
 
-    (setq org-todo-keywords
-          '((sequence "TODO" "STARTED" "WAITING" "|" "DONE")))
+     (setq org-todo-keywords
+           '((sequence "TODO" "STARTED" "WAITING" "|" "DONE")))
 
-    ;; Hide DONE items
-    (setq org-agenda-skip-scheduled-if-done t
-          org-agenda-skip-deadline-if-done t)
-    ;; Set a 30 day span, instead of a week view
-    (setq org-agenda-start-day "-3d"
-          org-agenda-span 30)
-    (setq org-agenda-show-all-dates nil) ; Omit empty days in the agenda
-    (setq org-deadline-warning-days 0) ; Disable pre-warnings
-    ;; Hide the time grid by default
-    (setq org-agenda-use-time-grid nil)
+     ;; Hide DONE items
+     (setq org-agenda-skip-scheduled-if-done t
+           org-agenda-skip-deadline-if-done t)
+     ;; Set a 30 day span, instead of a week view
+     (setq org-agenda-start-day "-3d"
+           org-agenda-span 30)
+     (setq org-agenda-show-all-dates nil) ; Omit empty days in the agenda
+     (setq org-deadline-warning-days 0) ; Disable pre-warnings
+     ;; Hide the time grid by default
+     (setq org-agenda-use-time-grid nil)
    #+end_src
 ** Calendar
    #+begin_src emacs-lisp :tangle yes
@@ -730,15 +739,15 @@
 ** LaTeX
    Settings for exporting to LaTeX
    #+begin_src emacs-lisp :tangle yes
-    (require 'ox-latex)
-    (add-to-list 'org-latex-packages-alist '("" "minted"))
-    (setq org-latex-listings 'minted)
+     (require 'ox-latex)
+     (add-to-list 'org-latex-packages-alist '("" "minted"))
+     (setq org-latex-listings 'minted)
 
-    (setq org-latex-pdf-process
-          '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-            "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-            "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-
+     (setq org-latex-pdf-process
+           ;; Need 3 of the same string, oddly.
+           (make-list 3 (concat
+                         "pdflatex -shell-escape -interaction nonstopmode"
+                         " -output-directory %o %f")))
    #+end_src
 * Language Modes
 ** Markdown
@@ -776,15 +785,15 @@
      (use-package helm-gtags)
      (use-package company-irony
        :config
-       (add-hook 'irony-mode-hook (lambda ()
-                                    (add-to-list 'company-backends 'company-irony))))
+       (add-hook 'irony-mode-hook
+                 (lambda () (add-to-list 'company-backends 'company-irony))))
      (use-package flycheck-irony
        :config
        (add-hook 'irony-mode-hook 'flycheck-irony-setup))
      (use-package irony
        :config
-       ;(add-hook 'c++-mode-hook 'irony-mode)
-       ;(add-hook 'c-mode-hook 'irony-mode)
+       ;;(add-hook 'c++-mode-hook 'irony-mode)
+       ;;(add-hook 'c-mode-hook 'irony-mode)
        (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
    #+end_src
 ** Blarb
@@ -809,7 +818,8 @@
      (add-hook 'python-mode-hook
                (lambda ()
                  (add-to-list 'company-backends 'company-jedi)
-                 (define-key python-mode-map (kbd "C-c C-d") 'jedi:show-doc)))
+                 (define-key
+                   python-mode-map (kbd "C-c C-d") 'jedi:show-doc)))
    #+end_src
 ** Elisp
    #+begin_src emacs-lisp :tangle yes
@@ -831,7 +841,8 @@
    Some functions for more easily narrowing script and style tags in web mode.
    
    #+begin_src emacs-lisp :tangle yes
-     ;; Based on a gist by ceving: https://gist.github.com/ceving/7ba174960b9dd3516fff
+     ;; Based on a gist by ceving:
+     ;; https://gist.github.com/ceving/7ba174960b9dd3516fff
 
      (defun eli/narrow-to-html-style ()
        "Narrow a HTML buffer to the style part and switch to css-mode."
@@ -875,8 +886,10 @@
 
        (let ((lang (web-mode-language-at-pos (point))))
          (cond ((string= 'web-mode major-mode)
-                (cond ((string= lang "javascript") (eli/narrow-to-html-script))
-                      ((string= lang "css") (eli/narrow-to-html-style))))
+                (cond ((string= lang "javascript")
+                       (eli/narrow-to-html-script))
+                      ((string= lang "css")
+                       (eli/narrow-to-html-style))))
                ((string= 'js-mode major-mode)
                 (eli/widen-to-html))
                ((string= 'css-mode major-mode)
@@ -918,7 +931,8 @@
      (use-package omnisharp
        :after company
        :config
-       (setq omnisharp-server-executable-path "/usr/local/omnisharp/run.sh")
+       (setq omnisharp-server-executable-path
+             "/usr/local/omnisharp/run.sh")
        (add-hook 'csharp-mode-hook 'omnisharp-mode)
        (add-to-list 'company-backends 'company-omnisharp)
 
@@ -977,15 +991,19 @@
      (use-package bbdb
        :config
        (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
-       ;; Disable helm for creating BBDB entries - It caused annoying completion issues
+       ;; Disable helm for creating BBDB entries
+       ;; (It caused annoying completion issues)
        (add-to-list 'helm-completing-read-handlers-alist
                     '(bbdb-create . nil))
        (bbdb-insinuate-message)
        (setq
         bbdb-file "~/Dropbox/Notes/bbdb"
         bbdb-always-add-address t
-        bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook
-        bbdb-ignore-some-messages-alist '(( "From" . "no.?reply\\|DAEMON\\|daemon\\|facebookmail\\|twitter"))))
+        bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook)
+       (setq
+        bbdb-ignore-some-messages-alist
+        '(( "From" .
+            "no.?reply\\|DAEMON\\|daemon\\|facebookmail\\|twitter"))))
    #+end_src
 ** DocViewMode
    This mode is for document viewing, such as PDFs.
@@ -995,7 +1013,9 @@
      (evil-set-initial-state 'doc-view-mode 'emacs)
      (add-hook 'doc-view-mode-hook
                (lambda ()
-                 (set (make-local-variable 'evil-emacs-state-cursor) (list nil))))
+                 (set
+                  (make-local-variable 'evil-emacs-state-cursor)
+                  (list nil))))
    #+end_src
 ** ERC
    #+begin_src emacs-lisp :tangle yes
@@ -1008,11 +1028,11 @@
      (use-package slack
        :commands (slack-start)
        :init
-       (setq slack-buffer-emojify t) ;; if you want to enable emoji, default nil
+       (setq slack-buffer-emojify t)
        (setq slack-prefer-current-team t)
        :config
 
-       ;; Only use Slack company completion to avoid annoying word completion
+       ;; Only use Slack company completion
        (make-local-variable 'company-backends)
        (setq company-backends '((company-slack-backend)))
 
@@ -1054,7 +1074,7 @@
 
    #+begin_src emacs-lisp :tangle yes
      (defun eli/slack-change-to-team (team-name)
-       "Changes the current Slack team - nice for setting a default team in config"
+       "Changes the current Slack team - to set a default team in config"
        (interactive)
        (let ((team (slack-team-find-by-name team-name)))
          (when team
@@ -1082,17 +1102,21 @@
        :mode ("\\.http$" . restclient-mode)
        :config
        (defconst restclient-method-url-regexp
-         "^\\(GET\\|POST\\|DELETE\\|PUT\\|HEAD\\|OPTIONS\\|PATCH\\|LINK\\|UNLINK\\) \\(.*\\)$"))
+         (concat
+          "^\\("
+          "GET\\|POST\\|DELETE\\|PUT\\|HEAD"
+          "\\|OPTIONS\\|PATCH\\|LINK\\|UNLINK"
+          "\\) \\(.*\\)$")))
      (use-package restclient-helm)
      (use-package company-restclient
        :config
        (add-hook 'restclient-mode-hook
-                 (lambda () (set (make-local-variable 'company-backends) (list 'company-restclient)))))
+                 (lambda ()
+                   (set
+                    (make-local-variable 'company-backends)
+                    (list 'company-restclient)))))
    #+end_src
 ** xkcd
-   
-   Show the latest xkcd on startup.
-  
    #+begin_src emacs-lisp :tangle yes
      (use-package xkcd
        :if window-system
