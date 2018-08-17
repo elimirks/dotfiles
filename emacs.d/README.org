@@ -380,6 +380,19 @@
      (eli/add-insert-char-key "/ Z" ?Ź)
      (eli/add-insert-char-key ". z" ?ż)
      (eli/add-insert-char-key ". Z" ?Ż)
+
+     ;; Maths
+     (eli/add-insert-char-key "m 2" ?²)
+     (eli/add-insert-char-key "m 3" ?³)
+     (eli/add-insert-char-key "m d" ?°)
+     (eli/add-insert-char-key "m n n" ?¬)
+     (eli/add-insert-char-key "m n e" ?≠)
+     (eli/add-insert-char-key "m n g" ?≯)
+     (eli/add-insert-char-key "m n l" ?≮)
+     (eli/add-insert-char-key "m n i" ?∉)
+     (eli/add-insert-char-key "m g e" ?≥)
+     (eli/add-insert-char-key "m l e" ?≤)
+     (eli/add-insert-char-key "m i" ?∈)
    #+end_src
 * Aesthetics
 ** Configure a nice theme
@@ -1082,6 +1095,13 @@
              (setq slack-current-team team)
              (slack-team-connect team))
            (message (concat "No such Slack team: " team-name)))))
+
+     (defun eli/slack-request-emoji ()
+       "Pull emojis for the current team."
+       (interactive)
+       (if slack-current-team
+           (slack-request-emoji slack-current-team)
+         (message "Not connected to any team!")))
    #+end_src
 ** MultiTerm
    #+begin_src emacs-lisp :tangle yes
