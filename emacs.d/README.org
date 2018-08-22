@@ -214,6 +214,15 @@
    #+begin_src emacs-lisp :tangle yes
      (use-package helm-ag)
    #+end_src
+
+   [[https://github.com/joaotavora/yasnippet][YASnippet]]. Code snippets.
+   #+begin_src emacs-lisp :tangle yes
+     (use-package yasnippet
+       :config
+       (yas-global-mode 1)
+       (define-key yas-minor-mode-map (kbd "TAB") nil)
+       (define-key yas-minor-mode-map (kbd "M-TAB") 'yas-expand))
+   #+end_src
 ** Handy functions
    #+begin_src emacs-lisp :tangle yes
      (defun eli/load-init ()
@@ -696,12 +705,12 @@
         'org-babel-load-languages
         '((python . t))))
    #+end_src
-  
+
    Custom Org Keybindings
    #+begin_src emacs-lisp :tangle yes
-     (define-key evil-normal-state-map (kbd "M-h") 'org-metaleft)
-     (define-key evil-normal-state-map (kbd "M-s") 'org-metaright)
-     (define-key evil-normal-state-map (kbd "M-e") 'org-latex-export-to-pdf)
+     (define-key org-mode-map (kbd "M-h") 'org-metaleft)
+     (define-key org-mode-map (kbd "M-s") 'org-metaright)
+     (define-key org-mode-map (kbd "M-e") 'org-latex-export-to-pdf)
    #+end_src
 ** Agenda
    #+begin_src emacs-lisp :tangle yes
@@ -767,8 +776,7 @@
 ** Markdown
    #+begin_src emacs-lisp :tangle yes
      (use-package markdown-mode
-       :mode ("\\.\\(m\\(ark\\)?down\\|md\\)$" . markdown-mode)
-       :config)
+       :mode "\\.\\(m\\(ark\\)?down\\|md\\)$")
    #+end_src
 ** Prolog
    #+begin_src emacs-lisp :tangle yes
@@ -817,7 +825,7 @@
 ** CSV
    #+begin_src emacs-lisp :tangle yes
      (use-package csv-mode
-       :mode ("\\.csv$" . csv-mode)
+       :mode "\\.csv$"
        :config
        (define-key csv-mode-map (kbd "C-c C-c")
          (lambda ()
@@ -961,7 +969,8 @@
    #+end_src
 ** Bison
    #+begin_src emacs-lisp :tangle yes
-     (use-package bison-mode)
+     (use-package bison-mode
+       :mode "\\.y$")
    #+end_src
 * Apps
 ** Gnus

@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: fetch
+# key: fetch
+# --
+fetch( ${1:url}, {
+  method: '${2:GET}',
+  body: ${3:''},
+  headers: {
+    ${4:}
+  },
+}).then( response => {
+  ${5:}
+});

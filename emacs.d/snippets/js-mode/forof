@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: forof
+# key: forof
+# --
+for (let ${1:i} of ${2:iterable}) {
+    ${3:actions}
+}
