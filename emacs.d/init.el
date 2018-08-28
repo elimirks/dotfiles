@@ -39,14 +39,7 @@
  ;; If there is more than one, they won't work right.
  '(org-scheduled ((t (:foreground "magenta"))))
  '(org-scheduled-today ((t (:foreground "magenta"))))
- '(powerline-evil-normal-face ((t (:inherit powerline-evil-base-face :background "dark green"))))
- '(rainbow-delimiters-depth-1-face ((t (:foreground "firebrick"))))
- '(rainbow-delimiters-depth-2-face ((t (:foreground "dark magenta"))))
- '(rainbow-delimiters-depth-3-face ((t (:foreground "orange red"))))
- '(rainbow-delimiters-depth-4-face ((t (:foreground "blue"))))
- '(rainbow-delimiters-depth-5-face ((t (:foreground "spring green"))))
- '(rainbow-delimiters-depth-6-face ((t (:foreground "cyan"))))
- '(rainbow-delimiters-unmatched-face ((t (:foreground "magenta")))))
+ '(powerline-evil-normal-face ((t (:inherit powerline-evil-base-face :background "dark green")))))
 
 (put 'narrow-to-region 'disabled nil)
 (put 'narrow-to-page 'disabled nil)
