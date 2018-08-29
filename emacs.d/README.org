@@ -69,200 +69,6 @@
      ;; Backup in one place. Flat, no tree structure
      (setq auto-save-file-name-transforms '((".*" "~/.bak.emacs/auto/" t)))
    #+end_src
-** Global Plugins
-   [[https://github.com/emacs-helm/helm][Helm]]. A nice minibuffer / completion / etc framework
-   #+begin_src emacs-lisp :tangle yes
-     (use-package helm
-       :bind
-       (("M-x" . helm-M-x)
-        ("C-x C-f" . helm-find-files)
-        ("C-x b" . helm-buffers-list)
-        :map helm-find-files-map
-        ("<RET>" . eli/helm-return-find-file))
-       :config
-       (require 'helm-config)
-       (helm-mode 1)
-       (global-set-key (kbd "M-x") 'helm-M-x)
-       (setq helm-M-x-fuzzy-match t          ; Fuzzy M-x matching
-             helm-buffer-max-length nil      ; Don't limit filename length
-             helm-split-window-in-side-p t)) ; Split on the bottom edge
-
-     ;; For using the enter key in helm
-     (defun eli/helm-return-find-file ()
-       (interactive)
-       (if (file-directory-p (helm-get-selection))
-           (helm-execute-persistent-action)
-         (helm-maybe-exit-minibuffer)))
-   #+end_src
-   
-   [[https://www.emacswiki.org/emacs/CompanyMode][Company Mode]]. For autocompletion.
-   #+begin_src emacs-lisp :tangle yes
-     (require 'color)
-     (use-package company
-       :config
-       (global-company-mode t)
-       (setq company-idle-delay 0) ; Delay to complete
-       (setq company-minimum-prefix-length 1)
-       (setq company-selection-wrap-around t)
-       (setq company-global-modes '(not org-mode)) ; Disable in org
-
-       (define-key company-active-map [backtab] 'company-select-previous)
-       (define-key company-active-map [tab] 'company-select-next)
-
-
-       ;; Style nicely
-       (let* ((bg (face-attribute 'default :background))
-              (bg-light (color-lighten-name bg 2))
-              (bg-lighter (color-lighten-name bg 5))
-              (bg-lightest (color-lighten-name bg 10))
-              (ac (face-attribute 'match :foreground)))
-         (custom-set-faces
-          `(company-tooltip
-            ((t (:inherit default :background ,bg-light))))
-          `(company-scrollbar-bg ((t (:background ,bg-lightest))))
-          `(company-scrollbar-fg ((t (:background ,bg-lighter))))
-          `(company-tooltip-selection
-            ((t (:inherit font-lock-function-name-face))))
-          `(company-tooltip-common
-            ((t (:inherit font-lock-constant-face))))
-          `(company-preview-common
-            ((t (:foreground ,ac :background ,bg-lightest))))))
-
-       ;; Workaround for using company with FCI mode
-
-       (defvar-local company-fci-mode-on-p nil)
-
-       (defun company-turn-off-fci (&rest ignore)
-         (when (boundp 'fci-mode)
-           (setq company-fci-mode-on-p fci-mode)
-           (when fci-mode (fci-mode -1))))
-
-       (defun company-maybe-turn-on-fci (&rest ignore)
-         (when company-fci-mode-on-p (fci-mode 1)))
-
-       (add-hook 'company-completion-started-hook
-                 'company-turn-off-fci)
-       (add-hook 'company-completion-finished-hook
-                 'company-maybe-turn-on-fci)
-       (add-hook 'company-completion-cancelled-hook
-                 'company-maybe-turn-on-fci))
-   #+end_src
-
-   [[https://github.com/flycheck/flycheck][Flycheck]]. For syntax correction.
-   #+begin_src emacs-lisp :tangle yes
-     (use-package helm-flycheck)
-     (use-package flycheck
-       :config
-       (global-flycheck-mode t))
-   #+end_src
-
-   [[https://www.emacswiki.org/emacs/Magit][Magit]]. Git plugin that makes life easy.
-   #+begin_src emacs-lisp :tangle yes
-     (use-package magit)
-     ;; Vim bindings for magit
-     (use-package evil-magit)
-   #+end_src
-   
-   [[https://github.com/justbur/emacs-which-key][Which Key]]. Shows help dialogs for keybindings
-   #+begin_src emacs-lisp :tangle yes
-     (use-package which-key
-       :config
-       (which-key-mode))
-   #+end_src
-   
-   [[https://github.com/editorconfig/editorconfig-emacs][EditorConfig]]. For consistent project code styles
-   #+begin_src emacs-lisp :tangle yes
-     (use-package editorconfig
-       :ensure t
-       :config
-       (editorconfig-mode 1))
-   #+end_src
-
-   [[https://www.emacswiki.org/emacs/nameses][Nameses]]. For managing multiple desktops
-   #+begin_src emacs-lisp :tangle yes
-     (require 'desktop)
-     (require 'nameses)
-     (setq nameses-ido-mode nil)
-   #+end_src
-   
-   [[https://github.com/cyrus-and/zoom][Zoom.]] Zooms current pane!
-   #+begin_src emacs-lisp :tangle yes
-     (use-package zoom
-       :config
-       (custom-set-variables
-        '(zoom-size '(0.8 . 0.8))))
-   #+end_src
-
-   [[https://github.com/sshaw/copy-as-format][Copy As Format.]] Copies as Slack / Github / Etc formatted code blocks
-   #+begin_src emacs-lisp :tangle yes
-     (use-package copy-as-format)
-   #+end_src
-
-   [[https://github.com/jwiegley/alert][Alert.]] Used for sending alerts / notifications
-   
-   #+begin_src emacs-lisp :tangle yes
-     (use-package alert
-       :commands (alert)
-       :init
-       (setq alert-default-style (if (eq system-type 'darwin)
-                                  'osx-notifier
-                                  'libnotify)))
-   #+end_src
-
-   [[https://github.com/syohex/emacs-quickrun][Quickrun.]] Used for running a single buffer in an isolated environment
-   
-   #+begin_src emacs-lisp :tangle yes
-     (use-package quickrun
-       :config
-       (add-hook 'quickrun--mode-hook 'turn-off-evil-mode))
-   #+end_src
-
-   [[https://github.com/myrkr/dictionary-el][Dictionary.]] For word lookups.
-   
-   #+begin_src emacs-lisp :tangle yes
-     (use-package dictionary)
-   #+end_src
-   
-   [[https://github.com/Fuco1/smartparens][Smartparens.]] Sane automatic parens.
-   
-   #+begin_src emacs-lisp :tangle yes
-     (use-package smartparens
-       :config
-       ;; For a lot of modes, smartparens is super annoying :)
-       (mapc (lambda (hook) (smartparens-mode))
-             '(c-mode-hook c++-mode-hook js-mode-hook php-mode-hook
-                           lisp-mode-hook css-mode-hook python-mode-hook)))
-
-     (use-package evil-smartparens
-       :config
-       (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
-   #+end_src
-
-   [[https://github.com/iquiw/smart-semicolon][Smartsemicolon.]] Sane semicolons.
-
-   #+begin_src emacs-lisp :tangle yes
-     (use-package smart-semicolon
-       :config
-       (mapc
-        (lambda (hook)
-          (add-hook hook #'smart-semicolon-mode))
-        '(c-mode-hook c++-mode-hook php-mode-hook js-mode-hook
-                      css-mode-hook)))
-   #+end_src
-
-   [[https://github.com/syohex/emacs-helm-ag][Helm AG]]. Silver Searcher integration.
-   #+begin_src emacs-lisp :tangle yes
-     (use-package helm-ag)
-   #+end_src
-
-   [[https://github.com/joaotavora/yasnippet][YASnippet]]. Code snippets.
-   #+begin_src emacs-lisp :tangle yes
-     (use-package yasnippet
-       :config
-       (yas-global-mode 1)
-       (define-key yas-minor-mode-map (kbd "TAB") nil)
-       (define-key yas-minor-mode-map (kbd "M-TAB") 'yas-expand))
-   #+end_src
 ** Handy functions
    #+begin_src emacs-lisp :tangle yes
      (defun eli/load-init ()
@@ -473,11 +279,12 @@
 *** Global
     #+BEGIN_SRC emacs-lisp :tangle yes
       (defun eli/pretty-symbol-push-default ()
-        (push '("!=" . ?≢) prettify-symbols-alist)
-        (push '("==" . ?≡) prettify-symbols-alist)
-        (push '("<=" . ?≤) prettify-symbols-alist)
-        (push '(">=" . ?≥) prettify-symbols-alist)
-        (push '("=>" . ?⇒) prettify-symbols-alist))
+        (push '("!="     . ?≢) prettify-symbols-alist)
+        (push '("=="     . ?≡) prettify-symbols-alist)
+        (push '("<="     . ?≤) prettify-symbols-alist)
+        (push '(">="     . ?≥) prettify-symbols-alist)
+        (push '("=>"     . ?⇒) prettify-symbols-alist)
+        (push '("return" . ?⏎) prettify-symbols-alist))
     #+END_SRC
 *** C & C++
     #+BEGIN_SRC emacs-lisp :tangle yes
@@ -540,6 +347,7 @@
                   (push '("||"       . ?∨) prettify-symbols-alist)
                   (push '("&&"       . ?∧) prettify-symbols-alist)
                   (push '("!"        . ?¬) prettify-symbols-alist)
+                  (push '("in"       . ?∈) prettify-symbols-alist)
                   (prettify-symbols-mode t)))
     #+END_SRC
 ** Relative line numbers
@@ -625,6 +433,200 @@
                   '(("\\<\\(FIXME\\|TODO\\|NOTE\\):"
                      1 font-lock-warning-face t)))))
    #+end_src
+* Plugins
+  [[https://github.com/emacs-helm/helm][Helm]]. A nice minibuffer / completion / etc framework
+  #+begin_src emacs-lisp :tangle yes
+     (use-package helm
+       :bind
+       (("M-x" . helm-M-x)
+        ("C-x C-f" . helm-find-files)
+        ("C-x b" . helm-buffers-list)
+        :map helm-find-files-map
+        ("<RET>" . eli/helm-return-find-file))
+       :config
+       (require 'helm-config)
+       (helm-mode 1)
+       (global-set-key (kbd "M-x") 'helm-M-x)
+       (setq helm-M-x-fuzzy-match t          ; Fuzzy M-x matching
+             helm-buffer-max-length nil      ; Don't limit filename length
+             helm-split-window-in-side-p t)) ; Split on the bottom edge
+
+     ;; For using the enter key in helm
+     (defun eli/helm-return-find-file ()
+       (interactive)
+       (if (file-directory-p (helm-get-selection))
+           (helm-execute-persistent-action)
+         (helm-maybe-exit-minibuffer)))
+  #+end_src
+   
+  [[https://www.emacswiki.org/emacs/CompanyMode][Company Mode]]. For autocompletion.
+  #+begin_src emacs-lisp :tangle yes
+    (require 'color)
+    (use-package company
+      :config
+      (global-company-mode t)
+      (setq company-idle-delay 0) ; Delay to complete
+      (setq company-minimum-prefix-length 1)
+      (setq company-selection-wrap-around t)
+      (setq company-global-modes '(not org-mode)) ; Disable in org
+
+      (define-key company-active-map [backtab] 'company-select-previous)
+      (define-key company-active-map [tab] 'company-select-next)
+
+
+      ;; Style nicely
+      (let* ((bg (face-attribute 'default :background))
+             (bg-light (color-lighten-name bg 2))
+             (bg-lighter (color-lighten-name bg 5))
+             (bg-lightest (color-lighten-name bg 10))
+             (ac (face-attribute 'match :foreground)))
+        (custom-set-faces
+         `(company-tooltip
+           ((t (:inherit default :background ,bg-light))))
+         `(company-scrollbar-bg ((t (:background ,bg-lightest))))
+         `(company-scrollbar-fg ((t (:background ,bg-lighter))))
+         `(company-tooltip-selection
+           ((t (:inherit font-lock-function-name-face))))
+         `(company-tooltip-common
+           ((t (:inherit font-lock-constant-face))))
+         `(company-preview-common
+           ((t (:foreground ,ac :background ,bg-lightest))))))
+
+      ;; Workaround for using company with FCI mode
+
+      (defvar-local company-fci-mode-on-p nil)
+
+      (defun company-turn-off-fci (&rest ignore)
+        (when (boundp 'fci-mode)
+          (setq company-fci-mode-on-p fci-mode)
+          (when fci-mode (fci-mode -1))))
+
+      (defun company-maybe-turn-on-fci (&rest ignore)
+        (when company-fci-mode-on-p (fci-mode 1)))
+
+      (add-hook 'company-completion-started-hook
+                'company-turn-off-fci)
+      (add-hook 'company-completion-finished-hook
+                'company-maybe-turn-on-fci)
+      (add-hook 'company-completion-cancelled-hook
+                'company-maybe-turn-on-fci))
+  #+end_src
+
+  [[https://github.com/flycheck/flycheck][Flycheck]]. For syntax correction.
+  #+begin_src emacs-lisp :tangle yes
+     (use-package helm-flycheck)
+     (use-package flycheck
+       :config
+       (global-flycheck-mode t))
+  #+end_src
+
+  [[https://www.emacswiki.org/emacs/Magit][Magit]]. Git plugin that makes life easy.
+  #+begin_src emacs-lisp :tangle yes
+     (use-package magit)
+     ;; Vim bindings for magit
+     (use-package evil-magit)
+  #+end_src
+   
+  [[https://github.com/justbur/emacs-which-key][Which Key]]. Shows help dialogs for keybindings
+  #+begin_src emacs-lisp :tangle yes
+     (use-package which-key
+       :config
+       (which-key-mode))
+  #+end_src
+   
+  [[https://github.com/editorconfig/editorconfig-emacs][EditorConfig]]. For consistent project code styles
+  #+begin_src emacs-lisp :tangle yes
+     (use-package editorconfig
+       :ensure t
+       :config
+       (editorconfig-mode 1))
+  #+end_src
+
+  [[https://www.emacswiki.org/emacs/nameses][Nameses]]. For managing multiple desktops
+  #+begin_src emacs-lisp :tangle yes
+     (require 'desktop)
+     (require 'nameses)
+     (setq nameses-ido-mode nil)
+  #+end_src
+   
+  [[https://github.com/cyrus-and/zoom][Zoom.]] Zooms current pane!
+  #+begin_src emacs-lisp :tangle yes
+     (use-package zoom
+       :config
+       (custom-set-variables
+        '(zoom-size '(0.8 . 0.8))))
+  #+end_src
+
+  [[https://github.com/sshaw/copy-as-format][Copy As Format.]] Copies as Slack / Github / Etc formatted code blocks
+  #+begin_src emacs-lisp :tangle yes
+     (use-package copy-as-format)
+  #+end_src
+
+  [[https://github.com/jwiegley/alert][Alert.]] Used for sending alerts / notifications
+   
+  #+begin_src emacs-lisp :tangle yes
+     (use-package alert
+       :commands (alert)
+       :init
+       (setq alert-default-style (if (eq system-type 'darwin)
+                                  'osx-notifier
+                                  'libnotify)))
+  #+end_src
+
+  [[https://github.com/syohex/emacs-quickrun][Quickrun.]] Used for running a single buffer in an isolated environment
+   
+  #+begin_src emacs-lisp :tangle yes
+     (use-package quickrun
+       :config
+       (add-hook 'quickrun--mode-hook 'turn-off-evil-mode))
+  #+end_src
+
+  [[https://github.com/myrkr/dictionary-el][Dictionary.]] For word lookups.
+   
+  #+begin_src emacs-lisp :tangle yes
+     (use-package dictionary)
+  #+end_src
+   
+  [[https://github.com/Fuco1/smartparens][Smartparens.]] Sane automatic parens.
+   
+  #+begin_src emacs-lisp :tangle yes
+     (use-package smartparens
+       :config
+       ;; For a lot of modes, smartparens is super annoying :)
+       (mapc (lambda (hook) (smartparens-mode))
+             '(c-mode-hook c++-mode-hook js-mode-hook php-mode-hook
+                           lisp-mode-hook css-mode-hook python-mode-hook)))
+
+     (use-package evil-smartparens
+       :config
+       (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
+  #+end_src
+
+  [[https://github.com/iquiw/smart-semicolon][Smartsemicolon.]] Sane semicolons.
+
+  #+begin_src emacs-lisp :tangle yes
+     (use-package smart-semicolon
+       :config
+       (mapc
+        (lambda (hook)
+          (add-hook hook #'smart-semicolon-mode))
+        '(c-mode-hook c++-mode-hook php-mode-hook js-mode-hook
+                      css-mode-hook)))
+  #+end_src
+
+  [[https://github.com/syohex/emacs-helm-ag][Helm AG]]. Silver Searcher integration.
+  #+begin_src emacs-lisp :tangle yes
+     (use-package helm-ag)
+  #+end_src
+
+  [[https://github.com/joaotavora/yasnippet][YASnippet]]. Code snippets.
+  #+begin_src emacs-lisp :tangle yes
+     (use-package yasnippet
+       :config
+       (yas-global-mode 1)
+       (define-key yas-minor-mode-map (kbd "TAB") nil)
+       (define-key yas-minor-mode-map (kbd "M-TAB") 'yas-expand))
+  #+end_src
 * Evil Mode
 ** Load and configure evil
    #+begin_src emacs-lisp :tangle yes
