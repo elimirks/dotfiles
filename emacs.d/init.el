@@ -29,7 +29,7 @@
  '(org-agenda-files (quote ("~/Dropbox/Notes/everything.org")))
  '(package-selected-packages
    (quote
-    (fill-column-indicator helm-ag unicode-fonts company-jedi bison-mode emms-setup xkcd restclient-company company-restclient restclient-helm restclient general edit-indirect smart-semicolon smartparens evil-smartparens speed-type multi-term yaml-mode pdf-tools ac-php company-php 4clojure quickrun php-extras php-mode doc-view-mode gnus-desktop-notify copy-as-format slack flow-minor-mode arduino-mode omnisharp love-minor-mode eslint-fix web-mode tide ggtags helm-rtags rtags gtags markdown-mode org-bullets nlinum-relative evil-org evil-magit which-key magit powerline-evil powerline evil-surround evil-leader evil rainbow-delimiters use-package)))
+    (lsp-ui lsp-javascript-typescript eglot lsp-php fill-column-indicator helm-ag unicode-fonts company-jedi bison-mode emms-setup xkcd restclient-company company-restclient restclient-helm restclient general edit-indirect smart-semicolon smartparens evil-smartparens speed-type multi-term yaml-mode pdf-tools ac-php company-php 4clojure quickrun php-extras php-mode doc-view-mode gnus-desktop-notify copy-as-format slack flow-minor-mode arduino-mode omnisharp love-minor-mode eslint-fix web-mode tide ggtags helm-rtags rtags gtags markdown-mode org-bullets nlinum-relative evil-org evil-magit which-key magit powerline-evil powerline evil-surround evil-leader evil rainbow-delimiters use-package)))
  '(send-mail-function (quote smtpmail-send-it))
  '(zoom-size (quote (0.8 . 0.8))))
 (custom-set-faces
@@ -37,6 +37,12 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(company-preview-common ((t (:foreground unspecified :background "#199919991999"))))
+ '(company-scrollbar-bg ((t (:background "#199919991999"))))
+ '(company-scrollbar-fg ((t (:background "#0ccc0ccc0ccc"))))
+ '(company-tooltip ((t (:inherit default :background "#051e051e051e"))))
+ '(company-tooltip-common ((t (:inherit font-lock-constant-face))))
+ '(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
  '(org-scheduled ((t (:foreground "magenta"))))
  '(org-scheduled-today ((t (:foreground "magenta"))))
  '(powerline-evil-normal-face ((t (:inherit powerline-evil-base-face :background "dark green")))))

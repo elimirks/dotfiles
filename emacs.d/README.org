@@ -627,6 +627,11 @@
        (define-key yas-minor-mode-map (kbd "TAB") nil)
        (define-key yas-minor-mode-map (kbd "M-TAB") 'yas-expand))
   #+end_src
+
+  [https://github.com/emacs-lsp/lsp-mode][LSP Mode]].
+  #+begin_src emacs-lisp :tangle yes
+    (use-package lsp-mode)
+  #+end_src
 * Evil Mode
 ** Load and configure evil
    #+begin_src emacs-lisp :tangle yes
@@ -996,15 +1001,12 @@
    #+end_src
 ** JavaScript
    #+begin_src emacs-lisp :tangle yes
-     (use-package flycheck-flow
+     (use-package lsp-javascript-typescript
        :config
-       (add-hook 'javascript-mode-hook 'flycheck-mode))
-     (use-package company-flow
-       :config
-       (eval-after-load 'company
-         '(add-to-list 'company-backends 'company-flow)))
+       ;; Only load LSP mode if it's installed for JS
+       (when (executable-find "javascript-typescript-stdio")
+         (add-hook 'js-mode-hook #'lsp-javascript-typescript-enable)))
    #+end_src
-   
 ** C#
    #+begin_src emacs-lisp :tangle yes
      (use-package csharp-mode)
