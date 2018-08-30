@@ -631,6 +631,9 @@
   [https://github.com/emacs-lsp/lsp-mode][LSP Mode]].
   #+begin_src emacs-lisp :tangle yes
     (use-package lsp-mode)
+    (use-package company-lsp
+      :config
+      (push 'company-lsp company-backends))
   #+end_src
 * Evil Mode
 ** Load and configure evil
