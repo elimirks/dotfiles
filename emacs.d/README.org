@@ -56,6 +56,9 @@
            browse-url-browser-function 'browse-url-generic)
 
      (add-to-list 'exec-path "/usr/local/bin")
+
+     (setq split-height-threshold nil)
+     (setq split-width-threshold 160)
    #+end_src
 ** Backup Options
    #+begin_src emacs-lisp :tangle yes
