@@ -590,28 +590,39 @@
   [[https://github.com/Fuco1/smartparens][Smartparens.]] Sane automatic parens.
    
   #+begin_src emacs-lisp :tangle yes
-     (use-package smartparens
-       :config
-       ;; For a lot of modes, smartparens is super annoying :)
-       (mapc (lambda (hook) (smartparens-mode))
-             '(c-mode-hook c++-mode-hook js-mode-hook php-mode-hook
-                           lisp-mode-hook css-mode-hook python-mode-hook)))
+    (use-package smartparens
+      :config
+      ;; For a lot of modes, smartparens is super annoying :)
+      (mapc (lambda (hook) (add-hook hook 'smartparens-mode))
+            '(c-mode-hook c++-mode-hook js-mode-hook php-mode-hook
+                          lisp-mode-hook css-mode-hook python-mode-hook
+                          kotlin-mode-hook java-mode-hook))
 
-     (use-package evil-smartparens
-       :config
-       (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
+      ;; Make indenting braces behave nicely.
+      (defun eli/sp-ret-and-enter-sexp (&rest _ignored)
+        (newline)
+        (indent-according-to-mode)
+        (forward-line -1)
+        (indent-according-to-mode))
+
+      (mapc (lambda (mode)
+              (sp-local-pair mode "{" nil :post-handlers
+                             '((eli/sp-ret-and-enter-sexp "RET"))))
+            '(c-mode c++-mode js-mode php-mode lisp-mode css-mode
+                     python-mode kotlin-mode java-mode)))
+    (use-package evil-smartparens
+      :config
+      (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
   #+end_src
 
   [[https://github.com/iquiw/smart-semicolon][Smartsemicolon.]] Sane semicolons.
 
   #+begin_src emacs-lisp :tangle yes
-     (use-package smart-semicolon
-       :config
-       (mapc
-        (lambda (hook)
-          (add-hook hook #'smart-semicolon-mode))
-        '(c-mode-hook c++-mode-hook php-mode-hook js-mode-hook
-                      css-mode-hook)))
+    (use-package smart-semicolon
+      :config
+      (mapc (lambda (hook) (add-hook hook #'smart-semicolon-mode))
+            '(c-mode-hook c++-mode-hook php-mode-hook js-mode-hook
+                          css-mode-hook)))
   #+end_src
 
   [[https://github.com/syohex/emacs-helm-ag][Helm AG]]. Silver Searcher integration.
@@ -1034,6 +1045,10 @@
    #+begin_src emacs-lisp :tangle yes
      (use-package bison-mode
        :mode "\\.y$")
+   #+end_src
+** Kotlin
+   #+begin_src emacs-lisp :tangle yes
+     (use-package kotlin-mode)
    #+end_src
 * Apps
 ** Gnus

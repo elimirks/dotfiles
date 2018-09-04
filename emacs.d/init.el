@@ -29,7 +29,7 @@
  '(org-agenda-files (quote ("~/Dropbox/Notes/everything.org")))
  '(package-selected-packages
    (quote
-    (lsp-ui lsp-javascript-typescript eglot lsp-php fill-column-indicator helm-ag unicode-fonts company-jedi bison-mode emms-setup xkcd restclient-company company-restclient restclient-helm restclient general edit-indirect smart-semicolon smartparens evil-smartparens speed-type multi-term yaml-mode pdf-tools ac-php company-php 4clojure quickrun php-extras php-mode doc-view-mode gnus-desktop-notify copy-as-format slack flow-minor-mode arduino-mode omnisharp love-minor-mode eslint-fix web-mode tide ggtags helm-rtags rtags gtags markdown-mode org-bullets nlinum-relative evil-org evil-magit which-key magit powerline-evil powerline evil-surround evil-leader evil rainbow-delimiters use-package)))
+    (lsp-intelij lsp-intellij kotlin-mode lsp-ui lsp-javascript-typescript eglot lsp-php fill-column-indicator helm-ag unicode-fonts company-jedi bison-mode emms-setup xkcd restclient-company company-restclient restclient-helm restclient general edit-indirect smart-semicolon smartparens evil-smartparens speed-type multi-term yaml-mode pdf-tools ac-php company-php 4clojure quickrun php-extras php-mode doc-view-mode gnus-desktop-notify copy-as-format slack flow-minor-mode arduino-mode omnisharp love-minor-mode eslint-fix web-mode tide ggtags helm-rtags rtags gtags markdown-mode org-bullets nlinum-relative evil-org evil-magit which-key magit powerline-evil powerline evil-surround evil-leader evil rainbow-delimiters use-package)))
  '(send-mail-function (quote smtpmail-send-it))
  '(zoom-size (quote (0.8 . 0.8))))
 (custom-set-faces
