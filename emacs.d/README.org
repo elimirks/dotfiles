@@ -180,6 +180,17 @@
          (beginning-of-line)
          (open-line 1)
          (insert surround)))
+
+     (defun eli/center-buffer ()
+       "Centers the current buffer (based on column ruler)"
+       (interactive)
+       (let ((margin (/ (- (frame-width) fci-column) 3)))
+         (when (> margin 0)
+           (set-window-margins nil margin))))
+
+     (defun eli/uncenter-buffer ()
+       (interactive)
+       (set-window-margins nil nil))
    #+end_src
 ** Global keybindings
 *** Follow newly created windows, only when created manually
@@ -424,6 +435,7 @@
       (use-package fill-column-indicator
         :config
         (setq fci-rule-color "#222")
+        (setq fci-rule-column 80)
         ;; Display the column indicator in all programming modes
         (add-hook 'prog-mode-hook 'fci-mode))
     #+end_src
@@ -1049,9 +1061,18 @@
      (use-package bison-mode
        :mode "\\.y$")
    #+end_src
-** Kotlin
+** JVM
    #+begin_src emacs-lisp :tangle yes
      (use-package kotlin-mode)
+   #+end_src
+** Java
+   #+begin_src emacs-lisp :tangle yes
+     (add-to-list 'auto-mode-alist '("\\.gradle$" . java-mode))
+   #+end_src
+** Groovy
+   #+begin_src emacs-lisp :tangle yes
+     (use-package groovy-mode
+       :mode ("\\.gradle$" . groovy-mode))
    #+end_src
 * Apps
 ** Gnus
