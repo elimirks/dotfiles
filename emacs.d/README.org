@@ -1061,9 +1061,86 @@
      (use-package bison-mode
        :mode "\\.y$")
    #+end_src
-** JVM
+** Kotlin
    #+begin_src emacs-lisp :tangle yes
      (use-package kotlin-mode)
+   #+end_src
+   
+   Nicer kotlin indentation
+  
+   #+begin_src emacs-lisp :tangle yes
+     ;; Overrides the default kotlin indent function
+     (defun kotlin-mode--indent-line ()
+       "Indent current line as kotlin code"
+       (interactive)
+       (beginning-of-line)
+       (if (bobp) ; 1.)
+           (kotlin-mode--beginning-of-buffer-indent)
+         (let ((not-indented t)
+               (cur-indent 0))
+           (cond ((looking-at "^[ \t]*\\.") ; line starts with .
+                  (save-excursion
+                    (kotlin-mode--prev-line)
+                    (cond ((looking-at "^[ \t]*\\.")
+                           (setq cur-indent (current-indentation)))
+
+                          (t
+                           (setq cur-indent (+ (current-indentation) kotlin-tab-width))))
+                    (when (< cur-indent 0)
+                      (setq cur-indent 0))))
+
+                 ((looking-at "^[ \t]*}") ; line starts with }
+                  (save-excursion
+                    (kotlin-mode--prev-line)
+                    (while (and (or (looking-at "^[ \t]*$") (looking-at "^[ \t]*\\.")) (not (bobp)))
+                      (kotlin-mode--prev-line))
+                    (setq cur-indent
+                          (if (or (looking-at ".*{[ \t]*$") (looking-at ".*{.*->[ \t]*$"))
+                              (current-indentation)
+                            (- (current-indentation) kotlin-tab-width))))
+
+                  (when (< cur-indent 0)
+                    (setq cur-indent 0)))
+
+                 ((looking-at "^[ \t]*)") ; line starts with )
+                  (save-excursion
+                    (kotlin-mode--prev-line)
+                    (setq cur-indent (- (current-indentation) kotlin-tab-width)))
+                  (when (< cur-indent 0)
+                    (setq cur-indent 0)))
+
+                 ((looking-at ".*[gs]et\(.*") ; line is a getter or setter
+                  (save-excursion
+                    (kotlin-mode--prev-line)
+                    (setq cur-indent (+ (current-indentation) kotlin-tab-width))))
+
+                 (t
+                  (save-excursion
+                    (while not-indented
+                      (kotlin-mode--prev-line)
+                      (cond ((looking-at ".*{[ \t]*$") ; line ends with {
+                             (setq cur-indent (+ (current-indentation) kotlin-tab-width))
+                             (setq not-indented nil))
+
+                            ((looking-at "^[ \t]*}") ; line starts with }
+                             (setq cur-indent (current-indentation))
+                             (setq not-indented nil))
+
+                            ((looking-at ".*{.*->[ \t]*$") ; line ends with ->
+                             (setq cur-indent (+ (current-indentation) kotlin-tab-width))
+                             (setq not-indented nil))
+
+                            ((looking-at ".*([ \t]*$") ; line ends with (
+                             (setq cur-indent (+ (current-indentation) kotlin-tab-width))
+                             (setq not-indented nil))
+
+                            ((looking-at "^[ \t]*).*$") ; line starts with )
+                             (setq cur-indent (current-indentation))
+                             (setq not-indented nil))
+
+                            ((bobp) ; 5.)
+                             (setq not-indented nil)))))))
+           (indent-line-to cur-indent))))
    #+end_src
 ** Java
    #+begin_src emacs-lisp :tangle yes
