@@ -448,6 +448,22 @@
                   '(("\\<\\(FIXME\\|TODO\\|NOTE\\):"
                      1 font-lock-warning-face t)))))
    #+end_src
+*** Kotlin
+    #+BEGIN_SRC emacs-lisp :tangle yes
+      (add-hook 'kotlin-mode-hook
+                (lambda ()
+                  (eli/pretty-symbol-push-default)
+                  (push '("fun"     . ?ƒ) prettify-symbols-alist)
+                  (push '("null"    . ?∅) prettify-symbols-alist)
+                  (push '("in"      . ?∈) prettify-symbols-alist)
+                  (push '("not in"  . ?∉) prettify-symbols-alist)
+                  (push '("||"      . ?∨) prettify-symbols-alist)
+                  (push '("&&"      . ?∧) prettify-symbols-alist)
+                  (push '("!"       . ?¬) prettify-symbols-alist)
+                  (push '("!!"      . ?‼) prettify-symbols-alist)
+                  (push '("->"      . ?⇒) prettify-symbols-alist)
+                  (prettify-symbols-mode t)))
+    #+END_SRC
 * Plugins
   [[https://github.com/emacs-helm/helm][Helm]]. A nice minibuffer / completion / etc framework
   #+begin_src emacs-lisp :tangle yes
@@ -1081,21 +1097,26 @@
            (cond ((looking-at "^[ \t]*\\.") ; line starts with .
                   (save-excursion
                     (kotlin-mode--prev-line)
-                    (cond ((looking-at "^[ \t]*\\.")
-                           (setq cur-indent (current-indentation)))
 
-                          (t
-                           (setq cur-indent (+ (current-indentation) kotlin-tab-width))))
+                    (setq cur-indent
+                          (if (looking-at "^[ \t]*\\.")
+                              (current-indentation)
+                            (+ (current-indentation) kotlin-tab-width)))
+
                     (when (< cur-indent 0)
                       (setq cur-indent 0))))
 
                  ((looking-at "^[ \t]*}") ; line starts with }
                   (save-excursion
                     (kotlin-mode--prev-line)
-                    (while (and (or (looking-at "^[ \t]*$") (looking-at "^[ \t]*\\.")) (not (bobp)))
+                    (while (and
+                            (or (looking-at "^[ \t]*$") (looking-at "^[ \t]*\\."))
+                            (not (bobp)))
                       (kotlin-mode--prev-line))
                     (setq cur-indent
-                          (if (or (looking-at ".*{[ \t]*$") (looking-at ".*{.*->[ \t]*$"))
+                          (if (or
+                               (looking-at ".*{[ \t]*$")
+                               (looking-at ".*{.*->[ \t]*$"))
                               (current-indentation)
                             (- (current-indentation) kotlin-tab-width))))
 
@@ -1119,7 +1140,8 @@
                     (while not-indented
                       (kotlin-mode--prev-line)
                       (cond ((looking-at ".*{[ \t]*$") ; line ends with {
-                             (setq cur-indent (+ (current-indentation) kotlin-tab-width))
+                             (setq cur-indent
+                                   (+ (current-indentation) kotlin-tab-width))
                              (setq not-indented nil))
 
                             ((looking-at "^[ \t]*}") ; line starts with }
@@ -1127,11 +1149,13 @@
                              (setq not-indented nil))
 
                             ((looking-at ".*{.*->[ \t]*$") ; line ends with ->
-                             (setq cur-indent (+ (current-indentation) kotlin-tab-width))
+                             (setq cur-indent
+                                   (+ (current-indentation) kotlin-tab-width))
                              (setq not-indented nil))
 
                             ((looking-at ".*([ \t]*$") ; line ends with (
-                             (setq cur-indent (+ (current-indentation) kotlin-tab-width))
+                             (setq cur-indent
+                                   (+ (current-indentation) kotlin-tab-width))
                              (setq not-indented nil))
 
                             ((looking-at "^[ \t]*).*$") ; line starts with )
