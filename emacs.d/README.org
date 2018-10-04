@@ -191,6 +191,12 @@
      (defun eli/uncenter-buffer ()
        (interactive)
        (set-window-margins nil nil))
+
+     (defun eli/align-regexp-eq ()
+       "Aligns lines at the equals character."
+       (interactive)
+       (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)="))
+     (global-set-key (kbd "C-c e a") 'eli/align-regexp-eq)
    #+end_src
 ** Global keybindings
 *** Follow newly created windows, only when created manually
