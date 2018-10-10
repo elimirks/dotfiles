@@ -22,7 +22,8 @@
      (setq use-package-always-ensure t) ; Ensure packages are downloaded
    #+end_src
 ** Essential Settings
-   #+begin_src emacs-lisp :tangle yes
+*** Misc things
+    #+begin_src emacs-lisp :tangle yes
      (server-start)
      ;; MacOS has some trouble finding ispell
      (when (eq system-type 'darwin)
@@ -59,7 +60,21 @@
 
      (setq split-height-threshold nil)
      (setq split-width-threshold 160)
-   #+end_src
+    #+end_src
+   
+*** Disable killing *scratch*
+    
+    #+begin_src emacs-lisp :tangle yes
+      ;; From https://emacs.stackexchange.com/questions/19254/never-close-scratch
+      (add-hook 'kill-buffer-query-functions
+                (lambda ()
+                  (if (not (equal (buffer-name) "*scratch*"))
+                      t
+                    (message "Not allowed to kill %s, burying instead" (buffer-name))
+                    (bury-buffer)
+                    nil)))
+    #+end_src
+
 ** Backup Options
    #+begin_src emacs-lisp :tangle yes
      (setq backup-by-copying t) ; Stop shinanigans with links
