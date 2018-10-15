@@ -841,6 +841,11 @@
      (define-key org-mode-map (kbd "M-s") 'org-metaright)
      (define-key org-mode-map (kbd "M-e") 'org-latex-export-to-pdf)
    #+end_src
+
+   Code evaluation prompt settings.
+   #+begin_src emacs-lisp :tangle yes
+     (setq org-confirm-babel-evaluate nil)
+   #+end_src
 ** Agenda
    #+begin_src emacs-lisp :tangle yes
      ;; Match those tagged with, are not scheduled/deadlined, are not DONE.
