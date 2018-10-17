@@ -793,6 +793,13 @@
      ;; (~/.emacs.d/lisp/init-powerline.el)
      (require 'init-powerline)
    #+end_src
+** Global Evil Plugins
+   [[https://github.com/edkolev/evil-lion][Evil Lion]]. Used for aligning (similar to align-regexp, but more vimy)
+   #+begin_src emacs-lisp :tangle yes
+     (use-package evil-lion
+       :config
+       (evil-lion-mode))
+   #+end_src
 ** Keybindings
    #+begin_src emacs-lisp :tangle yes
      ;; Disable evil-ex initial auto-fill
