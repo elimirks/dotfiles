@@ -853,6 +853,12 @@
    #+begin_src emacs-lisp :tangle yes
      (setq org-confirm-babel-evaluate nil)
    #+end_src
+   
+   Don't spell check in org source code blocks.
+   #+begin_src emacs-lisp :tangle yes
+     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
+     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_LATEX" . "#\\+END_LATEX"))
+   #+end_src
 ** Agenda
    #+begin_src emacs-lisp :tangle yes
      ;; Match those tagged with, are not scheduled/deadlined, are not DONE.
