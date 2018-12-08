@@ -1214,6 +1214,15 @@
      (use-package groovy-mode
        :mode ("\\.gradle$" . groovy-mode))
    #+end_src
+** Objective-C
+   #+begin_src emacs-lisp :tangle yes
+     (add-to-list 'auto-mode-alist '("\\.m\\'" . objc-mode))
+     (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
+
+     (use-package objc-font-lock
+       :config
+       (objc-font-lock-global-mode 1))
+   #+end_src
 * Apps
 ** Gnus
    #+begin_src emacs-lisp :tangle yes
