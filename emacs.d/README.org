@@ -997,6 +997,8 @@
 
      (define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-buffer)
      (define-key emacs-lisp-mode-map (kbd "C-c C-r") 'eval-region)
+
+     (add-hook 'emacs-lisp-mode-hook (lambda () (electric-pair-mode t)))
    #+end_src
 ** Web
    #+begin_src emacs-lisp :tangle yes
