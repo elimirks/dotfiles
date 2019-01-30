@@ -13,7 +13,7 @@ case "$1" in
     suspend)
 				lock&
 				sleep 1
-        sudo pm-suspend
+				systemctl suspend
 				sleep 10
 				xmodmap /home/elijah/.Xmodmap
         ;;
