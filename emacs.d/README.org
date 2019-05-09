@@ -48,7 +48,7 @@
      (setq-default tab-width 4)
      (defvaralias 'c-basic-offset 'tab-width)
      (defvaralias 'cperl-indent-level 'tab-width)
-
+     
      ;; Default browser for links
      (setq browse-url-firefox-program (if (eq system-type 'darwin)
                                           "/Users/elijah/bin/firefox"
@@ -284,6 +284,18 @@
      (eli/add-insert-char-key "m l e" ?≤)
      (eli/add-insert-char-key "m i" ?∈)
    #+end_src
+** Tramp
+   Use plink (PuTTY) when running Windows.
+   
+   #+begin_src emacs-lisp :tangle yes
+     (when (eq window-system 'w32)
+       (setq tramp-default-method "plink")
+       (when (and (boundp 'putty-directory)
+                  (not (string-match putty-directory (getenv "PATH")))
+                  (file-directory-p putty-directory))
+         (setenv "PATH" (concat putty-directory ";" (getenv "PATH")))
+         (add-to-list 'exec-path putty-directory)))
+   #+end_src
 * Aesthetics
 ** Configure a nice theme
    #+begin_src emacs-lisp :tangle yes
@@ -385,6 +397,22 @@
                   (push '("in"       . ?∈) prettify-symbols-alist)
                   (prettify-symbols-mode t)))
     #+END_SRC
+*** Kotlin
+    #+BEGIN_SRC emacs-lisp :tangle yes
+      (add-hook 'kotlin-mode-hook
+                (lambda ()
+                  (eli/pretty-symbol-push-default)
+                  (push '("fun"     . ?ƒ) prettify-symbols-alist)
+                  (push '("null"    . ?∅) prettify-symbols-alist)
+                  (push '("in"      . ?∈) prettify-symbols-alist)
+                  (push '("not in"  . ?∉) prettify-symbols-alist)
+                  (push '("||"      . ?∨) prettify-symbols-alist)
+                  (push '("&&"      . ?∧) prettify-symbols-alist)
+                  (push '("!"       . ?¬) prettify-symbols-alist)
+                  (push '("!!"      . ?‼) prettify-symbols-alist)
+                  (push '("->"      . ?⇒) prettify-symbols-alist)
+                  (prettify-symbols-mode t)))
+    #+END_SRC
 ** Relative line numbers
 
    [[https://github.com/CodeFalling/nlinum-relative][Nlinum Relative]]. Relative line numbers n' stuff
@@ -469,22 +497,12 @@
                   '(("\\<\\(FIXME\\|TODO\\|NOTE\\):"
                      1 font-lock-warning-face t)))))
    #+end_src
-*** Kotlin
-    #+BEGIN_SRC emacs-lisp :tangle yes
-      (add-hook 'kotlin-mode-hook
-                (lambda ()
-                  (eli/pretty-symbol-push-default)
-                  (push '("fun"     . ?ƒ) prettify-symbols-alist)
-                  (push '("null"    . ?∅) prettify-symbols-alist)
-                  (push '("in"      . ?∈) prettify-symbols-alist)
-                  (push '("not in"  . ?∉) prettify-symbols-alist)
-                  (push '("||"      . ?∨) prettify-symbols-alist)
-                  (push '("&&"      . ?∧) prettify-symbols-alist)
-                  (push '("!"       . ?¬) prettify-symbols-alist)
-                  (push '("!!"      . ?‼) prettify-symbols-alist)
-                  (push '("->"      . ?⇒) prettify-symbols-alist)
-                  (prettify-symbols-mode t)))
-    #+END_SRC
+** Fonts
+   Nice windows font:
+   #+begin_src emacs-lisp :tangle yes
+     (when (eq window-system 'w32)
+       (set-frame-font "Consolas"))
+   #+end_src
 * Plugins
   [[https://github.com/emacs-helm/helm][Helm]]. A nice minibuffer / completion / etc framework
   #+begin_src emacs-lisp :tangle yes
@@ -1224,6 +1242,11 @@
      (use-package objc-font-lock
        :config
        (objc-font-lock-global-mode 1))
+   #+end_src
+** Eshell
+   #+begin_src emacs-lisp :tangle yes
+     (add-hook 'eshell-mode-hook
+               '(lambda () (company-mode -1)))
    #+end_src
 * Apps
 ** Gnus
