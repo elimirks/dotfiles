@@ -24,42 +24,43 @@
 ** Essential Settings
 *** Misc things
     #+begin_src emacs-lisp :tangle yes
-     (server-start)
-     ;; MacOS has some trouble finding ispell
-     (when (eq system-type 'darwin)
-       (setq ispell-program-name "/usr/local/bin/ispell"))
-     ;; For ansi-term n' stuff
-     (setq explicit-shell-file-name "/bin/bash")
-     (setq inhibit-splash-screen t ; No welcome screen
-           inhibit-startup-message t
-           inhibit-startup-echo-area-message t)
-     (tool-bar-mode -1) ; No toolbar
-     (scroll-bar-mode -1) ; Hide scrollbars
-     (menu-bar-mode -1) ; Hide menu bar
-     (show-paren-mode t) ; Highlights matching parenthesis
-     (global-visual-line-mode t)
-     (setq ring-bell-function 'ignore) ; Disable ALL bells! They suck!
-     ;;(electric-pair-mode t) ; Add closing pairs automatically
-     (setq initial-scratch-message "") ; No scratch text
-     (fset 'yes-or-no-p 'y-or-n-p) ; y/n instead of yes/no
+      (server-start)
+      ;; MacOS has some trouble finding ispell
+      (when (eq system-type 'darwin)
+        (setq ispell-program-name "/usr/local/bin/ispell"))
+      ;; For ansi-term n' stuff
+      (setq explicit-shell-file-name "/bin/bash")
+      (setq inhibit-splash-screen t ; No welcome screen
+            inhibit-startup-message t
+            inhibit-startup-echo-area-message t)
+      (tool-bar-mode -1) ; No toolbar
+      (scroll-bar-mode -1) ; Hide scrollbars
+      (menu-bar-mode -1) ; Hide menu bar
+      (show-paren-mode t) ; Highlights matching parenthesis
+      (global-visual-line-mode t)
+      (setq ring-bell-function 'ignore) ; Disable ALL bells! They suck!
+      ;;(electric-pair-mode t) ; Add closing pairs automatically
+      (setq initial-scratch-message "") ; No scratch text
+      (fset 'yes-or-no-p 'y-or-n-p) ; y/n instead of yes/no
 
-     ;; No tabs, use spaces
-     (setq-default indent-tabs-mode nil)
-     (setq-default tab-width 4)
-     (defvaralias 'c-basic-offset 'tab-width)
-     (defvaralias 'cperl-indent-level 'tab-width)
-     
-     ;; Default browser for links
-     (setq browse-url-firefox-program (if (eq system-type 'darwin)
-                                          "/Users/elijah/bin/firefox"
-                                        "firefox")
-           browse-url-generic-program browse-url-firefox-program
-           browse-url-browser-function 'browse-url-generic)
+      ;; No tabs, use spaces
+      (setq-default indent-tabs-mode nil)
+      (setq-default tab-width 4)
+      (defvaralias 'c-basic-offset 'tab-width)
+      (defvaralias 'cperl-indent-level 'tab-width)
 
-     (add-to-list 'exec-path "/usr/local/bin")
+      ;; Default browser for links
+      (setq browse-url-firefox-program
+            (cond ((eq system-type 'darwin) "/Users/elijah/bin/firefox")
+                  ((eq system-type 'windows-nt) "/Program Files/Mozilla Firefox/firefox.exe")
+                  (t "firefox"))
+            browse-url-generic-program browse-url-firefox-program
+            browse-url-browser-function 'browse-url-generic)
 
-     (setq split-height-threshold nil)
-     (setq split-width-threshold 160)
+      (add-to-list 'exec-path "/usr/local/bin")
+
+      (setq split-height-threshold nil)
+      (setq split-width-threshold 160)
     #+end_src
    
 *** Disable killing *scratch*
