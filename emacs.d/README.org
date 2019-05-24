@@ -710,12 +710,21 @@
        (define-key yas-minor-mode-map (kbd "M-TAB") 'yas-expand))
   #+end_src
 
-  [https://github.com/emacs-lsp/lsp-mode][LSP Mode]].
+  [[https://github.com/emacs-lsp/lsp-mode][LSP Mode]].
   #+begin_src emacs-lisp :tangle yes
     (use-package lsp-mode)
     (use-package company-lsp
       :config
       (push 'company-lsp company-backends))
+  #+end_src
+
+  [[https://www.emacswiki.org/emacs/SmartTabs][Smart Tabs Mode]].
+  #+begin_src emacs-lisp :tangle yes
+    (use-package smart-tabs-mode
+      :config
+      (smart-tabs-insinuate 'python)
+      (mapc (lambda (hook) (add-hook hook #'smart-tabs-mode))
+            '(python-mode-hook)))
   #+end_src
 * Evil Mode
 ** Load and configure evil
@@ -1007,7 +1016,13 @@
                (lambda ()
                  (add-to-list 'company-backends 'company-jedi)
                  (define-key
-                   python-mode-map (kbd "C-c C-d") 'jedi:show-doc)))
+                   python-mode-map (kbd "C-c C-d") 'jedi:show-doc)
+
+                 ;; Python smart tabs
+                 (smart-tabs-advice py-indent-line py-indent-offset)
+                 (smart-tabs-advice py-newline-and-indent py-indent-offset)
+                 (smart-tabs-advice py-indent-region py-indent-offset)
+                 (setq evil-indent-convert-tabs nil)))
    #+end_src
 ** Elisp
    #+begin_src emacs-lisp :tangle yes
