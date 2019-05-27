@@ -1012,6 +1012,11 @@
    #+begin_src emacs-lisp :tangle yes
      (when (eq system-type 'darwin)
        (setq python-shell-interpreter "/usr/local/bin/python3"))
+
+     ;; To install, run M-x jedi:install-server
+     (use-package jedi)
+     (use-package company-jedi)
+
      (add-hook 'python-mode-hook
                (lambda ()
                  (add-to-list 'company-backends 'company-jedi)
