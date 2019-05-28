@@ -74,16 +74,19 @@ echo -e Linking dotfiles to \"$DIR\" "\n"
 read -p "Set up shells? (y/n) " yesorno
 if [ "x$yesorno" = "xy" ]; then
 	echo "Setting up $HOME/.profile"
+    touch $HOME/.profile
 	sed -i -- "/^.*#ELIDOTFILES$/d" $HOME/.profile
 	SOURCE_CMD="export DOTFILES_DIR=$DIR; source $DIR/profile"
 	echo "$SOURCE_CMD #ELIDOTFILES" >> "$HOME/.profile"
 
 	echo "Setting up $HOME/.bashrc"
+    touch $HOME/.bashrc
 	sed -i -- "/^.*#ELIDOTFILES$/d" $HOME/.bashrc
 	SOURCE_CMD="source $DIR/bashrc"
 	echo "$SOURCE_CMD #ELIDOTFILES" >> "$HOME/.bashrc"
 
 	echo "Setting up $HOME/.zshrc"
+    touch $HOME/.zshrc
 	sed -i -- "/^.*#ELIDOTFILES$/d" $HOME/.zshrc
 	SOURCE_CMD="source $DIR/zshrc"
 	echo "$SOURCE_CMD #ELIDOTFILES" >> "$HOME/.zshrc"
@@ -117,7 +120,10 @@ then
 else
 	read -p "Set up $HOME/.vimrc? (y/n) " yesorno
 	case "$yesorno" in
-		y) echo "source $DIR/vimrc" > "$HOME/.vimrc" ;;
+		y)
+            echo "source $DIR/vimrc" > "$HOME/.vimrc"
+            mkdir "$HOME/.vimrc" 2> /dev/null # Silence creation of the dir
+            ;;
 		*) echo "Skipping $HOME/.vimrc" ;;
 	esac
 fi
