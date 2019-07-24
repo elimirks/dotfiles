@@ -90,6 +90,11 @@
    #+end_src
 ** Handy functions
    #+begin_src emacs-lisp :tangle yes
+     (defun eli/set-font-size ()
+       (interactive)
+       (set-face-attribute 'default nil
+                           :height (read-number "New font size: ")))
+
      (defun eli/load-init ()
        "Reloads init file (and therefore, README.org)"
        (interactive)
@@ -237,7 +242,7 @@
    #+end_src
 ** Human language
    Because sometimes I need to speak with humans.
-
+   
    #+begin_src emacs-lisp :tangle yes
      (defun eli/add-insert-char-key (sequence char)
        (global-set-key (kbd (concat "C-c l" sequence))
@@ -1049,7 +1054,9 @@
        :mode "\\.\\(tsx\\|html\\.twig\\)$"
        :config
        (setq web-mode-enable-auto-closing t
-             web-mode-enable-auto-indentation t))
+             web-mode-enable-auto-indentation t)
+
+       (flycheck-add-mode 'javascript-eslint 'web-mode))
    #+end_src
    
    Some functions for more easily narrowing script and style tags in web mode.
@@ -1425,7 +1432,9 @@
 
    #+begin_src emacs-lisp :tangle yes
      (use-package restclient
-       :bind (:map restclient-mode-map ("C-c C-e" . eli/url-hexify-region))
+       :bind (:map restclient-mode-map
+                   ("C-c C-e" . eli/url-hexify-region)
+                   ("C-c C-c" . restclient-http-send-current-stay-in-window))
        :mode ("\\.http$" . restclient-mode)
        :config
        (defconst restclient-method-url-regexp
