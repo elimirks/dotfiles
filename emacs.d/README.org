@@ -651,9 +651,13 @@
   [[https://github.com/syohex/emacs-quickrun][Quickrun.]] Used for running a single buffer in an isolated environment
    
   #+begin_src emacs-lisp :tangle yes
-     (use-package quickrun
-       :config
-       (add-hook 'quickrun--mode-hook 'turn-off-evil-mode))
+    (use-package quickrun
+      :config
+      (add-hook 'quickrun--mode-hook 'turn-off-evil-mode)
+      (quickrun-add-command "blarb"
+        '((:command . "blarb")
+          (:exec    . "%c %s"))
+        :mode 'blarb-mode))
   #+end_src
 
   [[https://github.com/myrkr/dictionary-el][Dictionary.]] For word lookups.

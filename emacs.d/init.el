@@ -43,6 +43,7 @@
  '(company-tooltip ((t (:inherit default :background "#051e051e051e"))))
  '(company-tooltip-common ((t (:inherit font-lock-constant-face))))
  '(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
+ '(linum ((t (:background "color-16" :foreground "#9fc59f"))))
  '(org-scheduled ((t (:foreground "magenta"))))
  '(org-scheduled-today ((t (:foreground "magenta"))))
  '(powerline-evil-normal-face ((t (:inherit powerline-evil-base-face :background "dark green")))))
