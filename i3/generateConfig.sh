@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # This script generates Eli's i3 config!
 
@@ -11,6 +11,9 @@ cat $DIR/config.d/vars.conf >> $CONF
 echo >> $CONF
 cat $DIR/config.d/main.conf >> $CONF
 echo >> $CONF
+cat $DIR/config.d/pulseaudio_controls.conf >> $CONF
+echo >> $CONF
+
 
 if [ "$(setxkbmap -query | \grep layout | sed 's/layout:[ ]*//')" = "us" ]; then
     cat $DIR/config.d/qwerty.conf >> $CONF
