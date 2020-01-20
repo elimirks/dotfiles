@@ -484,7 +484,7 @@
       (set-face-background 'hl-line "#222")
       (set-face-underline 'hl-line nil)
     #+end_src
-*** Highlight 80th column
+*** COMMENT Highlight 80th column
     #+begin_src emacs-lisp :tangle yes
       (use-package fill-column-indicator
         :config
@@ -1283,6 +1283,13 @@
    #+begin_src emacs-lisp :tangle yes
      (add-hook 'eshell-mode-hook
                '(lambda () (company-mode -1)))
+   #+end_src
+** Rust
+   #+begin_src emacs-lisp :tangle yes
+     (use-package rust)
+     (use-package flycheck-rust)
+     (with-eval-after-load 'rust-mode
+       (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
    #+end_src
 * Apps
 ** Gnus
