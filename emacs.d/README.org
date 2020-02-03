@@ -306,14 +306,17 @@
 ** Configure a nice theme
    #+begin_src emacs-lisp :tangle yes
      (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-     (load-theme 'spolsky t)
-     (set-face-attribute 'default nil :height 110)
-     ;; When in terminal
-     (unless (display-graphic-p) 
-       (setq nlinum-format "%d ")
-       (add-to-list 'default-frame-alist '(background-color . "color-16"))
-       (custom-set-faces
-        '(linum ((t (:background "color-16" :foreground "#9fc59f"))))))
+
+     (if (display-graphic-p)
+         ;; GUI
+         (progn
+           (load-theme 'spolsky t)
+           (set-face-attribute 'default nil :height 110))
+       ;; Terminal
+       (progn
+         (setq nlinum-format "%d ")
+         (add-to-list 'default-frame-alist '(background-color . "color-16"))
+         (load-theme 'monokai t)))
    #+end_src
 ** Fancy rainbox parens to sooth my eyes
    #+begin_src emacs-lisp :tangle yes
@@ -847,6 +850,14 @@
      (define-key evil-normal-state-map (kbd ":")
        '(lambda () (interactive)
           (evil-ex "")))
+   #+end_src
+   
+   Fix for using Emacs in the terminal with EVIL+org mode
+   #+begin_src emacs-lisp :tangle yes
+     (unless (display-graphic-p)
+       (add-hook 'org-mode-hook
+                 (lambda ()
+                   (define-key evil-normal-state-map (kbd "TAB") 'org-cycle))))
    #+end_src
 * Org Mode
 ** Basic
