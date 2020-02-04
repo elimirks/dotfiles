@@ -4,7 +4,6 @@
      (require 'package)
      (setq package-archives
            '(("gnu"       . "http://elpa.gnu.org/packages/")
-             ("marmalade" . "http://marmalade-repo.org/packages/")
              ("melpa"     . "http://melpa.org/packages/")))
      (setq package-enable-at-startup nil)
      (package-initialize)
@@ -307,16 +306,16 @@
    #+begin_src emacs-lisp :tangle yes
      (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 
+     (load-theme 'spolsky t)
+
      (if (display-graphic-p)
          ;; GUI
          (progn
-           (load-theme 'spolsky t)
            (set-face-attribute 'default nil :height 110))
        ;; Terminal
        (progn
          (setq nlinum-format "%d ")
-         (add-to-list 'default-frame-alist '(background-color . "color-16"))
-         (load-theme 'monokai t)))
+         (add-to-list 'default-frame-alist '(background-color . "color-16"))))
    #+end_src
 ** Fancy rainbox parens to sooth my eyes
    #+begin_src emacs-lisp :tangle yes
@@ -548,10 +547,6 @@
       (setq company-selection-wrap-around t)
       (setq company-global-modes '(not org-mode)) ; Disable in org
 
-      (define-key company-active-map [backtab] 'company-select-previous)
-      (define-key company-active-map [tab] 'company-select-next)
-
-
       ;; Style nicely
       (let* ((bg (face-attribute 'default :background))
              (bg-light (color-lighten-name bg 2))
@@ -587,7 +582,12 @@
       (add-hook 'company-completion-finished-hook
                 'company-maybe-turn-on-fci)
       (add-hook 'company-completion-cancelled-hook
-                'company-maybe-turn-on-fci))
+                'company-maybe-turn-on-fci)
+
+      :bind
+      (:map company-active-map
+            ("C-n" . company-select-next-or-abort)
+            ("C-p" . company-select-previous-or-abort)))
   #+end_src
 
   [[https://github.com/flycheck/flycheck][Flycheck]]. For syntax correction.
@@ -723,7 +723,14 @@
 
   [[https://github.com/emacs-lsp/lsp-mode][LSP Mode]].
   #+begin_src emacs-lisp :tangle yes
-    (use-package lsp-mode)
+    (use-package lsp-mode
+      :hook
+      (scala-mode . lsp)
+      :config
+      (setq lsp-prefer-flymake nil))
+
+    (use-package lsp-ui)
+
     (use-package company-lsp
       :config
       (push 'company-lsp company-backends))
@@ -1301,6 +1308,26 @@
      (use-package flycheck-rust)
      (with-eval-after-load 'rust-mode
        (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+   #+end_src
+** Scala
+   Config based on: https://scalameta.org/metals/docs/editors/emacs.html
+
+   #+begin_src emacs-lisp :tangle yes
+     ;; Scala & SBT mode
+     (use-package scala-mode
+       :mode "\\.s\\(cala\\|bt\\)$")
+
+     (use-package sbt-mode
+       :commands sbt-start sbt-command
+       :config
+       ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+       ;; allows using SPACE when in the minibuffer
+       (substitute-key-definition
+        'minibuffer-complete-word
+        'self-insert-command
+        minibuffer-local-completion-map)
+       ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
+       (setq sbt:program-options '("-Dsbt.supershell=false")))
    #+end_src
 * Apps
 ** Gnus
