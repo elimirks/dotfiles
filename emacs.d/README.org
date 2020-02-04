@@ -978,6 +978,14 @@
                          "pdflatex -shell-escape -interaction nonstopmode"
                          " -output-directory %o %f")))
    #+end_src
+** MacOS
+   Fixes a hickup on MacOS when running in terminal Emacs
+   #+begin_src emacs-lisp :tangle yes
+     (when (eq system-type 'darwin)
+       (lambda ()
+         (evil-define-key (kbd "TAB") nil)
+         (local-set-key (kbd "TAB") 'org-cycle)))
+   #+end_src
 * Language Modes
 ** Markdown
    #+begin_src emacs-lisp :tangle yes
