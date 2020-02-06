@@ -22,6 +22,12 @@
    #+end_src
 ** Essential Settings
 *** Misc things
+    Aquamacs specific configuration
+    #+begin_src emacs-lisp :tangle yes
+      (when (boundp 'aquamacs-version)
+             (tabbar-mode 0))
+    #+end_src
+
     #+begin_src emacs-lisp :tangle yes
       (server-start)
       ;; MacOS has some trouble finding ispell
@@ -811,7 +817,7 @@
          "g" 'magit-status
          "hp" 'helm-ag-project-root
          "kr" 'helm-show-kill-ring
-         "kk" 'kill-this-buffer
+         "kk" (lambda () (interactive) (kill-buffer (current-buffer)))
          "kw" 'kill-buffer-and-window
          "l" 'org-timeline
          "m" 'helm-mini
