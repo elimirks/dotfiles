@@ -532,10 +532,9 @@
 
      This one changes the cursor color on each blink. Define colors in `blink-cursor-colors'."
        (when (not (internal-show-cursor-p))
-         (when (>= blink-cursor-count (length blink-cursor-colors))
-           (setq blink-cursor-count 0))
          (set-cursor-color (nth blink-cursor-count blink-cursor-colors))
-         (setq blink-cursor-count (+ 1 blink-cursor-count)))
+         (setq blink-cursor-count (mod (+ 1 blink-cursor-count)
+                                       (length blink-cursor-colors))))
        (internal-show-cursor nil (not (internal-show-cursor-p))))
    #+end_src
 * Plugins
@@ -1030,17 +1029,19 @@
    #+end_src
 ** Matlab
    #+begin_src emacs-lisp :tangle yes
-     (add-to-list 'custom-theme-load-path "~/.emacs.d/lisp/matlab-emacs")
-     (load-library "matlab-load")
-     (matlab-cedet-setup)
-     (autoload 'matlab-mode "matlab" "Matlab Editing Mode" t)
-     (add-to-list
-      'auto-mode-alist
-      '("\\.m$" . matlab-mode))
-     (setq matlab-indent-function t)
-     (setq matlab-shell-command "matlab")
-     ;; elisp setup for matlab-mode:
-     (setq matlab-shell-command-switches (list "-nodesktop" "-nosplash"))
+     ;; This Matlab mode breaks the built in Aquamacs matlab mode
+     (unless (boundp 'aquamacs-version)
+       (add-to-list 'custom-theme-load-path "~/.emacs.d/lisp/matlab-emacs")
+       (load-library "matlab-load")
+       (matlab-cedet-setup)
+       (autoload 'matlab-mode "matlab" "Matlab Editing Mode" t)
+       (add-to-list
+        'auto-mode-alist
+        '("\\.m$" . matlab-mode))
+       (setq matlab-indent-function t)
+       (setq matlab-shell-command "matlab")
+       ;; elisp setup for matlab-mode:
+       (setq matlab-shell-command-switches (list "-nodesktop" "-nosplash")))
    #+end_src
 ** C/C++
    #+begin_src emacs-lisp :tangle yes
