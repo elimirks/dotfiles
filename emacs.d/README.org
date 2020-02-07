@@ -22,12 +22,6 @@
    #+end_src
 ** Essential Settings
 *** Misc things
-    Aquamacs specific configuration
-    #+begin_src emacs-lisp :tangle yes
-      (when (boundp 'aquamacs-version)
-             (tabbar-mode 0))
-    #+end_src
-
     #+begin_src emacs-lisp :tangle yes
       (server-start)
       ;; MacOS has some trouble finding ispell
@@ -67,7 +61,12 @@
       (setq split-height-threshold nil)
       (setq split-width-threshold 160)
     #+end_src
-   
+*** Aquamacs Config
+    #+begin_src emacs-lisp :tangle yes
+      (when (boundp 'aquamacs-version)
+        (tabbar-mode 0)
+        (setq x-select-enable-clipboard t))
+    #+end_src
 *** Disable killing *scratch*
     
     #+begin_src emacs-lisp :tangle yes
@@ -515,6 +514,29 @@
    #+begin_src emacs-lisp :tangle yes
      (when (eq window-system 'w32)
        (set-frame-font "Consolas"))
+   #+end_src
+** Change cursor blink color
+   Taken from https://stackoverflow.com/questions/4642835/how-to-change-the-cursor-color-on-emacs
+   
+   This is a fun little mod to change the colour of the cursor for
+   each blink.
+   
+   #+begin_src emacs-lisp :tangle yes
+     (defvar blink-cursor-colors (list  "#92c48f" "#6785c5" "#be369c" "#d9ca65")
+       "On each blink the cursor will cycle to the next color in this list.")
+
+     (setq blink-cursor-count 0)
+     (defun blink-cursor-timer-function ()
+       "Zarza wrote this cyberpunk variant of timer `blink-cursor-timer'. 
+     Warning: overwrites original version in `frame.el'.
+
+     This one changes the cursor color on each blink. Define colors in `blink-cursor-colors'."
+       (when (not (internal-show-cursor-p))
+         (when (>= blink-cursor-count (length blink-cursor-colors))
+           (setq blink-cursor-count 0))
+         (set-cursor-color (nth blink-cursor-count blink-cursor-colors))
+         (setq blink-cursor-count (+ 1 blink-cursor-count)))
+       (internal-show-cursor nil (not (internal-show-cursor-p))))
    #+end_src
 * Plugins
   [[https://github.com/emacs-helm/helm][Helm]]. A nice minibuffer / completion / etc framework
