@@ -50,7 +50,7 @@
 
       ;; Default browser for links
       (setq browse-url-firefox-program
-            (cond ((eq system-type 'darwin) "/Users/elijah/bin/firefox")
+            (cond ((eq system-type 'darwin) "~/bin/firefox")
                   ((eq system-type 'windows-nt) "/Program Files/Mozilla Firefox/firefox.exe")
                   (t "firefox"))
             browse-url-generic-program browse-url-firefox-program
@@ -1149,6 +1149,14 @@
    
 ** Python
    #+begin_src emacs-lisp :tangle yes
+     (add-hook 'python-mode-hook
+               (lambda ()
+                 ;; Python smart tabs
+                 (smart-tabs-advice py-indent-line py-indent-offset)
+                 (smart-tabs-advice py-newline-and-indent py-indent-offset)
+                 (smart-tabs-advice py-indent-region py-indent-offset)
+                 (setq evil-indent-convert-tabs nil)))
+
      (when (eq system-type 'darwin)
        (setq python-shell-interpreter "/usr/local/bin/python3"))
 
@@ -1161,12 +1169,6 @@
                  (add-to-list 'company-backends 'company-jedi)
                  (define-key
                    python-mode-map (kbd "C-c C-d") 'jedi:show-doc)
-
-                 ;; Python smart tabs
-                 (smart-tabs-advice py-indent-line py-indent-offset)
-                 (smart-tabs-advice py-newline-and-indent py-indent-offset)
-                 (smart-tabs-advice py-indent-region py-indent-offset)
-                 (setq evil-indent-convert-tabs nil)))
    #+end_src
 ** Elisp
    #+begin_src emacs-lisp :tangle yes
@@ -1619,3 +1621,101 @@
                    ("C-c C-r" . xkcd-rand)
                    ("C-c C-a" . xkcd-alt-text)))
    #+end_src
+* AZ AWS Mode
+  This is an experimental AWS mode I'm working on _UNOFFICIALLY_. Use
+  at your own risk :)
+  
+  #+begin_src emacs-lisp :tangle yes
+    (require 'json)
+    (add-to-list 'org-src-lang-modes '("sql-athena" . sql))
+
+    (defvar az-aws/athena/invalid-query-prefix
+      "Invalid Query: ")
+
+    (defun az-aws/athena/result-response-to-table (response-json)
+      (let* ((raw-rows (cdr (assoc 'Rows (cdr (assoc 'ResultSet query-result)))))
+             (rows (mapcar
+                    (lambda (raw-row)
+                      (cdr (assoc 'Data raw-row)))
+                    raw-rows))
+             (table (mapcar
+                     (lambda (row)
+                       (mapcar (lambda (raw-value)
+                                 (cdr (assoc 'VarCharValue raw-value)))
+                               row))
+                     rows)))
+        table))
+
+    (defun az-aws/athena/wait-for-query-result (query-id)
+      (let ((result nil)
+            (response nil))
+        (while (not result)
+          (sleep-for 2)
+          (setq response (az-aws/athena/get-query-result query-id))
+          (setq result
+                (when (or (not (stringp response))
+                          (not (string-match-p "\\(QUEUED\\|RUNNING\\)" response)))
+                  response)))
+        result))
+
+    (defun org-babel-execute:sql-athena (body params)
+      "Execute a block of Athena (SQL) code with Babel.
+      This function is called by `org-babel-execute-src-block'."
+      (let* ((session (org-babel-python-initiate-session
+                       (cdr (assoc :session params))))
+             (query-id-response (az-aws/athena/execute-query body))
+             (query-result
+              (if (string-prefix-p az-aws/athena/invalid-query-prefix
+                                   query-id-response)
+                  query-id-response ;; Invalid query, dump the response
+                (az-aws/athena/wait-for-query-result query-id-response)))
+             (org-output (if (string-prefix-p az-aws/athena/invalid-query-prefix
+                                              query-result)
+                             query-result ;; Invalid query, dump string
+                           (az-aws/athena/result-response-to-table query-result))))
+        (org-babel-reassemble-table
+         org-output
+         (org-babel-pick-name (cdr (assoc :colname-names params))
+                              (cdr (assoc :colnames params)))
+         (org-babel-pick-name (cdr (assoc :rowname-names params))
+                              (cdr (assoc :rownames params))))))
+
+    (defun az-aws/athena/get-query-result (query-id)
+      (let* ((query-response (shell-command-to-string
+                              (concat "aws athena get-query-results "
+                                      "--query-execution-id "
+                                      (shell-quote-argument query-id))))
+             (is-valid-query (az-aws/validate-json-string query-response)))
+        (if is-valid-query
+            (json-read-from-string query-response)
+          (concat az-aws/athena/invalid-query-prefix query-response))))
+
+    (defun az-aws/athena/execute-query (query)
+      (let* ((query-response (shell-command-to-string
+                              (concat "aws athena start-query-execution "
+                                      "--query-string "
+                                      (shell-quote-argument query))))
+             (is-valid-query (az-aws/validate-json-string query-response))
+             (query-id (if is-valid-query
+                           (cdr (assoc 'QueryExecutionId
+                                       (json-read-from-string query-response)))
+                         nil)))
+        (if is-valid-query
+            query-id
+          (concat az-aws/athena/invalid-query-prefix query-response))))
+
+    (defun az-aws/validate-json-string (string)
+      "Validates a JSON string."
+      (condition-case nil
+          (progn
+            (json-read-from-string string)
+            t)
+        (error nil)))
+
+    (defun az-aws/glue/start-crawler (&optional name)
+      (interactive)
+      (message (shell-command-to-string
+                (concat "aws glue start-crawler --name "
+                        (shell-quote-argument
+                         (if name name (read-string "Crawler name: ")))))))
+  #+end_src
