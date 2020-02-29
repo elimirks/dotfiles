@@ -573,6 +573,7 @@
       (setq ivy-height 20))
 
     (use-package counsel)
+    (use-package smex)
   #+end_src
 
   [[https://github.com/emacs-helm/helm][Helm]]. A nice minibuffer / completion / etc framework
@@ -583,7 +584,6 @@
        ("<RET>" . eli/helm-return-find-file))
       :config
       (require 'helm-config)
-      (helm-mode 1)
       (setq helm-M-x-fuzzy-match t          ; Fuzzy M-x matching
             helm-buffer-max-length nil      ; Don't limit filename length
             helm-split-window-in-side-p t)) ; Split on the bottom edge
@@ -809,11 +809,12 @@
   #+begin_src emacs-lisp :tangle yes
     (use-package projectile
       :config
-      (projectile-mode +1))
+      (projectile-mode +1)
+      (setq projectile-completion-system 'ivy))
 
     (use-package counsel-projectile)
   #+end_src
-  
+
   [[https://github.com/storvik/emacs-lastpass/tree/e07b1a062153b9d56d0112ac45caf76d6bce67c5][LastPass]].
   #+begin_src emacs-lisp :tangle yes
     (use-package lastpass)
