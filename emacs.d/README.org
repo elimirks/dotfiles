@@ -484,6 +484,7 @@
                   (undo-tree-mode nil undo-tree)
                   (which-key-mode nil which-key)
                   (helm-mode nil helm)
+                  (ivy-mode nil ivy)
                   (editorconfig-mode nil editorconfig)
                   (rainbow-mode)
                   (evil-smartparens-mode nil evil-smartparens)
@@ -553,29 +554,46 @@
        (internal-show-cursor nil (not (internal-show-cursor-p))))
    #+end_src
 * Plugins
+  #+begin_src emacs-lisp :tangle yes
+    (use-package ivy :ensure t
+      :diminish (ivy-mode . "")
+      :bind
+      (("M-x" . counsel-M-x)
+       ("C-x C-f" . counsel-find-file)
+       ("C-x b" . ivy-switch-buffer)
+       :map ivy-minibuffer-map
+       ("<tab>" . ivy-next-line)
+       ("<backtab>" . ivy-previous-line)
+       ("RET" . ivy-alt-done))
+      :config
+      (ivy-mode 1)
+      ;; add ‘recentf-mode’ and bookmarks to ‘ivy-switch-buffer’.
+      (setq ivy-use-virtual-buffers t)
+      ;; number of result lines to display
+      (setq ivy-height 20))
+
+    (use-package counsel)
+  #+end_src
+
   [[https://github.com/emacs-helm/helm][Helm]]. A nice minibuffer / completion / etc framework
   #+begin_src emacs-lisp :tangle yes
-     (use-package helm
-       :bind
-       (("M-x" . helm-M-x)
-        ("C-x C-f" . helm-find-files)
-        ("C-x b" . helm-buffers-list)
-        :map helm-find-files-map
-        ("<RET>" . eli/helm-return-find-file))
-       :config
-       (require 'helm-config)
-       (helm-mode 1)
-       (global-set-key (kbd "M-x") 'helm-M-x)
-       (setq helm-M-x-fuzzy-match t          ; Fuzzy M-x matching
-             helm-buffer-max-length nil      ; Don't limit filename length
-             helm-split-window-in-side-p t)) ; Split on the bottom edge
+    (use-package helm
+      :bind
+      (:map helm-find-files-map
+       ("<RET>" . eli/helm-return-find-file))
+      :config
+      (require 'helm-config)
+      (helm-mode 1)
+      (setq helm-M-x-fuzzy-match t          ; Fuzzy M-x matching
+            helm-buffer-max-length nil      ; Don't limit filename length
+            helm-split-window-in-side-p t)) ; Split on the bottom edge
 
-     ;; For using the enter key in helm
-     (defun eli/helm-return-find-file ()
-       (interactive)
-       (if (file-directory-p (helm-get-selection))
-           (helm-execute-persistent-action)
-         (helm-maybe-exit-minibuffer)))
+    ;; For using the enter key in helm
+    (defun eli/helm-return-find-file ()
+      (interactive)
+      (if (file-directory-p (helm-get-selection))
+          (helm-execute-persistent-action)
+        (helm-maybe-exit-minibuffer)))
   #+end_src
    
   [[https://www.emacswiki.org/emacs/CompanyMode][Company Mode]]. For autocompletion.
@@ -749,13 +767,6 @@
                           css-mode-hook)))
   #+end_src
 
-  [[https://github.com/syohex/emacs-helm-ag][Helm AG]]. Silver Searcher integration.
-  #+begin_src emacs-lisp :tangle yes
-    (use-package helm-ag
-      :config
-      (setq helm-ag-insert-at-point 'symbol))
-  #+end_src
-
   [[https://github.com/joaotavora/yasnippet][YASnippet]]. Code snippets.
   #+begin_src emacs-lisp :tangle yes
      (use-package yasnippet
@@ -800,7 +811,7 @@
       :config
       (projectile-mode +1))
 
-    (use-package helm-projectile)
+    (use-package counsel-projectile)
   #+end_src
   
   [[https://github.com/storvik/emacs-lastpass/tree/e07b1a062153b9d56d0112ac45caf76d6bce67c5][LastPass]].
@@ -866,8 +877,8 @@
        ;;(setq evil-split-window-below t)
        ;;(setq evil-vsplit-window-right t)
 
-       ;; Automatically opens helm after :e
-       (define-key evil-ex-map "e " 'helm-find-files)
+       ;; Automatically opens counsel after :e
+       (define-key evil-ex-map "e " 'counsel-find-file)
 
        (general-create-definer bind-leader
          :keymaps 'global
@@ -895,10 +906,11 @@
           (helm-gtags-find-tag (thing-at-point 'symbol)))
        (defun eli/helm-gtags-find-rtag-at-point () (interactive)
           (helm-gtags-find-rtag (thing-at-point 'symbol)))
-       (defun eli/helm-projectile-grep () (interactive)
+
+       (defun eli/counsel-projectile-grep () (interactive)
           (if (executable-find "ag")
-              (helm-projectile-ag)
-            (helm-projectile-grep)))
+              (counsel-projectile-ag)
+            (counsel-projectile-grep)))
 
        (bind-leader
          "a" 'org-agenda
@@ -913,12 +925,12 @@
          "kk" (lambda () (interactive) (kill-buffer (current-buffer)))
          "kw" 'kill-buffer-and-window
          "l" 'org-timeline
-         "m" 'helm-mini
+         "m" 'ivy-switch-buffer
          "nl" 'nameses-load
          "nr" 'nameses-reset
          "ns" 'nameses-save
-         "pf" 'helm-projectile-find-file
-         "pg" 'eli/helm-projectile-grep
+         "pf" 'counsel-projectile-find-file
+         "pg" 'eli/counsel-projectile-grep
          "q" 'quickrun
          "r" 'recompile
          "sco" 'slack-channel-join
@@ -932,7 +944,6 @@
          "ts" 'helm-gtags-show-stack
          "tt" 'eli/helm-gtags-find-tag-at-point
          "w" 'save-buffer
-         "x" 'helm-M-x
          "z" 'zoom))
 
      ;; Tpope's surround
@@ -1168,7 +1179,7 @@
                (lambda ()
                  (add-to-list 'company-backends 'company-jedi)
                  (define-key
-                   python-mode-map (kbd "C-c C-d") 'jedi:show-doc)
+                   python-mode-map (kbd "C-c C-d") 'jedi:show-doc)))
    #+end_src
 ** Elisp
    #+begin_src emacs-lisp :tangle yes
@@ -1438,6 +1449,10 @@
         minibuffer-local-completion-map)
        ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
        (setq sbt:program-options '("-Dsbt.supershell=false")))
+   #+end_src
+** Lua
+   #+begin_src emacs-lisp :tangle yes
+     (use-package lua-mode)
    #+end_src
 * Apps
 ** Gnus
