@@ -3,6 +3,15 @@
 ; |  _|  | || || |\/| | / _` | / __|/ __|
 ; | |___ | || || |  | || (_| || (__ \__ \
 ; |_____||_||_||_|  |_| \__,_| \___||___/
+;; ____________________________________________________________________________
+;; Aquamacs custom-file warning:
+;; Warning: After loading this .emacs file, Aquamacs will also load
+;; customizations from `custom-file' (customizations.el). Any settings there
+;; will override those made here.
+;; Consider moving your startup settings to the Preferences.el file, which
+;; is loaded after `custom-file':
+;; ~/Library/Preferences/Aquamacs Emacs/Preferences
+;; _____________________________________________________________________________
 
 ;; The Org config is where all the magic happens:
 
@@ -25,6 +34,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("c9e858c340109fc5f722e40ffd1c59e437ebfb858793fdf70e76732e1df8a6c5" default)))
  '(flycheck-javascript-flow-args nil)
  '(org-agenda-files (quote ("~/Dropbox/Notes/everything.org")))
  '(package-selected-packages
@@ -37,10 +49,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(company-preview-common ((t (:foreground unspecified :background "#199919991999"))))
- '(company-scrollbar-bg ((t (:background "#199919991999"))))
- '(company-scrollbar-fg ((t (:background "#0ccc0ccc0ccc"))))
- '(company-tooltip ((t (:inherit default :background "#051e051e051e"))))
+ '(company-preview-common ((t (:foreground unspecified :background "#191919"))))
+ '(company-scrollbar-bg ((t (:background "#191919"))))
+ '(company-scrollbar-fg ((t (:background "#0c0c0c"))))
+ '(company-tooltip ((t (:inherit default :background "#050505"))))
  '(company-tooltip-common ((t (:inherit font-lock-constant-face))))
  '(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
  '(linum ((t (:background "color-16" :foreground "#9fc59f"))))

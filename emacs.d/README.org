@@ -4,7 +4,6 @@
      (require 'package)
      (setq package-archives
            '(("gnu"       . "http://elpa.gnu.org/packages/")
-             ("marmalade" . "http://marmalade-repo.org/packages/")
              ("melpa"     . "http://melpa.org/packages/")))
      (setq package-enable-at-startup nil)
      (package-initialize)
@@ -27,7 +26,7 @@
       (server-start)
       ;; MacOS has some trouble finding ispell
       (when (eq system-type 'darwin)
-        (setq ispell-program-name "/usr/local/bin/ispell"))
+        (setq ispell-program-name "/usr/local/bin/aspell"))
       ;; For ansi-term n' stuff
       (setq explicit-shell-file-name "/bin/bash")
       (setq inhibit-splash-screen t ; No welcome screen
@@ -51,7 +50,7 @@
 
       ;; Default browser for links
       (setq browse-url-firefox-program
-            (cond ((eq system-type 'darwin) "/Users/elijah/bin/firefox")
+            (cond ((eq system-type 'darwin) "~/bin/firefox")
                   ((eq system-type 'windows-nt) "/Program Files/Mozilla Firefox/firefox.exe")
                   (t "firefox"))
             browse-url-generic-program browse-url-firefox-program
@@ -62,7 +61,12 @@
       (setq split-height-threshold nil)
       (setq split-width-threshold 160)
     #+end_src
-   
+*** Aquamacs Config
+    #+begin_src emacs-lisp :tangle yes
+      (when (boundp 'aquamacs-version)
+        (tabbar-mode 0)
+        (setq x-select-enable-clipboard t))
+    #+end_src
 *** Disable killing *scratch*
     
     #+begin_src emacs-lisp :tangle yes
@@ -218,6 +222,21 @@
        (interactive)
        (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)="))
      (global-set-key (kbd "C-c e a") 'eli/align-regexp-eq)
+
+     (defun eli/match-in-current-buffer (regex &optional match-number)
+       "Return the first occurrence reegx in the current buffer, or nil if not found"
+       (unless match-number (setq match-number 0))
+       (let ((result nil))
+         (save-excursion
+           (goto-char (point-min))
+           (while (and (not (eobp)) (not result))
+             (let* ((lb (line-beginning-position))
+                    (le (line-end-position))
+                    (ln (buffer-substring-no-properties lb le)))
+               (setq result (when (string-match regex ln)
+                              (match-string match-number ln)))
+               (forward-line 1))))
+         result))
    #+end_src
 ** Global keybindings
 *** Follow newly created windows, only when created manually
@@ -306,27 +325,30 @@
 ** Configure a nice theme
    #+begin_src emacs-lisp :tangle yes
      (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+
      (load-theme 'spolsky t)
-     (set-face-attribute 'default nil :height 110)
-     ;; When in terminal
-     (unless (display-graphic-p) 
-       (setq nlinum-format "%d ")
-       (add-to-list 'default-frame-alist '(background-color . "color-16"))
-       (custom-set-faces
-        '(linum ((t (:background "color-16" :foreground "#9fc59f"))))))
+
+     (if (display-graphic-p)
+         ;; GUI
+         (progn
+           (set-face-attribute 'default nil :height 110))
+       ;; Terminal
+       (progn
+         (setq nlinum-format "%d ")
+         (add-to-list 'default-frame-alist '(background-color . "color-16"))))
    #+end_src
 ** Fancy rainbox parens to sooth my eyes
    #+begin_src emacs-lisp :tangle yes
      (use-package rainbow-delimiters
        :config
        (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
-       (set-face-foreground 'rainbow-delimiters-depth-1-face "firebrick")
-       (set-face-foreground 'rainbow-delimiters-depth-2-face "dark magenta")
-       (set-face-foreground 'rainbow-delimiters-depth-3-face "orange red")
-       (set-face-foreground 'rainbow-delimiters-depth-4-face "blue")
-       (set-face-foreground 'rainbow-delimiters-depth-5-face "spring green")
-       (set-face-foreground 'rainbow-delimiters-depth-6-face "cyan")
-       (set-face-foreground 'rainbow-delimiters-unmatched-face "magenta"))
+       (set-face-foreground 'rainbow-delimiters-depth-1-face "#af0")
+       (set-face-foreground 'rainbow-delimiters-depth-2-face "#fa0")
+       (set-face-foreground 'rainbow-delimiters-depth-3-face "#a0f")
+       (set-face-foreground 'rainbow-delimiters-depth-5-face "#0af")
+       (set-face-foreground 'rainbow-delimiters-depth-4-face "#0fa")
+       (set-face-foreground 'rainbow-delimiters-depth-6-face "#f0a")
+       (set-face-foreground 'rainbow-delimiters-unmatched-face "#fff"))
    #+end_src
 ** Pretty symbols
 *** Global
@@ -462,6 +484,7 @@
                   (undo-tree-mode nil undo-tree)
                   (which-key-mode nil which-key)
                   (helm-mode nil helm)
+                  (ivy-mode nil ivy)
                   (editorconfig-mode nil editorconfig)
                   (rainbow-mode)
                   (evil-smartparens-mode nil evil-smartparens)
@@ -508,30 +531,69 @@
      (when (eq window-system 'w32)
        (set-frame-font "Consolas"))
    #+end_src
+** Change cursor blink color
+   Taken from https://stackoverflow.com/questions/4642835/how-to-change-the-cursor-color-on-emacs
+   
+   This is a fun little mod to change the colour of the cursor for
+   each blink.
+   
+   #+begin_src emacs-lisp :tangle yes
+     (defvar blink-cursor-colors (list  "#92c48f" "#6785c5" "#be369c" "#d9ca65")
+       "On each blink the cursor will cycle to the next color in this list.")
+
+     (setq blink-cursor-count 0)
+     (defun blink-cursor-timer-function ()
+       "Zarza wrote this cyberpunk variant of timer `blink-cursor-timer'. 
+     Warning: overwrites original version in `frame.el'.
+
+     This one changes the cursor color on each blink. Define colors in `blink-cursor-colors'."
+       (when (not (internal-show-cursor-p))
+         (set-cursor-color (nth blink-cursor-count blink-cursor-colors))
+         (setq blink-cursor-count (mod (+ 1 blink-cursor-count)
+                                       (length blink-cursor-colors))))
+       (internal-show-cursor nil (not (internal-show-cursor-p))))
+   #+end_src
 * Plugins
+  #+begin_src emacs-lisp :tangle yes
+    (use-package ivy :ensure t
+      :diminish (ivy-mode . "")
+      :bind
+      (("M-x" . counsel-M-x)
+       ("C-x C-f" . counsel-find-file)
+       ("C-x b" . ivy-switch-buffer)
+       :map ivy-minibuffer-map
+       ("<tab>" . ivy-next-line)
+       ("<backtab>" . ivy-previous-line)
+       ("RET" . ivy-alt-done))
+      :config
+      (ivy-mode 1)
+      ;; add ‘recentf-mode’ and bookmarks to ‘ivy-switch-buffer’.
+      (setq ivy-use-virtual-buffers t)
+      ;; number of result lines to display
+      (setq ivy-height 20))
+
+    (use-package counsel)
+    (use-package smex)
+  #+end_src
+
   [[https://github.com/emacs-helm/helm][Helm]]. A nice minibuffer / completion / etc framework
   #+begin_src emacs-lisp :tangle yes
-     (use-package helm
-       :bind
-       (("M-x" . helm-M-x)
-        ("C-x C-f" . helm-find-files)
-        ("C-x b" . helm-buffers-list)
-        :map helm-find-files-map
-        ("<RET>" . eli/helm-return-find-file))
-       :config
-       (require 'helm-config)
-       (helm-mode 1)
-       (global-set-key (kbd "M-x") 'helm-M-x)
-       (setq helm-M-x-fuzzy-match t          ; Fuzzy M-x matching
-             helm-buffer-max-length nil      ; Don't limit filename length
-             helm-split-window-in-side-p t)) ; Split on the bottom edge
+    (use-package helm
+      :bind
+      (:map helm-find-files-map
+       ("<RET>" . eli/helm-return-find-file))
+      :config
+      (require 'helm-config)
+      (setq helm-M-x-fuzzy-match t          ; Fuzzy M-x matching
+            helm-buffer-max-length nil      ; Don't limit filename length
+            helm-split-window-in-side-p t)) ; Split on the bottom edge
 
-     ;; For using the enter key in helm
-     (defun eli/helm-return-find-file ()
-       (interactive)
-       (if (file-directory-p (helm-get-selection))
-           (helm-execute-persistent-action)
-         (helm-maybe-exit-minibuffer)))
+    ;; For using the enter key in helm
+    (defun eli/helm-return-find-file ()
+      (interactive)
+      (if (file-directory-p (helm-get-selection))
+          (helm-execute-persistent-action)
+        (helm-maybe-exit-minibuffer)))
   #+end_src
    
   [[https://www.emacswiki.org/emacs/CompanyMode][Company Mode]]. For autocompletion.
@@ -544,10 +606,6 @@
       (setq company-minimum-prefix-length 1)
       (setq company-selection-wrap-around t)
       (setq company-global-modes '(not org-mode)) ; Disable in org
-
-      (define-key company-active-map [backtab] 'company-select-previous)
-      (define-key company-active-map [tab] 'company-select-next)
-
 
       ;; Style nicely
       (let* ((bg (face-attribute 'default :background))
@@ -584,7 +642,12 @@
       (add-hook 'company-completion-finished-hook
                 'company-maybe-turn-on-fci)
       (add-hook 'company-completion-cancelled-hook
-                'company-maybe-turn-on-fci))
+                'company-maybe-turn-on-fci)
+
+      :bind
+      (:map company-active-map
+            ("C-n" . company-select-next-or-abort)
+            ("C-p" . company-select-previous-or-abort)))
   #+end_src
 
   [[https://github.com/flycheck/flycheck][Flycheck]]. For syntax correction.
@@ -660,10 +723,10 @@
         :mode 'blarb-mode))
   #+end_src
 
-  [[https://github.com/myrkr/dictionary-el][Dictionary.]] For word lookups.
+  [[https://oremacs.com/2015/05/22/define-word/][Define Word.]] For word lookups.
    
   #+begin_src emacs-lisp :tangle yes
-     (use-package dictionary)
+     (use-package define-word)
   #+end_src
    
   [[https://github.com/Fuco1/smartparens][Smartparens.]] Sane automatic parens.
@@ -704,11 +767,6 @@
                           css-mode-hook)))
   #+end_src
 
-  [[https://github.com/syohex/emacs-helm-ag][Helm AG]]. Silver Searcher integration.
-  #+begin_src emacs-lisp :tangle yes
-     (use-package helm-ag)
-  #+end_src
-
   [[https://github.com/joaotavora/yasnippet][YASnippet]]. Code snippets.
   #+begin_src emacs-lisp :tangle yes
      (use-package yasnippet
@@ -720,7 +778,14 @@
 
   [[https://github.com/emacs-lsp/lsp-mode][LSP Mode]].
   #+begin_src emacs-lisp :tangle yes
-    (use-package lsp-mode)
+    (use-package lsp-mode
+      :hook
+      (scala-mode . lsp)
+      :config
+      (setq lsp-prefer-flymake nil))
+
+    (use-package lsp-ui)
+
     (use-package company-lsp
       :config
       (push 'company-lsp company-backends))
@@ -735,9 +800,62 @@
             '(python-mode-hook)))
   #+end_src
   
-  [[https://github.com/Malabarba/emacs-google-this][Google This].
+  [[https://github.com/Malabarba/emacs-google-this][Google This]].
   #+begin_src emacs-lisp :tangle yes
     (use-package google-this)
+  #+end_src
+  
+  [[https://github.com/bbatsov/projectile][Projectile]].
+  #+begin_src emacs-lisp :tangle yes
+    (use-package projectile
+      :config
+      (projectile-mode +1)
+      (setq projectile-completion-system 'ivy))
+
+    (use-package counsel-projectile)
+  #+end_src
+
+  [[https://github.com/storvik/emacs-lastpass/tree/e07b1a062153b9d56d0112ac45caf76d6bce67c5][LastPass]].
+  #+begin_src emacs-lisp :tangle yes
+    (use-package lastpass)
+
+    (defun eli/lastpass-helm-list-all ()
+      (let* ((cmd-out (shell-command-to-string "lpass ls --color=never"))
+             (raw-lines (split-string cmd-out "\n" t)))
+        (mapcar (lambda (line)
+                  (string-match "^\\(.*\\)/\\(.*\\) \\[id: \\([0-9]+\\)\\]$" line)
+                  (list (match-string 1 line)
+                        (match-string 2 line)
+                        (match-string 3 line)))
+                raw-lines)))
+
+    (defun eli/lastpass-helm-row-for-candidate (candidate)
+      (let ((name (nth 1 candidate)))
+        (list name candidate)))
+
+    (defun eli/lastpass-helm-copy-candidate (candidates)
+      "Copies the candidate password to clipboard"
+
+      (let* ((candidate (car candidates))
+             (id (nth 2 candidate))
+             (name (nth 1 candidate))
+             (cmd (concat "lpass show " id " --password --color=never"))
+             (pw (shell-command-to-string cmd)))
+        (kill-new pw)
+        (message (concat "Copied password for " name " to the clipboard"))))
+
+    (defun eli/lastpass-helm-search ()
+      "Search for a lastpass password to copy to clipboard"
+      (interactive)
+      (let* ((list-forms (eli/lastpass-helm-list-all))
+             (rows (mapcar 'eli/lastpass-helm-row-for-candidate list-forms)))
+        (helm
+         :prompt "Find password: "
+         :sources (helm-build-sync-source "Lastpass Search"
+                    :candidates 'rows
+                    :action 'eli/lastpass-helm-copy-candidate))))
+
+    (global-set-key (kbd "C-c l p") 'eli/lastpass-helm-search)
   #+end_src
 * Evil Mode
 ** Load and configure evil
@@ -760,8 +878,8 @@
        ;;(setq evil-split-window-below t)
        ;;(setq evil-vsplit-window-right t)
 
-       ;; Automatically opens helm after :e
-       (define-key evil-ex-map "e " 'helm-find-files)
+       ;; Automatically opens counsel after :e
+       (define-key evil-ex-map "e " 'counsel-find-file)
 
        (general-create-definer bind-leader
          :keymaps 'global
@@ -790,24 +908,30 @@
        (defun eli/helm-gtags-find-rtag-at-point () (interactive)
           (helm-gtags-find-rtag (thing-at-point 'symbol)))
 
+       (defun eli/counsel-projectile-grep () (interactive)
+          (if (executable-find "ag")
+              (counsel-projectile-ag)
+            (counsel-projectile-grep)))
+
        (bind-leader
          "a" 'org-agenda
          "c" 'cfw:open-org-calendar
          "dd" (lambda () (interactive) (message (current-time-string)))
-         "dl" 'dictionary-lookup-definition
-         "ds" 'dictionary-search
+         "dl" 'define-word-at-point
+         "ds" 'define-word
          "e" 'gnus
          "f" 'helm-flycheck
          "g" 'magit-status
-         "hp" 'helm-ag-project-root
          "kr" 'helm-show-kill-ring
-         "kk" 'kill-this-buffer
+         "kk" (lambda () (interactive) (kill-buffer (current-buffer)))
          "kw" 'kill-buffer-and-window
          "l" 'org-timeline
-         "m" 'helm-mini
+         "m" 'ivy-switch-buffer
          "nl" 'nameses-load
          "nr" 'nameses-reset
          "ns" 'nameses-save
+         "pf" 'counsel-projectile-find-file
+         "pg" 'eli/counsel-projectile-grep
          "q" 'quickrun
          "r" 'recompile
          "sco" 'slack-channel-join
@@ -821,7 +945,6 @@
          "ts" 'helm-gtags-show-stack
          "tt" 'eli/helm-gtags-find-tag-at-point
          "w" 'save-buffer
-         "x" 'helm-M-x
          "z" 'zoom))
 
      ;; Tpope's surround
@@ -848,6 +971,14 @@
        '(lambda () (interactive)
           (evil-ex "")))
    #+end_src
+   
+   Fix for using Emacs in the terminal with EVIL+org mode
+   #+begin_src emacs-lisp :tangle yes
+     (unless (display-graphic-p)
+       (add-hook 'org-mode-hook
+                 (lambda ()
+                   (define-key evil-normal-state-map (kbd "TAB") 'org-cycle))))
+   #+end_src
 * Org Mode
 ** Basic
    #+begin_src emacs-lisp :tangle yes
@@ -873,9 +1004,6 @@
       org-latex-caption-above nil)
 
      (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-     ;; To enable an agenda hotkey
-     (global-set-key "\C-ca" 'org-agenda)
-     (global-set-key "\C-cb" 'org-iswitchb)
 
      (with-eval-after-load 'org
        (org-babel-do-load-languages
@@ -960,6 +1088,14 @@
                          "pdflatex -shell-escape -interaction nonstopmode"
                          " -output-directory %o %f")))
    #+end_src
+** MacOS
+   Fixes a hickup on MacOS when running in terminal Emacs
+   #+begin_src emacs-lisp :tangle yes
+     (when (eq system-type 'darwin)
+       (lambda ()
+         (evil-define-key (kbd "TAB") nil)
+         (local-set-key (kbd "TAB") 'org-cycle)))
+   #+end_src
 * Language Modes
 ** Markdown
    #+begin_src emacs-lisp :tangle yes
@@ -976,17 +1112,19 @@
    #+end_src
 ** Matlab
    #+begin_src emacs-lisp :tangle yes
-     (add-to-list 'custom-theme-load-path "~/.emacs.d/lisp/matlab-emacs")
-     (load-library "matlab-load")
-     (matlab-cedet-setup)
-     (autoload 'matlab-mode "matlab" "Matlab Editing Mode" t)
-     (add-to-list
-      'auto-mode-alist
-      '("\\.m$" . matlab-mode))
-     (setq matlab-indent-function t)
-     (setq matlab-shell-command "matlab")
-     ;; elisp setup for matlab-mode:
-     (setq matlab-shell-command-switches (list "-nodesktop" "-nosplash"))
+     ;; This Matlab mode breaks the built in Aquamacs matlab mode
+     (unless (boundp 'aquamacs-version)
+       (add-to-list 'custom-theme-load-path "~/.emacs.d/lisp/matlab-emacs")
+       (load-library "matlab-load")
+       (matlab-cedet-setup)
+       (autoload 'matlab-mode "matlab" "Matlab Editing Mode" t)
+       (add-to-list
+        'auto-mode-alist
+        '("\\.m$" . matlab-mode))
+       (setq matlab-indent-function t)
+       (setq matlab-shell-command "matlab")
+       ;; elisp setup for matlab-mode:
+       (setq matlab-shell-command-switches (list "-nodesktop" "-nosplash")))
    #+end_src
 ** C/C++
    #+begin_src emacs-lisp :tangle yes
@@ -1023,6 +1161,14 @@
    
 ** Python
    #+begin_src emacs-lisp :tangle yes
+     (add-hook 'python-mode-hook
+               (lambda ()
+                 ;; Python smart tabs
+                 (smart-tabs-advice py-indent-line py-indent-offset)
+                 (smart-tabs-advice py-newline-and-indent py-indent-offset)
+                 (smart-tabs-advice py-indent-region py-indent-offset)
+                 (setq evil-indent-convert-tabs nil)))
+
      (when (eq system-type 'darwin)
        (setq python-shell-interpreter "/usr/local/bin/python3"))
 
@@ -1034,13 +1180,7 @@
                (lambda ()
                  (add-to-list 'company-backends 'company-jedi)
                  (define-key
-                   python-mode-map (kbd "C-c C-d") 'jedi:show-doc)
-
-                 ;; Python smart tabs
-                 (smart-tabs-advice py-indent-line py-indent-offset)
-                 (smart-tabs-advice py-newline-and-indent py-indent-offset)
-                 (smart-tabs-advice py-indent-region py-indent-offset)
-                 (setq evil-indent-convert-tabs nil)))
+                   python-mode-map (kbd "C-c C-d") 'jedi:show-doc)))
    #+end_src
 ** Elisp
    #+begin_src emacs-lisp :tangle yes
@@ -1291,6 +1431,30 @@
      (with-eval-after-load 'rust-mode
        (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
    #+end_src
+** Scala
+   Config based on: https://scalameta.org/metals/docs/editors/emacs.html
+
+   #+begin_src emacs-lisp :tangle yes
+     ;; Scala & SBT mode
+     (use-package scala-mode
+       :mode "\\.s\\(cala\\|bt\\)$")
+
+     (use-package sbt-mode
+       :commands sbt-start sbt-command
+       :config
+       ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+       ;; allows using SPACE when in the minibuffer
+       (substitute-key-definition
+        'minibuffer-complete-word
+        'self-insert-command
+        minibuffer-local-completion-map)
+       ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
+       (setq sbt:program-options '("-Dsbt.supershell=false")))
+   #+end_src
+** Lua
+   #+begin_src emacs-lisp :tangle yes
+     (use-package lua-mode)
+   #+end_src
 * Apps
 ** Gnus
    #+begin_src emacs-lisp :tangle yes
@@ -1473,3 +1637,101 @@
                    ("C-c C-r" . xkcd-rand)
                    ("C-c C-a" . xkcd-alt-text)))
    #+end_src
+* AZ AWS Mode
+  This is an experimental AWS mode I'm working on _UNOFFICIALLY_. Use
+  at your own risk :)
+  
+  #+begin_src emacs-lisp :tangle yes
+    (require 'json)
+    (add-to-list 'org-src-lang-modes '("sql-athena" . sql))
+
+    (defvar az-aws/athena/invalid-query-prefix
+      "Invalid Query: ")
+
+    (defun az-aws/athena/result-response-to-table (response-json)
+      (let* ((raw-rows (cdr (assoc 'Rows (cdr (assoc 'ResultSet query-result)))))
+             (rows (mapcar
+                    (lambda (raw-row)
+                      (cdr (assoc 'Data raw-row)))
+                    raw-rows))
+             (table (mapcar
+                     (lambda (row)
+                       (mapcar (lambda (raw-value)
+                                 (cdr (assoc 'VarCharValue raw-value)))
+                               row))
+                     rows)))
+        table))
+
+    (defun az-aws/athena/wait-for-query-result (query-id)
+      (let ((result nil)
+            (response nil))
+        (while (not result)
+          (sleep-for 2)
+          (setq response (az-aws/athena/get-query-result query-id))
+          (setq result
+                (when (or (not (stringp response))
+                          (not (string-match-p "\\(QUEUED\\|RUNNING\\)" response)))
+                  response)))
+        result))
+
+    (defun org-babel-execute:sql-athena (body params)
+      "Execute a block of Athena (SQL) code with Babel.
+      This function is called by `org-babel-execute-src-block'."
+      (let* ((session (org-babel-python-initiate-session
+                       (cdr (assoc :session params))))
+             (query-id-response (az-aws/athena/execute-query body))
+             (query-result
+              (if (string-prefix-p az-aws/athena/invalid-query-prefix
+                                   query-id-response)
+                  query-id-response ;; Invalid query, dump the response
+                (az-aws/athena/wait-for-query-result query-id-response)))
+             (org-output (if (string-prefix-p az-aws/athena/invalid-query-prefix
+                                              query-result)
+                             query-result ;; Invalid query, dump string
+                           (az-aws/athena/result-response-to-table query-result))))
+        (org-babel-reassemble-table
+         org-output
+         (org-babel-pick-name (cdr (assoc :colname-names params))
+                              (cdr (assoc :colnames params)))
+         (org-babel-pick-name (cdr (assoc :rowname-names params))
+                              (cdr (assoc :rownames params))))))
+
+    (defun az-aws/athena/get-query-result (query-id)
+      (let* ((query-response (shell-command-to-string
+                              (concat "aws athena get-query-results "
+                                      "--query-execution-id "
+                                      (shell-quote-argument query-id))))
+             (is-valid-query (az-aws/validate-json-string query-response)))
+        (if is-valid-query
+            (json-read-from-string query-response)
+          (concat az-aws/athena/invalid-query-prefix query-response))))
+
+    (defun az-aws/athena/execute-query (query)
+      (let* ((query-response (shell-command-to-string
+                              (concat "aws athena start-query-execution "
+                                      "--query-string "
+                                      (shell-quote-argument query))))
+             (is-valid-query (az-aws/validate-json-string query-response))
+             (query-id (if is-valid-query
+                           (cdr (assoc 'QueryExecutionId
+                                       (json-read-from-string query-response)))
+                         nil)))
+        (if is-valid-query
+            query-id
+          (concat az-aws/athena/invalid-query-prefix query-response))))
+
+    (defun az-aws/validate-json-string (string)
+      "Validates a JSON string."
+      (condition-case nil
+          (progn
+            (json-read-from-string string)
+            t)
+        (error nil)))
+
+    (defun az-aws/glue/start-crawler (&optional name)
+      (interactive)
+      (message (shell-command-to-string
+                (concat "aws glue start-crawler --name "
+                        (shell-quote-argument
+                         (if name name (read-string "Crawler name: ")))))))
+  #+end_src
