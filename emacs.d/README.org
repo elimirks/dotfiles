@@ -65,7 +65,9 @@
     #+begin_src emacs-lisp :tangle yes
       (when (boundp 'aquamacs-version)
         (tabbar-mode 0)
-        (setq x-select-enable-clipboard t))
+        (setq x-select-enable-clipboard t)
+        (setq aquamacs-autoface-mode nil)
+        (remove-hook 'minibuffer-setup-hook 'aquamacs-set-minibuffer-face))
     #+end_src
 *** Disable killing *scratch*
     
@@ -952,6 +954,7 @@
        :config
        (global-evil-surround-mode 1))
    #+end_src
+
 ** External config for powerline and evil powerline
    #+begin_src emacs-lisp :tangle yes
      ;; (~/.emacs.d/lisp/init-powerline.el)
@@ -1734,4 +1737,113 @@
                 (concat "aws glue start-crawler --name "
                         (shell-quote-argument
                          (if name name (read-string "Crawler name: ")))))))
+
+    (defun az-aws/s3/ls-recursive (bucket key)
+      "Expect key to NOT end in a slash. Empty key string for entire bucket"
+      (let* ((path (format "s3://%s/%s" bucket key))
+             (command (concat "aws s3 ls --recursive " path))
+             (output (string-trim (shell-command-to-string command)))
+             (entries (split-string output "\n")))
+        (mapcar (lambda (entry)
+                  ;; TODO: Trim the key string
+                  (string-match "^[-0-9]+ [:0-9]+\s+[0-9]+ \\(.*\\)" entry)
+                  (substring (match-string 1 entry) (+ 1 (length key))))
+                entries)))
+
+    (defun az-aws/s3/open-s3-file (s3-path)
+      (let* ((destination "/tmp/emacs-az-aws/")
+             (local-file-name
+              (progn
+                ;; Download the file
+                (shell-command (format "aws s3 cp %s %s" s3-path destination))
+                ;; Extract it, if it's in a gzip format
+                (shell-command (format "gzip -d %s/*gz" destination))
+                (string-trim
+                 (shell-command-to-string (format "ls %s/ | head -1" destination)))))
+             (local-path (concat destination local-file-name)))
+
+        (switch-to-buffer (get-buffer-create "*az-aws-s3-file*"))
+        (erase-buffer)
+
+        (message local-path)
+        (insert-file-contents local-path)
+
+        (shell-command (format "rm %s" local-path))))
+
+    (defun az-aws/s3/ivy-open-file-search (bucket key)
+      (ivy-read "File to open: "
+                (az-aws/s3/ls-recursive bucket key)
+                :sort t
+                :action (lambda (selection)
+                          (az-aws/s3/open-s3-file
+                           (format "s3://%s/%s/%s" bucket key selection)))))
+
+    (defun az-aws/emr/normalize-cluster-listing (json)
+      (let* ((id (cdr (assoc 'Id json)))
+             (name (cdr (assoc 'Name json)))
+             (status (cdr (assoc 'Status json)))
+             (state (cdr (assoc 'State status)))
+             (timeline (cdr (assoc 'Timeline status)))
+             (created-time (cdr (assoc 'CreationDateTime timeline)))
+             (display-name (format "%-13s %s %s" state id name)))
+        (list display-name id state created-time)))
+
+    (defun az-aws/emr/ls-recent ()
+      (let* ((two-days-ago (format-time-string "%Y-%m-%dT%T" (- (float-time) (* 48 60 60))))
+             (command (concat "aws emr list-clusters --created-after "
+                              two-days-ago))
+             (output (shell-command-to-string command))
+             (json-output (json-read-from-string output))
+             (json-cluster-vector (cdr (assoc 'Clusters json-output))))
+        (mapcar 'az-aws/emr/normalize-cluster-listing json-cluster-vector)))
+
+    (defun az-aws/emr/describe-cluster (cluster-id)
+      (let* ((output (shell-command-to-string
+                      (concat "aws emr describe-cluster --cluster-id "
+                              (shell-quote-argument cluster-id))))
+             (json-output (json-read-from-string output)))
+        (cdr (assoc 'Cluster json-output))))
+
+    (defun az-aws/emr/list-steps (cluster-id)
+      (let* ((output (shell-command-to-string
+                      (concat "aws emr list-steps --cluster-id "
+                              (shell-quote-argument cluster-id))))
+             (json-output (json-read-from-string output)))
+        (cdr (assoc 'Steps json-output))))
+
+    (defun az-aws/emr/get-s3-log-bucket (cluster-id)
+      "Returns the bucket,key pair of the s3 bucket log for the given cluster"
+      (let* ((cluster-json (az-aws/emr/describe-cluster cluster-id))
+             (s3n-uri (cdr (assoc 'LogUri cluster-json))))
+        (string-match "^s3n?://\\([-_a-zA-Z0-9]+\\)/\\(.*\\)/$" s3n-uri)
+        (list
+         (match-string 1 s3n-uri)
+         (match-string 2 s3n-uri))))
+
+    (defun az-aws/emr/ivy-show-step-logs (cluster-id)
+      (let* ((log-bucket (az-aws/emr/get-s3-log-bucket cluster-id))
+             (bucket (car log-bucket))
+             (log-key (cadr log-bucket))
+             (steps-key (format "%s/%s/steps" log-key cluster-id)))
+        (az-aws/s3/ivy-open-file-search bucket steps-key)))
+
+    (defun az-aws/emr/ivy-cluster-op (cluster-id)
+      (ivy-read (format "Operation (%s): " cluster-id)
+                '(("Copy ID to Clipboard" kill-new)
+                  ("Dump step logs" az-aws/emr/ivy-show-step-logs))
+                :sort t
+                :action (lambda (selection)
+                          (funcall (cadr selection) cluster-id))))
+
+    (defun az-aws/emr/ivy-ls ()
+      (interactive)
+      (ivy-read "Cluster: "
+                (az-aws/emr/ls-recent)
+                :sort t
+                :action (lambda (selection)
+                          (az-aws/emr/ivy-cluster-op (cadr selection)))))
+  #+end_src
+
+  #+begin_src emacs-lisp :tangle yes
+    (global-set-key (kbd "C-c a e") 'az-aws/emr/ivy-ls)
   #+end_src
