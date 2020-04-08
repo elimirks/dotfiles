@@ -63,12 +63,15 @@
     #+end_src
 *** Aquamacs Config
     #+begin_src emacs-lisp :tangle yes
-      (when (boundp 'aquamacs-version)
-        (tabbar-mode 0)
-        (setq x-select-enable-clipboard t)
-        (setq aquamacs-autoface-mode nil)
-        (remove-hook 'minibuffer-setup-hook 'aquamacs-set-minibuffer-face))
+            (when (boundp 'aquamacs-version)
+              (tabbar-mode 0)
+              (setq x-select-enable-clipboard t)
+              (setq aquamacs-autoface-mode nil)
+              (remove-hook 'minibuffer-setup-hook 'aquamacs-set-minibuffer-face)
+              (setq python-environment-default-root-name
+                    "~/.emacs.d/.python-environments/default"))
     #+end_src
+
 *** Disable killing *scratch*
     
     #+begin_src emacs-lisp :tangle yes
@@ -859,6 +862,11 @@
 
     (global-set-key (kbd "C-c l p") 'eli/lastpass-helm-search)
   #+end_src
+  
+  #+begin_src emacs-lisp :tangle yes
+    (require 'aws-console)
+    (global-set-key (kbd "C-c a e") 'aws-console/emr/ivy-ls)
+  #+end_src
 * Evil Mode
 ** Load and configure evil
    #+begin_src emacs-lisp :tangle yes
@@ -957,7 +965,6 @@
 
 ** External config for powerline and evil powerline
    #+begin_src emacs-lisp :tangle yes
-     ;; (~/.emacs.d/lisp/init-powerline.el)
      (require 'init-powerline)
    #+end_src
 ** Global Evil Plugins
@@ -1090,14 +1097,6 @@
            (make-list 3 (concat
                          "pdflatex -shell-escape -interaction nonstopmode"
                          " -output-directory %o %f")))
-   #+end_src
-** MacOS
-   Fixes a hickup on MacOS when running in terminal Emacs
-   #+begin_src emacs-lisp :tangle yes
-     (when (eq system-type 'darwin)
-       (lambda ()
-         (evil-define-key (kbd "TAB") nil)
-         (local-set-key (kbd "TAB") 'org-cycle)))
    #+end_src
 * Language Modes
 ** Markdown
@@ -1640,210 +1639,3 @@
                    ("C-c C-r" . xkcd-rand)
                    ("C-c C-a" . xkcd-alt-text)))
    #+end_src
-* AZ AWS Mode
-  This is an experimental AWS mode I'm working on _UNOFFICIALLY_. Use
-  at your own risk :)
-  
-  #+begin_src emacs-lisp :tangle yes
-    (require 'json)
-    (add-to-list 'org-src-lang-modes '("sql-athena" . sql))
-
-    (defvar az-aws/athena/invalid-query-prefix
-      "Invalid Query: ")
-
-    (defun az-aws/athena/result-response-to-table (response-json)
-      (let* ((raw-rows (cdr (assoc 'Rows (cdr (assoc 'ResultSet query-result)))))
-             (rows (mapcar
-                    (lambda (raw-row)
-                      (cdr (assoc 'Data raw-row)))
-                    raw-rows))
-             (table (mapcar
-                     (lambda (row)
-                       (mapcar (lambda (raw-value)
-                                 (cdr (assoc 'VarCharValue raw-value)))
-                               row))
-                     rows)))
-        table))
-
-    (defun az-aws/athena/wait-for-query-result (query-id)
-      (let ((result nil)
-            (response nil))
-        (while (not result)
-          (sleep-for 2)
-          (setq response (az-aws/athena/get-query-result query-id))
-          (setq result
-                (when (or (not (stringp response))
-                          (not (string-match-p "\\(QUEUED\\|RUNNING\\)" response)))
-                  response)))
-        result))
-
-    (defun org-babel-execute:sql-athena (body params)
-      "Execute a block of Athena (SQL) code with Babel.
-      This function is called by `org-babel-execute-src-block'."
-      (let* ((session (org-babel-python-initiate-session
-                       (cdr (assoc :session params))))
-             (query-id-response (az-aws/athena/execute-query body))
-             (query-result
-              (if (string-prefix-p az-aws/athena/invalid-query-prefix
-                                   query-id-response)
-                  query-id-response ;; Invalid query, dump the response
-                (az-aws/athena/wait-for-query-result query-id-response)))
-             (org-output (if (string-prefix-p az-aws/athena/invalid-query-prefix
-                                              query-result)
-                             query-result ;; Invalid query, dump string
-                           (az-aws/athena/result-response-to-table query-result))))
-        (org-babel-reassemble-table
-         org-output
-         (org-babel-pick-name (cdr (assoc :colname-names params))
-                              (cdr (assoc :colnames params)))
-         (org-babel-pick-name (cdr (assoc :rowname-names params))
-                              (cdr (assoc :rownames params))))))
-
-    (defun az-aws/athena/get-query-result (query-id)
-      (let* ((query-response (shell-command-to-string
-                              (concat "aws athena get-query-results "
-                                      "--query-execution-id "
-                                      (shell-quote-argument query-id))))
-             (is-valid-query (az-aws/validate-json-string query-response)))
-        (if is-valid-query
-            (json-read-from-string query-response)
-          (concat az-aws/athena/invalid-query-prefix query-response))))
-
-    (defun az-aws/athena/execute-query (query)
-      (let* ((query-response (shell-command-to-string
-                              (concat "aws athena start-query-execution "
-                                      "--query-string "
-                                      (shell-quote-argument query))))
-             (is-valid-query (az-aws/validate-json-string query-response))
-             (query-id (if is-valid-query
-                           (cdr (assoc 'QueryExecutionId
-                                       (json-read-from-string query-response)))
-                         nil)))
-        (if is-valid-query
-            query-id
-          (concat az-aws/athena/invalid-query-prefix query-response))))
-
-    (defun az-aws/validate-json-string (string)
-      "Validates a JSON string."
-      (condition-case nil
-          (progn
-            (json-read-from-string string)
-            t)
-        (error nil)))
-
-    (defun az-aws/glue/start-crawler (&optional name)
-      (interactive)
-      (message (shell-command-to-string
-                (concat "aws glue start-crawler --name "
-                        (shell-quote-argument
-                         (if name name (read-string "Crawler name: ")))))))
-
-    (defun az-aws/s3/ls-recursive (bucket key)
-      "Expect key to NOT end in a slash. Empty key string for entire bucket"
-      (let* ((path (format "s3://%s/%s" bucket key))
-             (command (concat "aws s3 ls --recursive " path))
-             (output (string-trim (shell-command-to-string command)))
-             (entries (split-string output "\n")))
-        (mapcar (lambda (entry)
-                  ;; TODO: Trim the key string
-                  (string-match "^[-0-9]+ [:0-9]+\s+[0-9]+ \\(.*\\)" entry)
-                  (substring (match-string 1 entry) (+ 1 (length key))))
-                entries)))
-
-    (defun az-aws/s3/open-s3-file (s3-path)
-      (let* ((destination "/tmp/emacs-az-aws/")
-             (local-file-name
-              (progn
-                ;; Download the file
-                (shell-command (format "aws s3 cp %s %s" s3-path destination))
-                ;; Extract it, if it's in a gzip format
-                (shell-command (format "gzip -d %s/*gz" destination))
-                (string-trim
-                 (shell-command-to-string (format "ls %s/ | head -1" destination)))))
-             (local-path (concat destination local-file-name)))
-
-        (switch-to-buffer (get-buffer-create "*az-aws-s3-file*"))
-        (erase-buffer)
-
-        (message local-path)
-        (insert-file-contents local-path)
-
-        (shell-command (format "rm %s" local-path))))
-
-    (defun az-aws/s3/ivy-open-file-search (bucket key)
-      (ivy-read "File to open: "
-                (az-aws/s3/ls-recursive bucket key)
-                :sort t
-                :action (lambda (selection)
-                          (az-aws/s3/open-s3-file
-                           (format "s3://%s/%s/%s" bucket key selection)))))
-
-    (defun az-aws/emr/normalize-cluster-listing (json)
-      (let* ((id (cdr (assoc 'Id json)))
-             (name (cdr (assoc 'Name json)))
-             (status (cdr (assoc 'Status json)))
-             (state (cdr (assoc 'State status)))
-             (timeline (cdr (assoc 'Timeline status)))
-             (created-time (cdr (assoc 'CreationDateTime timeline)))
-             (display-name (format "%-13s %s %s" state id name)))
-        (list display-name id state created-time)))
-
-    (defun az-aws/emr/ls-recent ()
-      (let* ((two-days-ago (format-time-string "%Y-%m-%dT%T" (- (float-time) (* 48 60 60))))
-             (command (concat "aws emr list-clusters --created-after "
-                              two-days-ago))
-             (output (shell-command-to-string command))
-             (json-output (json-read-from-string output))
-             (json-cluster-vector (cdr (assoc 'Clusters json-output))))
-        (mapcar 'az-aws/emr/normalize-cluster-listing json-cluster-vector)))
-
-    (defun az-aws/emr/describe-cluster (cluster-id)
-      (let* ((output (shell-command-to-string
-                      (concat "aws emr describe-cluster --cluster-id "
-                              (shell-quote-argument cluster-id))))
-             (json-output (json-read-from-string output)))
-        (cdr (assoc 'Cluster json-output))))
-
-    (defun az-aws/emr/list-steps (cluster-id)
-      (let* ((output (shell-command-to-string
-                      (concat "aws emr list-steps --cluster-id "
-                              (shell-quote-argument cluster-id))))
-             (json-output (json-read-from-string output)))
-        (cdr (assoc 'Steps json-output))))
-
-    (defun az-aws/emr/get-s3-log-bucket (cluster-id)
-      "Returns the bucket,key pair of the s3 bucket log for the given cluster"
-      (let* ((cluster-json (az-aws/emr/describe-cluster cluster-id))
-             (s3n-uri (cdr (assoc 'LogUri cluster-json))))
-        (string-match "^s3n?://\\([-_a-zA-Z0-9]+\\)/\\(.*\\)/$" s3n-uri)
-        (list
-         (match-string 1 s3n-uri)
-         (match-string 2 s3n-uri))))
-
-    (defun az-aws/emr/ivy-show-step-logs (cluster-id)
-      (let* ((log-bucket (az-aws/emr/get-s3-log-bucket cluster-id))
-             (bucket (car log-bucket))
-             (log-key (cadr log-bucket))
-             (steps-key (format "%s/%s/steps" log-key cluster-id)))
-        (az-aws/s3/ivy-open-file-search bucket steps-key)))
-
-    (defun az-aws/emr/ivy-cluster-op (cluster-id)
-      (ivy-read (format "Operation (%s): " cluster-id)
-                '(("Copy ID to Clipboard" kill-new)
-                  ("Dump step logs" az-aws/emr/ivy-show-step-logs))
-                :sort t
-                :action (lambda (selection)
-                          (funcall (cadr selection) cluster-id))))
-
-    (defun az-aws/emr/ivy-ls ()
-      (interactive)
-      (ivy-read "Cluster: "
-                (az-aws/emr/ls-recent)
-                :sort t
-                :action (lambda (selection)
-                          (az-aws/emr/ivy-cluster-op (cadr selection)))))
-  #+end_src
-
-  #+begin_src emacs-lisp :tangle yes
-    (global-set-key (kbd "C-c a e") 'az-aws/emr/ivy-ls)
-  #+end_src
