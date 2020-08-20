@@ -97,6 +97,72 @@
                     (shell-quote-argument
                      (if name name (read-string "Crawler name: ")))))))
 
+(defun aws-console/glue/get-database-names ()
+  (let* ((db-json-string (shell-command-to-string "aws glue get-databases"))
+         (db-json (json-read-from-string db-json-string))
+         (db-entries (cdr (assoc 'DatabaseList db-json))))
+    (mapcar
+     (lambda (entry) (cdr (assoc 'Name entry)))
+     db-entries)))
+
+(defun aws-console/glue/get-table-names (db)
+  (let* ((table-json-string
+          (shell-command-to-string
+           (format "aws glue get-tables --database-name %s" db)))
+         (table-json (json-read-from-string table-json-string))
+         (table-entries (cdr (assoc 'TableList table-json))))
+    (mapcar
+     (lambda (entry) (cdr (assoc 'Name entry)))
+     table-entries)))
+
+(defun aws-console/glue/get-table (db table)
+  (let* ((table-json-string
+          (shell-command-to-string
+           (format "aws glue get-table --database-name %s --name %s" db table)))
+         (table-json (json-read-from-string table-json-string)))
+    (cdr (assoc 'Table table-json))))
+
+(defun aws-console/glue/delete-table (database table)
+  (shell-command-to-string
+   (format "aws glue delete-table --database-name %s --name %s" database table))
+  (message (format "Table %s deleted from %s" table database)))
+
+(defun aws-console/glue/show-table-schema (database table)
+  (let* ((table (aws-console/glue/get-table database table))
+         (storage-descriptor (cdr (assoc 'StorageDescriptor table)))
+         (json-columns (cdr (assoc 'Columns storage-descriptor)))
+         (columns (mapcar
+                   (lambda (column)
+                     (let ((name (cdr (assoc 'Name column)))
+                           (type (cdr (assoc 'Type column))))
+                       (format "%s:\n%s" name type)))
+                   json-columns))
+         (column-string (string-join columns "\n\n")))
+    (switch-to-buffer (get-buffer-create "*aws-console-glue-schema*"))
+    (erase-buffer)
+    (insert column-string)))
+
+(defun aws-console/glue/ivy-table-op (database table)
+  (ivy-read (format "Operation (%s.%s): " database table)
+            '(("Show Schema" aws-console/glue/show-table-schema)
+              ("Delete" aws-console/glue/delete-table))
+            :action (lambda (selection)
+                      (funcall (cadr selection) database table))))
+
+(defun aws-console/glue/ivy-list-tables (database)
+  (ivy-read "Table: "
+            (aws-console/glue/get-table-names database)
+            :sort t
+            :action (lambda (table)
+                      (aws-console/glue/ivy-table-op database table))))
+
+(defun aws-console/glue/ivy-list-databases ()
+  (interactive)
+  (ivy-read "Database: "
+            (aws-console/glue/get-database-names)
+            :sort t
+            :action 'aws-console/glue/ivy-list-tables))
+
 (defun aws-console/s3/ls-recursive (bucket key)
   "Expect key to NOT end in a slash. Empty key string for entire bucket"
   (let* ((path (format "s3://%s/%s" bucket key))
@@ -192,11 +258,22 @@
          (steps-key (format "%s/%s/steps" log-key cluster-id)))
     (aws-console/s3/ivy-open-file-search bucket steps-key)))
 
+(defun aws-console/emr/download-all-logs (cluster-id)
+  (let* ((log-bucket (aws-console/emr/get-s3-log-bucket cluster-id))
+         (s3-path (format "s3://%s/%s" (car log-bucket) (cadr log-bucket)))
+         ;; TODO: Make this configurable, or prompt the user
+         (destination "~/Downloads/emrlogs"))
+    (shell-command
+     (format "aws s3 sync %s %s" s3-path destination))
+    (shell-command
+     (format "find %s -name '*.gz' -exec gzip -d {} \\;" destination))
+    (message (format "Downloaded logs to %s" destination))))
+
 (defun aws-console/emr/ivy-cluster-op (cluster-id)
   (ivy-read (format "Operation (%s): " cluster-id)
             '(("Copy ID to Clipboard" kill-new)
-              ("Dump step logs" aws-console/emr/ivy-show-step-logs))
-            :sort t
+              ("Dump step logs" aws-console/emr/ivy-show-step-logs)
+              ("Download all logs" aws-console/emr/download-all-logs))
             :action (lambda (selection)
                       (funcall (cadr selection) cluster-id))))
 

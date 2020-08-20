@@ -23,7 +23,7 @@
 ** Essential Settings
 *** Misc things
     #+begin_src emacs-lisp :tangle yes
-      (server-start)
+      ;;(server-start)
       ;; MacOS has some trouble finding ispell
       (when (eq system-type 'darwin)
         (setq ispell-program-name "/usr/local/bin/aspell"))
@@ -63,15 +63,14 @@
     #+end_src
 *** Aquamacs Config
     #+begin_src emacs-lisp :tangle yes
-            (when (boundp 'aquamacs-version)
-              (tabbar-mode 0)
-              (setq x-select-enable-clipboard t)
-              (setq aquamacs-autoface-mode nil)
-              (remove-hook 'minibuffer-setup-hook 'aquamacs-set-minibuffer-face)
-              (setq python-environment-default-root-name
-                    "~/.emacs.d/.python-environments/default"))
+      (when (boundp 'aquamacs-version)
+        (tabbar-mode 0)
+        (setq x-select-enable-clipboard t)
+        (setq aquamacs-autoface-mode nil)
+        (remove-hook 'minibuffer-setup-hook 'aquamacs-set-minibuffer-face)
+        (setq python-environment-default-root-name
+              "~/.emacs.d/.python-environments/default"))
     #+end_src
-
 *** Disable killing *scratch*
     
     #+begin_src emacs-lisp :tangle yes
@@ -230,18 +229,11 @@
 
      (defun eli/match-in-current-buffer (regex &optional match-number)
        "Return the first occurrence reegx in the current buffer, or nil if not found"
-       (unless match-number (setq match-number 0))
-       (let ((result nil))
-         (save-excursion
+       (save-excursion
+         (save-match-data
            (goto-char (point-min))
-           (while (and (not (eobp)) (not result))
-             (let* ((lb (line-beginning-position))
-                    (le (line-end-position))
-                    (ln (buffer-substring-no-properties lb le)))
-               (setq result (when (string-match regex ln)
-                              (match-string match-number ln)))
-               (forward-line 1))))
-         result))
+           (and (search-forward-regexp regex nil t)
+                (substring-no-properties (match-string (or match-number 0)))))))
    #+end_src
 ** Global keybindings
 *** Follow newly created windows, only when created manually
@@ -866,6 +858,7 @@
   #+begin_src emacs-lisp :tangle yes
     (require 'aws-console)
     (global-set-key (kbd "C-c a e") 'aws-console/emr/ivy-ls)
+    (global-set-key (kbd "C-c a g") 'aws-console/glue/ivy-list-databases)
   #+end_src
 * Evil Mode
 ** Load and configure evil
@@ -1173,17 +1166,8 @@
 
      (when (eq system-type 'darwin)
        (setq python-shell-interpreter "/usr/local/bin/python3"))
-
-     ;; To install, run M-x jedi:install-server
-     (use-package jedi)
-     (use-package company-jedi)
-
-     (add-hook 'python-mode-hook
-               (lambda ()
-                 (add-to-list 'company-backends 'company-jedi)
-                 (define-key
-                   python-mode-map (kbd "C-c C-d") 'jedi:show-doc)))
    #+end_src
+
 ** Elisp
    #+begin_src emacs-lisp :tangle yes
      (with-eval-after-load 'flycheck
@@ -1281,13 +1265,9 @@
                                   (php-extras-eldoc-documentation-function)
                                   (auto-complete-mode -1))))
    #+end_src
-** JavaScript
+** TypeScript
    #+begin_src emacs-lisp :tangle yes
-     (use-package lsp-javascript-typescript
-       :config
-       ;; Only load LSP mode if it's installed for JS
-       (when (executable-find "javascript-typescript-stdio")
-         (add-hook 'js-mode-hook #'lsp-javascript-typescript-enable)))
+     (use-package typescript-mode)
    #+end_src
 ** C#
    #+begin_src emacs-lisp :tangle yes
