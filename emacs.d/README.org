@@ -38,7 +38,7 @@
       (show-paren-mode t) ; Highlights matching parenthesis
       (global-visual-line-mode t)
       (setq ring-bell-function 'ignore) ; Disable ALL bells! They suck!
-      ;;(electric-pair-mode t) ; Add closing pairs automatically
+      (electric-pair-mode -1)
       (setq initial-scratch-message "") ; No scratch text
       (fset 'yes-or-no-p 'y-or-n-p) ; y/n instead of yes/no
 
@@ -347,97 +347,6 @@
        (set-face-foreground 'rainbow-delimiters-depth-6-face "#f0a")
        (set-face-foreground 'rainbow-delimiters-unmatched-face "#fff"))
    #+end_src
-** Pretty symbols
-*** Global
-    #+BEGIN_SRC emacs-lisp :tangle yes
-      (defun eli/pretty-symbol-push-default ()
-        (push '("!="     . ?≢) prettify-symbols-alist)
-        (push '("=="     . ?≡) prettify-symbols-alist)
-        (push '("<="     . ?≤) prettify-symbols-alist)
-        (push '(">="     . ?≥) prettify-symbols-alist)
-        (push '("=>"     . ?⇒) prettify-symbols-alist)
-        (push '("return" . ?⏎) prettify-symbols-alist))
-    #+END_SRC
-*** C & C++
-    #+BEGIN_SRC emacs-lisp :tangle yes
-      (mapc
-       (lambda (hook)
-         (add-hook hook (lambda ()
-                          (eli/pretty-symbol-push-default)
-                          (push '("NULL" . ?∅) prettify-symbols-alist)
-                          (push '("||"   . ?∨) prettify-symbols-alist)
-                          (push '("&&"   . ?∧) prettify-symbols-alist)
-                          (push '("!"    . ?¬) prettify-symbols-alist)
-                          (prettify-symbols-mode t))))
-       '(c-mode-hook c++-mode-hook))
-    #+END_SRC
-*** Python
-    #+BEGIN_SRC emacs-lisp :tangle yes
-      (add-hook 'python-mode-hook
-                (lambda ()
-                  (eli/pretty-symbol-push-default)
-                  (push '("def"     . ?ƒ) prettify-symbols-alist)
-                  (push '("sum"     . ?Σ) prettify-symbols-alist)
-                  (push '("**2"     . ?²) prettify-symbols-alist)
-                  (push '("**3"     . ?³) prettify-symbols-alist)
-                  (push '("None"    . ?∅) prettify-symbols-alist)
-                  (push '("in"      . ?∈) prettify-symbols-alist)
-                  (push '("not in"  . ?∉) prettify-symbols-alist)
-                  (push '("or"      . ?∨) prettify-symbols-alist)
-                  (push '("and"     . ?∧) prettify-symbols-alist)
-                  (push '("not"     . ?¬) prettify-symbols-alist)
-                  (push '("math.pi" . ?π) prettify-symbols-alist)
-                  (prettify-symbols-mode t)))
-    #+END_SRC
-*** Lisp
-    #+BEGIN_SRC emacs-lisp :tangle yes
-      (add-hook 'emacs-lisp-mode-hook
-                (lambda ()
-                  (eli/pretty-symbol-push-default)
-                  (push '("lambda"   . ?λ) prettify-symbols-alist)
-                  (push '("defun"    . ?ƒ) prettify-symbols-alist)
-                  (push '("defmacro" . ?μ) prettify-symbols-alist)
-                  (push '("defvar"   . ?ν) prettify-symbols-alist)
-                  (prettify-symbols-mode t)))
-    #+END_SRC
-*** PHP
-    #+BEGIN_SRC emacs-lisp :tangle yes
-      (add-hook 'php-mode-hook
-                (lambda ()
-                  (eli/pretty-symbol-push-default)
-                  (push '("function" . ?ƒ) prettify-symbols-alist)
-                  (push '("null"     . ?∅) prettify-symbols-alist)
-                  (prettify-symbols-mode t)))
-    #+END_SRC
-*** Javascript
-    #+BEGIN_SRC emacs-lisp :tangle yes
-      (add-hook 'js-mode-hook
-                (lambda ()
-                  (eli/pretty-symbol-push-default)
-                  (push '("function" . ?ƒ) prettify-symbols-alist)
-                  (push '("null"     . ?∅) prettify-symbols-alist)
-                  (push '("||"       . ?∨) prettify-symbols-alist)
-                  (push '("&&"       . ?∧) prettify-symbols-alist)
-                  (push '("!"        . ?¬) prettify-symbols-alist)
-                  (push '("in"       . ?∈) prettify-symbols-alist)
-                  (prettify-symbols-mode t)))
-    #+END_SRC
-*** Kotlin
-    #+BEGIN_SRC emacs-lisp :tangle yes
-      (add-hook 'kotlin-mode-hook
-                (lambda ()
-                  (eli/pretty-symbol-push-default)
-                  (push '("fun"     . ?ƒ) prettify-symbols-alist)
-                  (push '("null"    . ?∅) prettify-symbols-alist)
-                  (push '("in"      . ?∈) prettify-symbols-alist)
-                  (push '("not in"  . ?∉) prettify-symbols-alist)
-                  (push '("||"      . ?∨) prettify-symbols-alist)
-                  (push '("&&"      . ?∧) prettify-symbols-alist)
-                  (push '("!"       . ?¬) prettify-symbols-alist)
-                  (push '("!!"      . ?‼) prettify-symbols-alist)
-                  (push '("->"      . ?⇒) prettify-symbols-alist)
-                  (prettify-symbols-mode t)))
-    #+END_SRC
 ** Relative line numbers
 
    [[https://github.com/CodeFalling/nlinum-relative][Nlinum Relative]]. Relative line numbers n' stuff
@@ -484,8 +393,6 @@
                   (ivy-mode nil ivy)
                   (editorconfig-mode nil editorconfig)
                   (rainbow-mode)
-                  (evil-smartparens-mode nil evil-smartparens)
-                  (smartparens-mode nil smartparens)
                   (smart-semicolon-mode nil smart-semicolon)
                   (auto-revert-mode nil autorevert))))
    #+end_src
@@ -724,34 +631,6 @@
    
   #+begin_src emacs-lisp :tangle yes
      (use-package define-word)
-  #+end_src
-   
-  [[https://github.com/Fuco1/smartparens][Smartparens.]] Sane automatic parens.
-   
-  #+begin_src emacs-lisp :tangle yes
-    (use-package smartparens
-      :config
-      ;; For a lot of modes, smartparens is super annoying :)
-      (mapc (lambda (hook) (add-hook hook 'smartparens-mode))
-            '(c-mode-hook c++-mode-hook js-mode-hook php-mode-hook
-                          lisp-mode-hook css-mode-hook python-mode-hook
-                          kotlin-mode-hook java-mode-hook))
-
-      ;; Make indenting braces behave nicely.
-      (defun eli/sp-ret-and-enter-sexp (&rest _ignored)
-        (newline)
-        (indent-according-to-mode)
-        (forward-line -1)
-        (indent-according-to-mode))
-
-      (mapc (lambda (mode)
-              (sp-local-pair mode "{" nil :post-handlers
-                             '((eli/sp-ret-and-enter-sexp "RET"))))
-            '(c-mode c++-mode js-mode php-mode lisp-mode css-mode
-                     python-mode kotlin-mode java-mode)))
-    (use-package evil-smartparens
-      :config
-      (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
   #+end_src
 
   [[https://github.com/iquiw/smart-semicolon][Smartsemicolon.]] Sane semicolons.
@@ -996,7 +875,6 @@
       org-src-fontify-natively t
       org-agenda-files '("~/Dropbox/Notes/everything.org")
       org-src-window-setup 'current-window
-      org-ellipsis " ⤵"
       ;; Allows custom inline image sizes
       org-image-actual-width nil
       ;; Makes inline latex previews bigger
@@ -1175,8 +1053,6 @@
 
      (define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-buffer)
      (define-key emacs-lisp-mode-map (kbd "C-c C-r") 'eval-region)
-
-     (add-hook 'emacs-lisp-mode-hook (lambda () (electric-pair-mode t)))
    #+end_src
 ** Web
    #+begin_src emacs-lisp :tangle yes
@@ -1268,6 +1144,17 @@
 ** TypeScript
    #+begin_src emacs-lisp :tangle yes
      (use-package typescript-mode)
+   #+end_src
+** PureScript
+   #+begin_src emacs-lisp :tangle yes
+     (use-package psc-ide)
+     (use-package purescript-mode
+       :hook
+       (purescript-mode . (lambda ()
+                            (psc-ide-mode)
+                            (company-mode)
+                            (flycheck-mode)
+                            (turn-on-purescript-indentation))))
    #+end_src
 ** C#
    #+begin_src emacs-lisp :tangle yes
@@ -1436,6 +1323,12 @@
 ** Lua
    #+begin_src emacs-lisp :tangle yes
      (use-package lua-mode)
+   #+end_src
+** Haskell
+   #+begin_src emacs-lisp :tangle yes
+     (use-package haskell-mode
+       :config
+       (setq haskell-process-type 'stack-ghci))
    #+end_src
 * Apps
 ** Gnus
