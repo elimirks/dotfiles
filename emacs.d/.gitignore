@@ -16,3 +16,5 @@ speed-type/
 url/
 var/
 request/
+transient/
+projectile-bookmarks.eld
