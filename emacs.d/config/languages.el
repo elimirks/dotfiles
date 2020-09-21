@@ -177,12 +177,6 @@
 (use-package php-mode
   :mode "\\.\\(php\\|inc\\)$")
 
-(use-package php-extras
-  :config
-  (add-hook 'php-mode-hook (lambda ()
-                             (php-extras-eldoc-documentation-function)
-                             (auto-complete-mode -1))))
-
 ;;
 ;; TypeScript
 ;;
@@ -366,6 +360,7 @@
 ;;
 
 ;; Config based on: https://scalameta.org/metals/docs/editors/emacs.html
+
 ;; Scala & SBT mode
 (use-package scala-mode
   :mode "\\.s\\(cala\\|bt\\)$")
@@ -395,3 +390,22 @@
 (use-package haskell-mode
   :config
   (setq haskell-process-type 'stack-ghci))
+
+;;
+;; Monty
+;;
+
+;; TODO: Load this in properly, with a fancy package manager perhaps
+
+(define-generic-mode 'monty-mode
+  '("#")
+  '("def" "type" "class" "if" "elif" "else" "return" "instance" "of")
+  '(("\\bdebug\\b" . 'font-lock-builtin-face)
+    ("\\b[A-Z][a-zA-Z0-9_]*\\b" . 'font-lock-type-face)
+    ("\\b[0-9]+\\b" . font-lock-constant-face)
+    ("\\bdef \\([a-z][a-zA-Z0-9_]*\\)\\b" . '(1 font-lock-function-name-face))
+    )
+  '("\\.my$")
+  nil
+  "A mode for Monty files"
+  )
