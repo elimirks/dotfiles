@@ -1,14 +1,3 @@
-;;
-;; Package management
-;;
-
-(require 'package)
-(setq package-archives
-      '(("gnu"       . "http://elpa.gnu.org/packages/")
-        ("melpa"     . "http://melpa.org/packages/")))
-(setq package-enable-at-startup nil)
-(package-initialize)
-
 ;; Specifies local directory to load packages from
 (let ((default-directory  "~/.emacs.d/lisp/"))
   (normal-top-level-add-to-load-path '("."))
@@ -30,6 +19,7 @@
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
+(setq straight-use-package-by-default t) ; Always fetch packages
 (straight-use-package 'use-package)
 
 ;; MacOS has some trouble finding ispell
