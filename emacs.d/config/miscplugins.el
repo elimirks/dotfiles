@@ -1,7 +1,7 @@
 ;;
 ;; Ivy Minibuffer
 ;;
-(use-package ivy :ensure t
+(use-package ivy
   :diminish (ivy-mode . "")
   :bind
   (("M-x" . counsel-M-x)
@@ -127,7 +127,6 @@
 
 ;; For consistent project code styles
 (use-package editorconfig
-  :ensure t
   :config
   (editorconfig-mode 1))
 

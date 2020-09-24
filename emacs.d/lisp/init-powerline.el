@@ -77,7 +77,6 @@
                              (powerline-render rhs)))))))
 
 (use-package powerline
-  :ensure t
   :config
   ;; For terminal
   (setq powerline-utf-8-separator-left #x0020)
@@ -87,7 +86,6 @@
                                       nil))
   (air--powerline-default-theme))
 
-(use-package powerline-evil
-  :ensure t)
+(use-package powerline-evil)
 
 (provide 'init-powerline)
