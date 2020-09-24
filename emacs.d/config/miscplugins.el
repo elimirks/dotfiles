@@ -10,6 +10,8 @@
    :map ivy-minibuffer-map
    ("<tab>" . ivy-next-line)
    ("<backtab>" . ivy-previous-line)
+   ("C-n" . ivy-next-line)
+   ("C-p" . ivy-previous-line)
    ("RET" . ivy-alt-done))
   :config
   (ivy-mode 1)

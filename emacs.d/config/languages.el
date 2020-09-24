@@ -38,7 +38,7 @@
 
 (require 'cc-mode)
 
-(use-package helm-gtags)
+;(use-package helm-gtags)
 (use-package company-irony
   :config
   (add-hook 'irony-mode-hook
@@ -56,7 +56,12 @@
 ;; Blarb
 ;;
 
-(require 'blarb-mode)
+(use-package blarb-mode
+  :straight (
+   :type git
+   :host github
+   :repo "elimirks/BlarbVM"
+   :files ("editors/blarb-mode.el")))
 
 ;;
 ;; CSV
@@ -395,17 +400,9 @@
 ;; Monty
 ;;
 
-;; TODO: Load this in properly, with a fancy package manager perhaps
-
-(define-generic-mode 'monty-mode
-  '("#")
-  '("def" "type" "class" "if" "elif" "else" "return" "instance" "of")
-  '(("\\bdebug\\b" . 'font-lock-builtin-face)
-    ("\\b[A-Z][a-zA-Z0-9_]*\\b" . 'font-lock-type-face)
-    ("\\b[0-9]+\\b" . font-lock-constant-face)
-    ("\\bdef \\([a-z][a-zA-Z0-9_]*\\)\\b" . '(1 font-lock-function-name-face))
-    )
-  '("\\.my$")
-  nil
-  "A mode for Monty files"
-  )
+(use-package monty-mode
+  :straight (
+   :type git
+   :host github
+   :repo "Mulan-Szechuan-Sauce/monty"
+   :files ("plugins/monty-mode.el")))
