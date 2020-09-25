@@ -41,10 +41,6 @@
 (use-package bbdb
   :config
   (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
-  ;; Disable helm for creating BBDB entries
-  ;; (It caused annoying completion issues)
-  (add-to-list 'helm-completing-read-handlers-alist
-               '(bbdb-create . nil))
   (bbdb-insinuate-message)
   (setq
    bbdb-file "~/Dropbox/Notes/bbdb"
@@ -96,10 +92,6 @@
             '(lambda ()
                (flycheck-mode -1)
                (company-mode -1)))
-
-  ;; Disable helm for file uploads - it gets stuck in a loop :/
-  (add-to-list 'helm-completing-read-handlers-alist
-               '(slack-file-upload . nil))
 
   (evil-define-key 'normal slack-mode-map
     ",ra" 'slack-message-add-reaction
@@ -168,7 +160,6 @@
      "GET\\|POST\\|DELETE\\|PUT\\|HEAD"
      "\\|OPTIONS\\|PATCH\\|LINK\\|UNLINK"
      "\\) \\(.*\\)$")))
-(use-package restclient-helm)
 (use-package company-restclient
   :config
   (add-hook 'restclient-mode-hook

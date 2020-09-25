@@ -70,10 +70,9 @@
 ;;
 ;; Calendar
 ;;
-(use-package calfw-org)
 (use-package calfw
   :config
-  (require 'calfw-org)
+  (use-package calfw-org)
   
   ;; Nicer Unicode characters
   (setq cfw:fchar-junction ?╋

@@ -23,26 +23,6 @@
 (use-package counsel)
 (use-package smex)
 
-;;
-;; Helm minibuffer (for compatability)
-;;
-(use-package helm
-  :bind
-  (:map helm-find-files-map
-        ("<RET>" . eli/helm-return-find-file))
-  :config
-  (require 'helm-config)
-  (setq helm-M-x-fuzzy-match t          ; Fuzzy M-x matching
-        helm-buffer-max-length nil      ; Don't limit filename length
-        helm-split-window-in-side-p t)) ; Split on the bottom edge
-
-;; For using the enter key in helm
-(defun eli/helm-return-find-file ()
-  (interactive)
-  (if (file-directory-p (helm-get-selection))
-      (helm-execute-persistent-action)
-    (helm-maybe-exit-minibuffer)))
-
 
 ;;
 ;; Compnay (autocompletion)
@@ -103,7 +83,6 @@
 ;; Flycheck, for syntax checker
 ;;
 
-(use-package helm-flycheck)
 (use-package flycheck
   :config
   (global-flycheck-mode t))
@@ -202,6 +181,8 @@
 ;; Lastpass
 (use-package lastpass)
 
+;; TODO: Port to Ivy
+
 (defun eli/lastpass-helm-list-all ()
   (let* ((cmd-out (shell-command-to-string "lpass ls --color=never"))
          (raw-lines (split-string cmd-out "\n" t)))
@@ -238,7 +219,7 @@
                 :candidates 'rows
                 :action 'eli/lastpass-helm-copy-candidate))))
 
-(global-set-key (kbd "C-c l p") 'eli/lastpass-helm-search)
+;(global-set-key (kbd "C-c l p") 'eli/lastpass-helm-search)
 
 ;; AWS console plugin
 ;; TODO: Load from the git repo insteal

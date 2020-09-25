@@ -67,7 +67,6 @@
              (flycheck-mode " Fl" flycheck)
              (undo-tree-mode nil undo-tree)
              (which-key-mode nil which-key)
-             (helm-mode nil helm)
              (ivy-mode nil ivy)
              (editorconfig-mode nil editorconfig)
              (rainbow-mode)

@@ -44,11 +44,6 @@
             (when (eq (display-graphic-p) nil)
               (suspend-frame))))
 
-  (defun eli/helm-gtags-find-tag-at-point () (interactive)
-         (helm-gtags-find-tag (thing-at-point 'symbol)))
-  (defun eli/helm-gtags-find-rtag-at-point () (interactive)
-         (helm-gtags-find-rtag (thing-at-point 'symbol)))
-
   (defun eli/counsel-projectile-grep () (interactive)
          (if (executable-find "ag")
              (counsel-projectile-ag)
@@ -61,9 +56,7 @@
     "dl" 'define-word-at-point
     "ds" 'define-word
     "e" 'gnus
-    "f" 'helm-flycheck
     "g" 'magit-status
-    "kr" 'helm-show-kill-ring
     "kk" (lambda () (interactive) (kill-buffer (current-buffer)))
     "kw" 'kill-buffer-and-window
     "l" 'org-timeline
@@ -78,10 +71,6 @@
     "sio" 'slack-im-open
     "sis" 'slack-im-select
     "ss" 'slack-start
-    "tp" 'helm-gtags-pop-stack
-    "tr" 'eli/helm-gtags-find-rtag-at-point
-    "ts" 'helm-gtags-show-stack
-    "tt" 'eli/helm-gtags-find-tag-at-point
     "w" 'save-buffer
     "z" 'zoom))
 

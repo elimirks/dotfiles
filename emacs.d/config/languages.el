@@ -38,7 +38,6 @@
 
 (require 'cc-mode)
 
-;(use-package helm-gtags)
 (use-package company-irony
   :config
   (add-hook 'irony-mode-hook
