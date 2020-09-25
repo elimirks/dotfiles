@@ -171,6 +171,7 @@
 (use-package lsp-mode
   :hook
   (scala-mode . lsp)
+  (lsp-mode . lsp-lens-mode)
   :config
   (setq lsp-prefer-flymake nil))
 
@@ -244,3 +245,8 @@
 (require 'aws-console)
 (global-set-key (kbd "C-c a e") 'aws-console/emr/ivy-ls)
 (global-set-key (kbd "C-c a g") 'aws-console/glue/ivy-list-databases)
+
+;; Silver searcher
+(use-package ag
+  :config
+  (setq ag-executable "/usr/local/bin/ag"))

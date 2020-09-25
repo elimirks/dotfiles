@@ -50,10 +50,9 @@
          (helm-gtags-find-rtag (thing-at-point 'symbol)))
 
   (defun eli/counsel-projectile-grep () (interactive)
-         (counsel-projectile-grep))
-  ;; (if (executable-find "ag")
-  ;;     (counsel-projectile-ag)
-  ;;   (counsel-projectile-grep)))
+         (if (executable-find "ag")
+             (counsel-projectile-ag)
+           (counsel-projectile-grep)))
 
   (bind-leader
     "a" 'org-agenda

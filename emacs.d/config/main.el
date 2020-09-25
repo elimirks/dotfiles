@@ -22,9 +22,10 @@
 (setq straight-use-package-by-default t) ; Always fetch packages
 (straight-use-package 'use-package)
 
-;; MacOS has some trouble finding ispell
+;; MacOS has some trouble finding some commands
 (when (eq system-type 'darwin)
-  (setq ispell-program-name "/usr/local/bin/aspell"))
+  (setq ispell-program-name "/usr/local/bin/aspell")
+  (setq-default counsel-ag-base-command "/usr/local/bin/ag --vimgrep --nocolor --nogroup %s"))
 ;; For ansi-term n' stuff
 (setq explicit-shell-file-name "/bin/bash")
 (setq inhibit-splash-screen t ; No welcome screen
