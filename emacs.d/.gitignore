@@ -17,4 +17,6 @@ url/
 var/
 request/
 transient/
+straight/
 projectile-bookmarks.eld
+projectile.cache

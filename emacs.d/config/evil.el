@@ -50,9 +50,10 @@
          (helm-gtags-find-rtag (thing-at-point 'symbol)))
 
   (defun eli/counsel-projectile-grep () (interactive)
-         (if (executable-find "ag")
-             (counsel-projectile-ag)
-           (counsel-projectile-grep)))
+         (counsel-projectile-grep))
+  ;; (if (executable-find "ag")
+  ;;     (counsel-projectile-ag)
+  ;;   (counsel-projectile-grep)))
 
   (bind-leader
     "a" 'org-agenda
@@ -90,9 +91,6 @@
   :config
   (global-evil-surround-mode 1))
 
-;; External config for powerline and evil powerline
-(require 'init-powerline)
-
 ;; Used for aligning (similar to align-regexp, but more vimy)
 (use-package evil-lion
   :config
@@ -108,3 +106,17 @@
   (add-hook 'org-mode-hook
             (lambda ()
               (define-key evil-normal-state-map (kbd "TAB") 'org-cycle))))
+
+;;
+;; Powerline config
+;;
+
+(use-package powerline
+  :config
+  (setq powerline-arrow-shape 'curve
+        powerline-display-buffer-size nil
+        powerline-display-mule-info nil)
+  (powerline-default-theme)
+  (remove-hook 'focus-out-hook 'powerline-unset-selected-window)
+  (setq powerline-height 17)
+  (defpowerline powerline-minor-modes ""))

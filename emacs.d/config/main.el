@@ -70,19 +70,6 @@
               nil)))
 
 ;;
-;; Aquamacs
-;;
-
-(when (boundp 'aquamacs-version)
-  (tabbar-mode 0)
-  (setq x-select-enable-clipboard t)
-  (setq aquamacs-autoface-mode nil)
-  (remove-hook 'minibuffer-setup-hook 'aquamacs-set-minibuffer-face)
-  (setq python-environment-default-root-name
-        "~/.emacs.d/.python-environments/default"))
-
-
-;;
 ;; Backup Settings
 ;;
 
