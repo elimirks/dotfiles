@@ -156,10 +156,6 @@
 
 (use-package lsp-ui)
 
-(use-package company-lsp
-  :config
-  (push 'company-lsp company-backends))
-
 ;; Smart tabs
 (use-package smart-tabs-mode
   :config

@@ -5,7 +5,7 @@
 (if (display-graphic-p)
     ;; GUI
     (progn
-      (set-face-attribute 'default nil :height 110))
+      (set-face-attribute 'default nil :height 130))
   ;; Terminal
   (progn
     (setq nlinum-format "%d ")
