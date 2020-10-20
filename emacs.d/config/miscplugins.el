@@ -150,11 +150,13 @@
 (use-package lsp-mode
   :hook
   (scala-mode . lsp)
-  (lsp-mode . lsp-lens-mode)
+  ;;(lsp-mode . lsp-lens-mode)
   :config
+  (setq lsp-completion-provider :capf)
   (setq lsp-prefer-flymake nil))
 
-(use-package lsp-ui)
+(when (display-graphic-p)
+  (use-package lsp-ui))
 
 ;; Smart tabs
 (use-package smart-tabs-mode
@@ -227,3 +229,5 @@
 (use-package ag
   :config
   (setq ag-executable "/usr/local/bin/ag"))
+
+(use-package elcord)

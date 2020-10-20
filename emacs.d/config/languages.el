@@ -397,9 +397,12 @@
 ;; Haskell
 ;;
 
-(use-package haskell-mode
+(use-package haskell-mode)
+
+(use-package lsp-haskell
   :config
-  (setq haskell-process-type 'stack-ghci))
+  (add-hook 'haskell-mode-hook #'lsp)
+  (add-hook 'haskell-literate-mode-hook #'lsp))
 
 ;;
 ;; Monty
