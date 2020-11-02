@@ -151,6 +151,10 @@
   :hook
   (scala-mode . lsp)
   ;;(lsp-mode . lsp-lens-mode)
+  :init
+  (setq
+   read-process-output-max (* 1024 1024)
+   lsp-idle-delay 0.500)
   :config
   (setq lsp-completion-provider :capf)
   (setq lsp-prefer-flymake nil))
