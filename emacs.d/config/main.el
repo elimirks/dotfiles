@@ -25,7 +25,11 @@
 ;; MacOS has some trouble finding some commands
 (when (eq system-type 'darwin)
   (setq ispell-program-name "/usr/local/bin/aspell")
-  (setq-default counsel-ag-base-command "/usr/local/bin/ag --vimgrep --nocolor --nogroup %s"))
+  (setq-default counsel-ag-base-command "/usr/local/bin/ag --vimgrep --nocolor --nogroup %s")
+
+  (use-package exec-path-from-shell)
+  (exec-path-from-shell-initialize))
+
 ;; For ansi-term n' stuff
 (setq explicit-shell-file-name "/bin/bash")
 (setq inhibit-splash-screen t ; No welcome screen

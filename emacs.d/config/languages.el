@@ -414,3 +414,14 @@
    :host github
    :repo "Mulan-Szechuan-Sauce/monty"
    :files ("plugins/monty-mode.el")))
+
+
+;;
+;; Dot
+;;
+
+(use-package graphviz-dot-mode)
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((dot . t)))
+(add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
