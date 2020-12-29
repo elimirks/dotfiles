@@ -160,7 +160,9 @@
   (setq lsp-prefer-flymake nil))
 
 (when (display-graphic-p)
-  (use-package lsp-ui))
+  (use-package lsp-ui
+    :config
+    (setq lsp-ui-sideline-enable nil)))
 
 ;; Smart tabs
 (use-package smart-tabs-mode
