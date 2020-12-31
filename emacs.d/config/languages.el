@@ -397,7 +397,9 @@
 ;; Haskell
 ;;
 
-(use-package haskell-mode)
+(use-package haskell-mode
+  :config
+  (define-key haskell-mode-map (kbd "C-c C-h") 'haskell-hoogle))
 
 (use-package lsp-haskell
   :config
