@@ -365,10 +365,32 @@
 
 ;; Config based on: https://scalameta.org/metals/docs/editors/emacs.html
 
+(defun eli/sbt-send-example ()
+  "Finds and executes code after @example in ScalaDoc in sbt REPL"
+  (interactive)
+  (let ((begin-point
+         (progn (beginning-of-line)
+                (re-search-forward "@example" nil t)))
+        (end-point
+         (progn (end-of-line)
+                (point))))
+    (when begin-point
+      (sbt-send-region begin-point end-point)
+      (goto-char begin-point))))
+
+(defun eli/sbt-send-buffer ()
+  "Sends the current buffer to sbt REPL"
+  (interactive)
+  (sbt-send-region (point-min) (point-max)))
+
 ;; Scala & SBT mode
 (use-package scala-mode
+  :config
+  (define-key scala-mode-map (kbd "C-c C-r") 'sbt-send-region)
+  (define-key scala-mode-map (kbd "C-c C-e") 'eli/sbt-send-example)
+  (define-key scala-mode-map (kbd "C-c C-c") 'eli/sbt-send-buffer)
   :interpreter
-    ("scala" . scala-mode))
+  ("scala" . scala-mode))
 
 ;; Enable sbt mode for executing sbt commands
 (use-package sbt-mode

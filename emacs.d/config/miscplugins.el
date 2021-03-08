@@ -178,7 +178,8 @@
 (use-package projectile
   :config
   (projectile-mode +1)
-  (setq projectile-completion-system 'ivy))
+  (setq projectile-completion-system 'ivy)
+  (add-to-list 'projectile-globally-ignored-directories "node_modules"))
 
 (use-package counsel-projectile)
 
