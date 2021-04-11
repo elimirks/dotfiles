@@ -150,6 +150,7 @@
 (use-package lsp-mode
   :hook
   (scala-mode . lsp)
+  (fsharp-mode . lsp)
   ;;(lsp-mode . lsp-lens-mode)
   :init
   (setq

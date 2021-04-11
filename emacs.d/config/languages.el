@@ -205,17 +205,12 @@
 ;;
 
 (use-package csharp-mode)
-(use-package omnisharp
-  :after company
-  :config
-  (setq omnisharp-server-executable-path
-        "/usr/local/omnisharp/run.sh")
-  (add-hook 'csharp-mode-hook 'omnisharp-mode)
-  (add-to-list 'company-backends 'company-omnisharp)
 
-  :bind
-  (:map omnisharp-mode-map
-        ("C-c C-c" . omnisharp-run-code-action-refactoring)))
+;;
+;; F#
+;;
+
+(use-package fsharp-mode)
 
 ;;
 ;; YAML

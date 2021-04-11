@@ -156,5 +156,18 @@ bindkey "\e[7~" beginning-of-line
 bindkey "\e[8~" end-of-line
 bindkey "\e[3~" delete-char
 
+# VI MODE KEYBINDINGS (ins mode)
+
+bindkey -M viins '^a'    beginning-of-line
+bindkey -M viins '^e'    end-of-line
+bindkey -M viins '^k'    kill-line
+bindkey -M viins '^w'    backward-kill-word
+bindkey -M viins '^u'    backward-kill-line
+
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey -M viins '^xe'  edit-command-line
+bindkey -M viins '^x^e'  edit-command-line
+
 bindkey "^R" history-incremental-search-backward
 
