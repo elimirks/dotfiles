@@ -11,5 +11,5 @@
 	u = add -u
 	pr = pull --rebase
 [user]
-	email = elimirks@gmail.com
+	email = emmireck@amazon.com
 	name = Elijah Mirecki

@@ -163,7 +163,9 @@
 (when (display-graphic-p)
   (use-package lsp-ui
     :config
-    (setq lsp-ui-sideline-enable nil)))
+    (setq lsp-ui-sideline-enable nil)
+    (setq lsp-headerline-breadcrumb-enable t)
+    (setq lsp-headerline-breadcrumb-segments '(file symbols))))
 
 ;; Smart tabs
 (use-package smart-tabs-mode

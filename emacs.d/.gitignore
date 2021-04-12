@@ -21,3 +21,6 @@ straight/
 projectile-bookmarks.eld
 projectile.cache
 .cache/
+SessionDesktop.el
+.lsp-session-v1
+.dap-breakpoints

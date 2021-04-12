@@ -74,6 +74,11 @@
     "w" 'save-buffer
     "z" 'zoom))
 
+(use-package undo-tree
+  :config
+  (global-undo-tree-mode)
+  (evil-set-undo-system 'undo-tree))
+
 ;; Tpope's surround
 (use-package evil-surround
   :config
