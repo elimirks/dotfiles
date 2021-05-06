@@ -24,3 +24,5 @@ projectile.cache
 SessionDesktop.el
 .lsp-session-v1
 .dap-breakpoints
+workspace/
+eclipse.jdt.ls/

@@ -320,6 +320,10 @@
 
 (add-to-list 'auto-mode-alist '("\\.gradle$" . java-mode))
 
+(use-package lsp-java
+  :config
+  (add-hook 'java-mode-hook #'lsp))
+
 ;;
 ;; Groovy
 ;;

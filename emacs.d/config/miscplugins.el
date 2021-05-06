@@ -164,6 +164,7 @@
   (use-package lsp-ui
     :config
     (setq lsp-ui-sideline-enable nil)
+    (setq lsp-ui-doc-show-with-cursor nil)
     (setq lsp-headerline-breadcrumb-enable t)
     (setq lsp-headerline-breadcrumb-segments '(file symbols))))
 
