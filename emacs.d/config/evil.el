@@ -10,6 +10,7 @@
   :init
   ;; Unbind <C-u> for evil mode'
   (setq evil-want-C-u-scroll t)
+
   :config
   (evil-mode t)
 
@@ -55,7 +56,7 @@
     "dd" (lambda () (interactive) (message (current-time-string)))
     "dl" 'define-word-at-point
     "ds" 'define-word
-    "e" 'gnus
+    "ei" 'iedit-mode
     "g" 'magit-status
     "kk" (lambda () (interactive) (kill-buffer (current-buffer)))
     "kw" 'kill-buffer-and-window

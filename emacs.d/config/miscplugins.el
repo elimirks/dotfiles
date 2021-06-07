@@ -190,6 +190,9 @@
 ;; Lastpass
 (use-package lastpass)
 
+;; IEdit
+(use-package iedit)
+
 ;; TODO: Port to Ivy
 
 (defun eli/lastpass-helm-list-all ()
