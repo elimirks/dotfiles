@@ -66,7 +66,7 @@
 ;; CSV
 ;;
 (use-package csv-mode
-  :mode "\\.csv$"
+  :mode ("\\.csv\\'")
   :config
   (define-key csv-mode-map (kbd "C-c C-c")
     (lambda ()
@@ -448,3 +448,9 @@
  'org-babel-load-languages
  '((dot . t)))
 (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
+
+;;
+;; GLSL
+;;
+(use-package glsl-mode
+  :mode ("\\.frag\\'" "\\.vert\\'"))

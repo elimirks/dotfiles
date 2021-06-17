@@ -58,7 +58,7 @@
     "ds" 'define-word
     "ei" 'iedit-mode
     "g" 'magit-status
-    "kk" (lambda () (interactive) (kill-buffer (current-buffer)))
+    "kk" `(,(lambda () (interactive) (kill-buffer (current-buffer))) :wk "Kill without mercy")
     "kw" 'kill-buffer-and-window
     "l" 'org-timeline
     "m" 'ivy-switch-buffer
@@ -76,9 +76,10 @@
     "z" 'zoom))
 
 (use-package undo-tree
+  :after evil
   :config
   (global-undo-tree-mode)
-  (evil-set-undo-system 'undo-tree))
+  (evil-turn-on-undo-tree-mode))
 
 ;; Tpope's surround
 (use-package evil-surround

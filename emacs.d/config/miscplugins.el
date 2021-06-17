@@ -151,6 +151,7 @@
   :hook
   (scala-mode . lsp)
   (fsharp-mode . lsp)
+  (rust-mode . lsp)
   ;;(lsp-mode . lsp-lens-mode)
   :init
   (setq
