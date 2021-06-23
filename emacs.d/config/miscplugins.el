@@ -184,7 +184,10 @@
   :config
   (projectile-mode +1)
   (setq projectile-completion-system 'ivy)
-  (add-to-list 'projectile-globally-ignored-directories "node_modules"))
+  (add-to-list 'projectile-globally-ignored-directories "node_modules")
+
+  (setq projectile-generic-command
+        "find . -type f ! -ipath '.git*' ! -ipath '*/.git*' ! -ipath '*/build/*' ! -ipath '*/node_modules/*' -print0"))
 
 (use-package counsel-projectile)
 
