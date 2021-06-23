@@ -4,6 +4,32 @@
 ;; For defining the leader key
 (use-package general)
 
+
+(defun eli/kill-non-project-buffers (&optional kill-special)
+  "Kill buffers that do not belong to current `projectile' project.
+  With prefix argument (`C-u'), also kill the special buffers.
+  Taxed from https://emacs.stackexchange.com/questions/10183/close-other-buffers-with-projectile
+  "
+  (interactive "P")
+  (let ((bufs (buffer-list (selected-frame))))
+    (dolist (buf bufs)
+      (with-current-buffer buf
+        (let ((buf-name (buffer-name buf)))
+          (when (or (null (projectile-project-p))
+                    (and kill-special
+                         (string-match "^\*" buf-name)))
+            ;; Preserve buffers with names starting with *scratch or *Messages
+            (unless (string-match "^\\*\\(\\scratch\\|Messages\\)" buf-name)
+              (message "Killing buffer %s" buf-name)
+              (kill-buffer buf))))))))
+
+(defun eli/counsel-projectile-grep ()
+  (interactive)
+  (if (executable-find "ag")
+      (counsel-projectile-ag)
+    (counsel-projectile-grep)))
+
+
 ;; Base evil package
 (use-package evil
   :demand
@@ -45,11 +71,6 @@
             (when (eq (display-graphic-p) nil)
               (suspend-frame))))
 
-  (defun eli/counsel-projectile-grep () (interactive)
-         (if (executable-find "ag")
-             (counsel-projectile-ag)
-           (counsel-projectile-grep)))
-
   (bind-leader
     "a" 'org-agenda
     "c" 'cfw:open-org-calendar
@@ -65,6 +86,7 @@
     "pf" 'counsel-projectile-find-file
     "pg" 'eli/counsel-projectile-grep
     "ps" 'counsel-projectile-switch-project
+    "pk" 'eli/kill-non-project-buffers
     "q" 'quickrun
     "r" 'recompile
     "sco" 'slack-channel-join
