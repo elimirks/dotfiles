@@ -79,7 +79,10 @@
   :after evil
   :config
   (global-undo-tree-mode)
-  (evil-turn-on-undo-tree-mode))
+  ;; Fixes a compatibility issue between Mac & Linux Emacs
+  (if (fboundp 'evil-set-undo-system)
+      (evil-set-undo-system 'undo-tree)
+    (evil-turn-on-undo-tree-mode)))
 
 ;; Tpope's surround
 (use-package evil-surround
