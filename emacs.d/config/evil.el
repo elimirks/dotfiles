@@ -64,6 +64,7 @@
     "m" 'ivy-switch-buffer
     "pf" 'counsel-projectile-find-file
     "pg" 'eli/counsel-projectile-grep
+    "ps" 'counsel-projectile-switch-project
     "q" 'quickrun
     "r" 'recompile
     "sco" 'slack-channel-join
