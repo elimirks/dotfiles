@@ -106,7 +106,9 @@
   :mode "\\.\\(tsx\\|html\\.twig\\)$"
   :config
   (setq web-mode-enable-auto-closing t
-        web-mode-enable-auto-indentation t)
+        web-mode-enable-auto-indentation t
+        web-mode-script-padding 0
+        web-mode-style-padding 0)
 
   (flycheck-add-mode 'javascript-eslint 'web-mode))
 
