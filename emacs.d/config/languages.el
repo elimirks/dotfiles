@@ -189,6 +189,9 @@
 
 (use-package typescript-mode)
 
+(setq lsp-clients-typescript-server "typescript-language-server"
+      lsp-clients-typescript-server-args '("--stdio"))
+
 ;;
 ;; PureScript
 ;;
