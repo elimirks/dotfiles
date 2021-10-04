@@ -112,6 +112,8 @@
 
   (flycheck-add-mode 'javascript-eslint 'web-mode))
 
+(add-hook 'js-mode-hook #'lsp)
+
 ;; Some functions for more easily narrowing script and style tags in web mode.
 
 ;; Based on a gist by ceving:
@@ -191,6 +193,8 @@
 
 (setq lsp-clients-typescript-server "typescript-language-server"
       lsp-clients-typescript-server-args '("--stdio"))
+
+(add-hook 'typescript-mode-hook #'lsp)
 
 ;;
 ;; PureScript
