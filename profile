@@ -48,3 +48,4 @@ else
     alias ed="vim"
 fi
 
+alias trim="sed 's/^ *//;s/ *$//'"
