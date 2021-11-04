@@ -49,3 +49,4 @@ else
 fi
 
 alias trim="sed 's/^ *//;s/ *$//'"
+alias wsdelimit="sed -r 's/\s+/ /g'"

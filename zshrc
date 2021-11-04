@@ -1,3 +1,6 @@
+# Fix for editing remote files with Emacs Tramp
+[[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
+
 source $HOME/.profile
 
 # COLURZ!!!
