@@ -116,3 +116,22 @@
       (org-roam-setup)
       ;; If using org-roam-protocol
       (require 'org-roam-protocol))
+
+(use-package org-tree-slide)
+(use-package org-appear)
+(setq org-hide-emphasis-markers t)
+
+(use-package org-bullets)
+(use-package org-tree-slide)
+
+(add-hook 'org-tree-slide-mode-hook
+          (lambda ()
+            (progn
+              (set-face-attribute 'org-level-1 nil :weight 'semi-bold :height 1.5)
+              (dolist (face '(org-level-2
+                              org-level-3
+                              org-level-4
+                              org-level-5))
+                (set-face-attribute face nil :weight 'semi-bold :height 1.2))
+              (org-display-inline-images)
+              (org-bullets-mode))))
