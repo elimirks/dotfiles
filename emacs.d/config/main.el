@@ -317,6 +317,6 @@
 (load "~/.emacs.d/config/theming.el")
 (load "~/.emacs.d/config/miscplugins.el")
 (load "~/.emacs.d/config/evil.el")
-(load "~/.emacs.d/config/org.el")
 (load "~/.emacs.d/config/apps.el")
+(load "~/.emacs.d/config/org.el")
 (load "~/.emacs.d/config/languages.el")

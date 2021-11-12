@@ -92,6 +92,23 @@
 (set-face-background 'hl-line "#222")
 (set-face-underline 'hl-line nil)
 
+;; Fix `describe-face`, which would otherwise always return `hl-line-face`
+;; Taken from https://emacs.stackexchange.com/questions/45492
+(defun eli/face-at-point ()
+  (let ((face (get-text-property (point) 'face)))
+    (or (and (face-list-p face)
+             (car face))
+        (and (symbolp face)
+             face))))
+(defun eli/describe-face (&rest ignore)
+  (interactive (list (read-face-name "Describe face"
+                                     (or (eli/face-at-point) 'default)
+                                     t)))
+  ;; This only needs to change the `interactive` spec, so:
+  nil)
+(eval-after-load "hl-line"
+  '(advice-add 'describe-face :before #'eli/describe-face))
+
 ;; Highlight 80th column
 (use-package fill-column-indicator
   :config

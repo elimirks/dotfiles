@@ -3,7 +3,17 @@
 ;;
 
 (use-package markdown-mode
-  :mode "\\.\\(m\\(ark\\)?down\\|md\\)$")
+  :mode "\\.\\(m\\(ark\\)?down\\|md\\)$"
+  :config
+  (setq face-remapping-alist
+        '((markdown-header-face-1 () org-level-1)
+          (markdown-header-face-2 () org-level-2)
+          (markdown-header-face-3 () org-level-3)
+          (markdown-header-face-4 () org-level-4)
+          (markdown-header-face-5 () org-level-5)
+          (markdown-header-face-6 () org-level-6)))
+  (setq markdown-fontify-code-blocks-natively t))
+
 ;;
 ;; Prolog
 ;;

@@ -2,6 +2,8 @@
 ;; Base
 ;;
 
+;; Fix for org mode bug
+(defun org-clocking-buffer (&rest _))
 (setq
  org-pretty-entities t ; Alows displaying UTF-8 chars like \alpha
  org-startup-truncated nil
@@ -34,6 +36,19 @@
 ;; Don't spell check in org source code blocks.
 (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
 (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_LATEX" . "#\\+END_LATEX"))
+
+;; Highlight the background of code blocks
+(require 'color)
+(set-face-attribute 'org-block nil :background
+                    (color-lighten-name
+                     (face-attribute 'default :background) 5))
+
+;; Make headers B.I.G.
+(set-face-attribute 'org-level-1 nil :height 1.5)
+(set-face-attribute 'org-level-2 nil :height 1.4)
+(set-face-attribute 'org-level-3 nil :height 1.3)
+(set-face-attribute 'org-level-4 nil :height 1.2)
+(set-face-attribute 'org-level-5 nil :height 1.1)
 
 ;;
 ;; Agenda
@@ -117,21 +132,27 @@
       ;; If using org-roam-protocol
       (require 'org-roam-protocol))
 
-(use-package org-tree-slide)
-(use-package org-appear)
-(setq org-hide-emphasis-markers t)
+;; (use-package org-appear)
+;; (use-package org-bullets)
 
-(use-package org-bullets)
 (use-package org-tree-slide)
 
-(add-hook 'org-tree-slide-mode-hook
-          (lambda ()
-            (progn
-              (set-face-attribute 'org-level-1 nil :weight 'semi-bold :height 1.5)
-              (dolist (face '(org-level-2
-                              org-level-3
-                              org-level-4
-                              org-level-5))
-                (set-face-attribute face nil :weight 'semi-bold :height 1.2))
-              (org-display-inline-images)
-              (org-bullets-mode))))
+(defun eli/org-tree-slide-mode-hook ()
+  (setq org-hide-emphasis-markers t)
+  ;; (setq buffer-face-mode-face '(:family "Helvetica" :height 1.5))
+  ;; (buffer-face-mode)
+  ;; (set-face-attribute 'org-level-1 nil :weight 'semi-bold :height 1.5)
+  ;; (dolist (face '(org-level-2
+  ;;                 org-level-3
+  ;;                 org-level-4
+  ;;                 org-level-5))
+  ;;   (set-face-attribute face nil :weight 'semi-bold :height 1.2))
+
+  (setq-local face-remapping-alist
+              '((org-level-1 (:height 1.5) org-level-1)
+                ))
+  (setq-local org-tree-slide-slide-in-effect nil)
+  (org-display-inline-images)
+  (org-bullets-mode))
+
+(add-hook 'org-tree-slide-mode-hook 'eli/org-tree-slide-mode-hook)
