@@ -457,6 +457,16 @@
    :repo "Mulan-Szechuan-Sauce/monty"
    :files ("plugins/monty-mode.el")))
 
+;;
+;; B
+;;
+
+(use-package b-mode
+  :straight (
+   :type git
+   :host github
+   :repo "elimirks/b64"
+   :files ("plugins/b-mode.el")))
 
 ;;
 ;; Dot
