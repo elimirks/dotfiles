@@ -483,3 +483,8 @@
 ;;
 (use-package glsl-mode
   :mode ("\\.frag\\'" "\\.vert\\'"))
+
+;;
+;; Assembly
+;;
+(setq asm-comment-char ?#)
