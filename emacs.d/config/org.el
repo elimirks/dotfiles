@@ -132,27 +132,35 @@
       ;; If using org-roam-protocol
       (require 'org-roam-protocol))
 
-;; (use-package org-appear)
-;; (use-package org-bullets)
+;;
+;; Org Tree Slide
+;;
 
-(use-package org-tree-slide)
+(use-package org-tree-slide
+  :config
+  (setq org-tree-slide-slide-in-effect nil))
+
 
 (defun eli/org-tree-slide-mode-hook ()
-  (setq org-hide-emphasis-markers t)
-  ;; (setq buffer-face-mode-face '(:family "Helvetica" :height 1.5))
-  ;; (buffer-face-mode)
-  ;; (set-face-attribute 'org-level-1 nil :weight 'semi-bold :height 1.5)
-  ;; (dolist (face '(org-level-2
-  ;;                 org-level-3
-  ;;                 org-level-4
-  ;;                 org-level-5))
-  ;;   (set-face-attribute face nil :weight 'semi-bold :height 1.2))
+  (buffer-face-set :height 200))
 
-  (setq-local face-remapping-alist
-              '((org-level-1 (:height 1.5) org-level-1)
-                ))
-  (setq-local org-tree-slide-slide-in-effect nil)
+(defun eli/org-tree-slide-after-narrow-hook ()
   (org-display-inline-images)
-  (org-bullets-mode))
+  ;; (org-toggle-pretty-entities)
+  (setq-local org-hide-emphasis-markers t)
+  (org-restart-font-lock))
 
 (add-hook 'org-tree-slide-mode-hook 'eli/org-tree-slide-mode-hook)
+(add-hook 'org-tree-slide-after-narrow-hook 'eli/org-tree-slide-after-narrow-hook)
+
+;; Remove date & file name from header
+(defun eli/org-tree-slide--set-slide-header (blank-lines)
+  (when (and org-tree-slide-header org-tree-slide-breadcrumbs)
+    (overlay-put org-tree-slide--header-overlay
+                 'display
+                 (concat (org-tree-slide--get-parents org-tree-slide-breadcrumbs)
+                         "\n"
+                         (org-tree-slide--get-blank-lines blank-lines)))))
+
+(advice-add 'org-tree-slide--set-slide-header
+            :after #'eli/org-tree-slide--set-slide-header)
