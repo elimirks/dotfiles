@@ -37,7 +37,7 @@
 
 (if (version< "26.0.50" emacs-version)
     (mapc (lambda (hook) (add-hook hook 'eli/line-numbers-mode))
-          '(prog-mode-hook web-mode-hook))
+          '(prog-mode-hook web-mode-hook yaml-mode-hook))
   (use-package nlinum-relative
     :config
     (nlinum-relative-setup-evil)
