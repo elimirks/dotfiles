@@ -164,3 +164,5 @@
 
 (advice-add 'org-tree-slide--set-slide-header
             :after #'eli/org-tree-slide--set-slide-header)
+
+(evil-define-key 'normal org-mode-map (kbd "TAB") 'org-cycle)

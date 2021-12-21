@@ -122,12 +122,6 @@
   '(lambda () (interactive)
      (evil-ex "")))
 
-;; Fix for using Emacs in the terminal with EVIL+org mode
-(unless (display-graphic-p)
-  (add-hook 'org-mode-hook
-            (lambda ()
-              (define-key evil-normal-state-map (kbd "TAB") 'org-cycle))))
-
 ;;
 ;; Powerline config
 ;;
