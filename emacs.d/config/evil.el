@@ -51,8 +51,9 @@
 
   (general-create-definer bind-leader
     :keymaps 'global
-    :states '(normal emacs)
-    :prefix "SPC")
+    :states '(emacs normal)
+    :prefix "SPC"
+    :non-normal-prefix (kbd "M-SPC"))
 
   (general-define-key
    :states 'motion

@@ -137,6 +137,8 @@
 
 ;; For word lookups
 
+;; Required for wordnik to work
+(setq url-user-agent "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36")
 (use-package define-word)
 
 ;; Code snippets.
@@ -251,3 +253,11 @@
   (setq ag-executable "/usr/local/bin/ag"))
 
 (use-package elcord)
+
+;;
+;; VTerm, a faster embedded terminal emulator
+;;
+
+(use-package vterm
+  :init
+  (add-to-list 'evil-emacs-state-modes 'vterm-mode))
