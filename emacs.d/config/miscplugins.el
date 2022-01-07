@@ -252,7 +252,9 @@
   :config
   (setq ag-executable "/usr/local/bin/ag"))
 
-(use-package elcord)
+(use-package elcord
+  :config
+  (setq elcord-quiet t))
 
 ;;
 ;; VTerm, a faster embedded terminal emulator
