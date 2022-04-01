@@ -488,3 +488,22 @@
 ;; Assembly
 ;;
 (setq asm-comment-char ?#)
+
+;;
+;; Docker
+;;
+(use-package dockerfile-mode)
+
+;;
+;; Turtle
+;;
+
+(use-package ttl-mode
+  :straight (
+   :type git
+   :host github
+   :repo "jeeger/ttl-mode"
+   :files ("ttl-mode.el"))
+  :mode "\\.ttl$"
+  :config
+  (setq ttl-indent-on-idle-timer))

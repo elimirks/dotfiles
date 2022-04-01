@@ -1,3 +1,4 @@
+
 ;;  _____  _  _  __  __                   
 ;; | ____|| |(_)|  \/  |  __ _   ___  ___ 
 ;; |  _|  | || || |\/| | / _` | / __|/ __|
@@ -12,10 +13,6 @@
 (package-initialize)
 
 (load "~/.emacs.d/config/main.el")
-
-;; For environment specific things
-(when (file-exists-p "~/.emacs.d/user.org")
-  (org-babel-load-file "~/.emacs.d/user.org"))
 
 ;; NTS: don't put anything except custom set stuff in this config
 

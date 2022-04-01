@@ -320,3 +320,9 @@
 (load "~/.emacs.d/config/apps.el")
 (load "~/.emacs.d/config/org.el")
 (load "~/.emacs.d/config/languages.el")
+
+;; For environment specific things
+(when (file-exists-p "~/.emacs.d/user.org")
+  (org-babel-load-file "~/.emacs.d/user.org"))
+(when (file-exists-p "~/.emacs.d/local.el")
+  (load "~/.emacs.d/local.el"))
