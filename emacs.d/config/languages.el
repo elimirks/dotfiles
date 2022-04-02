@@ -467,6 +467,7 @@
    :host github
    :repo "elimirks/b64"
    :files ("plugins/b-mode.el")))
+(add-to-list 'elcord-mode-text-alist '(b-mode . "B  "))
 
 ;;
 ;; Dot
