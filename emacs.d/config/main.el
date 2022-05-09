@@ -39,7 +39,6 @@
 (scroll-bar-mode -1) ; Hide scrollbars
 (menu-bar-mode -1) ; Hide menu bar
 (show-paren-mode t) ; Highlights matching parenthesis
-(global-visual-line-mode t)
 (setq ring-bell-function 'ignore) ; Disable ALL bells! They suck!
 (electric-pair-mode -1)
 (setq initial-scratch-message "") ; No scratch text

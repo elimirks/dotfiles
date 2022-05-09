@@ -507,4 +507,4 @@
    :files ("ttl-mode.el"))
   :mode "\\.ttl$"
   :config
-  (setq ttl-indent-on-idle-timer))
+  (setq ttl-indent-on-idle-timer nil))
