@@ -372,7 +372,9 @@
 ;; Rust
 ;;
 
-(use-package rust-mode)
+(use-package rust-mode
+  :config
+  (define-key rust-mode-map (kbd "C-c C-r") 'rust-run))
 (use-package flycheck-rust)
 (with-eval-after-load 'rust-mode
   (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
