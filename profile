@@ -48,5 +48,9 @@ else
     alias ed="vim"
 fi
 
+if [ `command -v bat` ]; then
+    alias cat="bat"
+fi
+
 alias trim="sed 's/^ *//;s/ *$//'"
 alias wsdelimit="sed -r 's/\s+/ /g'"

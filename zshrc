@@ -148,8 +148,6 @@ function source_if_exists() {
 
 source_if_exists /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh || \
     source_if_exists /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source_if_exists /usr/share/fzf/completion.zsh
-source_if_exists /usr/share/fzf/key-bindings.zsh
 
 # Computer specific scripts
 if [ -d $HOME/.zsh ]; then
@@ -173,5 +171,7 @@ autoload -U edit-command-line
 zle -N edit-command-line
 bindkey -M viins '^xe'  edit-command-line
 bindkey -M viins '^x^e'  edit-command-line
-
 bindkey "^R" history-incremental-search-backward
+
+source_if_exists /usr/share/fzf/completion.zsh
+source_if_exists /usr/share/fzf/key-bindings.zsh
