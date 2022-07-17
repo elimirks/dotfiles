@@ -490,7 +490,10 @@
 ;;
 ;; Assembly
 ;;
-(setq asm-comment-char ?#)
+(setq asm-comment-char 59)
+(add-hook 'asm-mode-hook
+          (lambda ()
+            (setq tab-width 2)))
 
 ;;
 ;; Docker
@@ -510,3 +513,11 @@
   :mode "\\.ttl$"
   :config
   (setq ttl-indent-on-idle-timer nil))
+
+;;
+;; Go
+;;
+
+(use-package go-mode
+  :config
+  (add-hook 'go-mode-hook 'lsp-deferred))
