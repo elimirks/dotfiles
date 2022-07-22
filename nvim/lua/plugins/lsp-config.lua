@@ -56,6 +56,15 @@ local server_overrides = {
             opts[k] = v;
         end
     end,
+    rust_analyzer = function(opts)
+        opts.settings = {
+            diagnostics = {
+                disabled = {
+                    'inactive-code',
+                },
+            },
+        }
+    end
 }
 
 lsp_installer.on_server_ready(function(server)
