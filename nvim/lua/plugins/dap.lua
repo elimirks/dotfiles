@@ -1,39 +1,6 @@
 local dap = require('dap');
 local dapui = require('dapui');
 
-function get_dll_paths()
-    local cwd = vim.fn.getcwd();
-    local sln_file = vim.fn.globpath(cwd, '*.sln');
-
-    local matcher = "";
-    if sln_file == "" then
-        local dir_name = vim.fn.fnamemodify(cwd, ':t');
-        matcher = string.format('**/bin/Debug/*/%s.dll', dir_name);
-    else
-        local base_name = vim.fn.fnamemodify(sln_file, ':t:r');
-        matcher = string.format('**/bin/Debug/*/%s*.dll', base_name);
-    end
-
-    local globs = vim.fn.globpath(cwd, matcher);
-    local files = vim.split(globs, "\n");
-
-    return require('dap.ui').pick_one_sync(files, 'Path to dll:', function(item) return item end);
-end
-
-dap.adapters.coreclr = {
-    type = 'executable',
-    command = 'netcoredbg',
-    args = { '--interpreter=vscode' }
-};
-dap.configurations.cs = {
-    {
-        type = "coreclr",
-        name = "launch - netcoredbg",
-        request = "launch",
-        program = get_dll_paths,
-    },
-};
-
 dap.adapters.lldb = {
     type = 'executable',
     command = '/usr/sbin/lldb-vscode',
@@ -126,12 +93,14 @@ require('persistent-breakpoints').setup({});
 -- automatically load breakpoints when a file is loaded into the buffer.
 vim.api.nvim_create_autocmd({"BufReadPost"},{ callback = require('persistent-breakpoints.api').load_breakpoints });
 
-local opts = { noremap = true, silent = true };
-local keymap = vim.api.nvim_set_keymap;
+function keymap(mode, lhs, rhs)
+    local opts = { noremap = true, silent = true };
+    vim.api.nvim_set_keymap(mode, lhs, string.format("<cmd>lua %s<cr>", rhs), opts);
+end
 
-keymap('n', '<F5>', '<cmd>lua require("dap").continue()<cr>', opts);
-keymap('n', '<F9>', '<cmd>lua require("persistent-breakpoints.api").toggle_breakpoint()<cr>', opts);
-keymap('n', '<F10>', '<cmd>lua require("dap").step_over()<cr>', opts);
-keymap('n', '<F11>', '<cmd>lua require("dap").step_into()<cr>', opts);
-keymap('n', '<M-e>', '<cmd>lua require("dapui").eval()<cr>', opts);
-keymap('v', '<M-e>', '<cmd>lua require("dapui").eval()<cr>', opts);
+keymap('n', '<F5>', 'require("dap").continue()');
+keymap('n', '<F9>', 'require("persistent-breakpoints.api").toggle_breakpoint()');
+keymap('n', '<F10>', 'require("dap").step_over()');
+keymap('n', '<F11>', 'require("dap").step_into()');
+keymap('n', '<M-e>', 'require("dapui").eval()');
+keymap('v', '<M-e>', 'require("dapui").eval()');

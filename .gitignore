@@ -3,3 +3,4 @@ emacs.d/elpa/
 emacs.d/eshell/
 emacs.d/ido.last
 emacs.d/smex-items
+.luarc.json
