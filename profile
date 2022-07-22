@@ -2,7 +2,10 @@
 
 # Environment
 export PATH="$PATH:$HOME/bin:$DOTFILES_DIR/bin"
-export EDITOR='vim'
+
+[ `command -v vi` ] && export EDITOR='vi'
+[ `command -v vim` ] && export EDITOR='vim'
+[ `command -v nvim` ] && export EDITOR='nvim'
 
 # This will break on unsupported systems... but who the fuck doesn't have 256?
 export TERM="xterm-256color"
