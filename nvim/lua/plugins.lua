@@ -39,6 +39,10 @@ use {
 }
 
 use {
+    'p00f/nvim-ts-rainbow',
+}
+
+use {
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate',
     config = function()
@@ -47,6 +51,11 @@ use {
             highlight = {
                 enable = true,
                 additional_vim_regex_highlighting = false,
+            },
+            rainbow = {
+                enable = true,
+                extended_mode = true,
+                max_file_lines = 10000,
             },
         });
         require('plugins.treesitter');
