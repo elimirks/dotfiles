@@ -4,9 +4,14 @@ use 'wbthomason/packer.nvim'
 use 'nvim-lua/plenary.nvim'
 
 use {
-    'bluz71/vim-moonfly-colors',
+    'jaredgorski/SpaceCamp',
     config = function()
-        vim.cmd('colorscheme moonfly');
+        vim.cmd([[colorscheme spacecamp]])
+        vim.o.colorcolumn = '80'
+        vim.o.cursorline = true
+        vim.cmd([[highlight ColorColumn ctermbg=236]])
+        vim.cmd([[highlight CursorLine ctermbg=236]])
+        vim.cmd([[highlight Visual ctermbg=239]])
     end
 }
 
