@@ -170,4 +170,10 @@ use {
     requires = {'leafgarland/typescript-vim'},
 }
 
-use 'jparise/vim-graphql'
+use {
+    'preservim/vim-markdown',
+    requires = {'godlygeek/tabular'},
+    config = function()
+        vim.g.vim_markdown_folding_style_pythonic = 1
+    end
+}
