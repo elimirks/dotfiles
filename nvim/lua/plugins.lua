@@ -57,8 +57,9 @@ use {
                 extended_mode = true,
                 max_file_lines = 10000,
             },
-        });
-        require('plugins.treesitter');
+        })
+        require('plugins.treesitter')
+        vim.cmd([[NoMatchParen]])
     end
 }
 
