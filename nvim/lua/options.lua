@@ -14,6 +14,8 @@ vim.o.guifont = 'FiraCode NF:h12'
 vim.o.lazyredraw = true
 vim.o.wrap = false
 vim.opt.list = true
-vim.opt.listchars = { trail = '·' }
-
+vim.opt.listchars:append({
+    trail = '·',
+    tab = ">-",
+})
 vim.g.do_filetype_lua = true
