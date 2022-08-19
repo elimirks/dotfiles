@@ -178,3 +178,5 @@ use {
         vim.g.vim_markdown_folding_style_pythonic = 1
     end
 }
+
+use 'gpanders/editorconfig.nvim'
