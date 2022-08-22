@@ -180,3 +180,26 @@ use {
 }
 
 use 'gpanders/editorconfig.nvim'
+
+use {
+    'is0n/jaq-nvim',
+    config = function()
+        require('jaq-nvim').setup{
+            cmds = {
+                -- Uses vim commands
+                internal = {
+                    lua = "luafile %",
+                    vim = "source %"
+                },
+                -- Uses shell commands
+                external = {
+                    markdown = "glow %",
+                    python   = "python3 %",
+                    go       = "go run %",
+                    sh       = "sh %"
+                }
+            },
+        }
+    end
+}
+

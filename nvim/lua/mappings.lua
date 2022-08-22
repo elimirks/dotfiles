@@ -42,4 +42,7 @@ require('legendary').bind_keymaps({
 
     -- Neogit
     { '<leader>G', '<cmd>Neogit<cr>' },
+
+    -- Quickrun
+    { '<leader>q', '<cmd>Jaq<cr>' },
 })
