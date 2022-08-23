@@ -4,9 +4,10 @@ use 'wbthomason/packer.nvim'
 use 'nvim-lua/plenary.nvim'
 
 use {
-    'jaredgorski/SpaceCamp',
+    'B4mbus/oxocarbon-lua.nvim',
     config = function()
-        vim.cmd([[colorscheme spacecamp]])
+        vim.g.oxocarbon_lua_disable_italic = true
+        vim.cmd([[colorscheme oxocarbon-lua]])
         vim.o.colorcolumn = '80'
         vim.o.cursorline = true
         vim.cmd([[highlight ColorColumn ctermbg=236]])
