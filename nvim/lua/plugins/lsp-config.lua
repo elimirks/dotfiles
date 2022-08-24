@@ -66,6 +66,9 @@ require("mason-lspconfig").setup_handlers({
     rust_analyzer = function ()
         setup_lsp('rust_analyzer', {
             settings = {
+                checkOnSave = {
+                    extraArgs = {'/tmp/rust-analyzer-check'},
+                },
                 diagnostics = {
                     disabled = {
                         'inactive-code',
