@@ -77,4 +77,17 @@ require("mason-lspconfig").setup_handlers({
             }
         })
     end,
+    pylsp = function ()
+        setup_lsp('pylsp', {
+            settings = {
+                pylsp = {
+                    plugins = {
+                        pycodestyle={
+                            ignore={'E501'},
+                        },
+                    },
+                },
+            }
+        })
+    end,
 })
