@@ -65,8 +65,13 @@ use {
 }
 
 use {
+    'nvim-treesitter/nvim-treesitter-context',
+    requires = { 'nvim-treesitter/nvim-treesitter' },
+}
+
+use {
     'nvim-lualine/lualine.nvim',
-    requires = {'kyazdani42/nvim-web-devicons', opt = true},
+    requires = { 'kyazdani42/nvim-web-devicons', opt = true },
     config = function() require('plugins.lualine') end
 }
 
@@ -75,7 +80,7 @@ use {
     requires = {
         'nvim-telescope/telescope-ui-select.nvim',
         'kyazdani42/nvim-web-devicons',
-        {'nvim-telescope/telescope-fzf-native.nvim', run = 'make' },
+        { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' },
         'nvim-telescope/telescope-file-browser.nvim',
     },
     config = function()
@@ -128,7 +133,7 @@ use {
 
 use {
     'j-hui/fidget.nvim',
-    requires = {'neovim/nvim-lspconfig'},
+    requires = { 'neovim/nvim-lspconfig' },
     config = function()
         require('fidget').setup({})
     end
@@ -156,7 +161,7 @@ use {
 use {
     'TimUntersberger/neogit',
     config = function()
-        require('neogit').setup{}
+        require('neogit').setup {}
     end
 }
 
@@ -169,12 +174,12 @@ use {
 
 use {
     'maxmellon/vim-jsx-pretty',
-    requires = {'leafgarland/typescript-vim'},
+    requires = { 'leafgarland/typescript-vim' },
 }
 
 use {
     'preservim/vim-markdown',
-    requires = {'godlygeek/tabular'},
+    requires = { 'godlygeek/tabular' },
     config = function()
         vim.g.vim_markdown_folding_style_pythonic = 1
     end
@@ -185,7 +190,7 @@ use 'gpanders/editorconfig.nvim'
 use {
     'is0n/jaq-nvim',
     config = function()
-        require('jaq-nvim').setup{
+        require('jaq-nvim').setup {
             cmds = {
                 -- Uses vim commands
                 internal = {
@@ -203,4 +208,3 @@ use {
         }
     end
 }
-
