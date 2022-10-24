@@ -77,6 +77,7 @@ function user_config()
 
         -- fzf
         { '<leader>f', fzf.files },
+        { '<leader>e', '<cmd>lua require("fzf-lua").files({ cwd = vim.fs.dirname(vim.api.nvim_buf_get_name(0)) })<cr>'},
         { '<leader>m', fzf.buffers },
         { '<leader>g', fzf.live_grep },
         { '<leader>r', fzf.resume },
