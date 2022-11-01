@@ -45,6 +45,8 @@ if [ `command -v grc` ]; then
 	alias configure='grc ./configure'
 fi
 
+alias objdump='objdump --disassembler-color=color'
+
 if [ `command -v emacs` ]; then
     alias ed="emacsclient -nw"
 else
