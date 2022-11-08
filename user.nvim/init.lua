@@ -19,40 +19,6 @@ function user_install_plugins()
             vim.g.vim_markdown_folding_style_pythonic = 1
         end
     }
-    use {
-        'ruifm/gitlinker.nvim',
-        config = function()
-            local function get_sourcegraph_type_url(url_data)
-              local url = "https://"
-                .. url_data.host
-                .. "/"
-                .. url_data.repo
-                .. "@"
-                .. url_data.rev
-                .. "/-/blob/"
-                .. url_data.file
-              if url_data.lstart then
-                url = url .. "#L" .. url_data.lstart
-                if url_data.lend then
-                  url = url .. "-L" .. url_data.lend
-                end
-              end
-              return url
-            end
-            require("gitlinker").setup({
-              callbacks = {
-                ["git.sjc.dropbox.com"] = function(url_data)
-                  url_data.host = "sourcegraph.pp.dropbox.com"
-                  url_data.repo = "git.sjc.dropbox.com/server"
-                  url_data.rev = vim.fn.trim(
-                    vim.fn.system("git merge-base HEAD origin/master")
-                  )
-                  return get_sourcegraph_type_url(url_data)
-                end,
-              },
-            })
-        end
-    }
 end
 
 function user_config()
@@ -93,8 +59,7 @@ function user_config()
         -- Quickrun
         { '<leader>q', '<cmd>Jaq<cr>' },
 
-        -- Gitlinker
-        { '<leader>gb', '<cmd>lua require"gitlinker".get_buf_range_url("n", {action_callback = require"gitlinker.actions".open_in_browser})<cr>' },
+        { 'gy', '<cmd>lua get_sourcegraph_url()<cr>' },
     })
 end
 
