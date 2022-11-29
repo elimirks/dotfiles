@@ -19,12 +19,20 @@ function user_install_plugins()
             vim.g.vim_markdown_folding_style_pythonic = 1
         end
     }
+    use {
+        'simrat39/symbols-outline.nvim',
+        config = function()
+            require("symbols-outline").setup({
+                -- autofold_depth = 0,
+            })
+        end
+    }
 end
 
 function user_config()
     local fzf = require('fzf-lua')
 
-    require('legendary').bind_keymaps({
+    require('legendary').keymaps({
         { '<Space>' , '<nop>' },
 
         -- Fast saving
@@ -69,7 +77,7 @@ function user_on_lsp_attach(client, bufnr)
 
     -- Mappings.
     -- See `:help vim.lsp.*` for documentation on any of the below functions
-    require('legendary').bind_keymaps({
+    require('legendary').keymaps({
         { 'gd', fzf.lsp_definitions, opts = map_opts },
         { 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts = map_opts },
         { 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts = map_opts },
