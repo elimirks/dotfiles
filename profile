@@ -32,17 +32,17 @@ alias .....="cd ../../../.. && ls"
 alias grep='grep -n --color=always'
 
 if [ `command -v grc` ]; then
-	# grc colors.. this is a very neat program
-	alias ping='grc ping'
-	alias traceroute='grc traceroute'
-	alias gcc='grc gcc'
-	alias make='grc make'
-	alias netstat='grc netstat'
-	alias diff='grc diff'
-	alias last='grc last'
-	alias ldap='grc ldap'
-	alias cvs='grc cvs'
-	alias configure='grc ./configure'
+    # grc colors.. this is a very neat program
+    alias ping='grc ping'
+    alias traceroute='grc traceroute'
+    alias gcc='grc gcc'
+    alias make='grc make'
+    alias netstat='grc netstat'
+    alias diff='grc diff'
+    alias last='grc last'
+    alias ldap='grc ldap'
+    alias cvs='grc cvs'
+    alias configure='grc ./configure'
 fi
 
 alias objdump='objdump --disassembler-color=color'
@@ -59,3 +59,7 @@ fi
 
 alias trim="sed 's/^ *//;s/ *$//'"
 alias wsdelimit="sed -r 's/\s+/ /g'"
+
+if [ `command -v fd` ]; then
+    export FZF_DEFAULT_COMMAND="fd --type f"
+fi
