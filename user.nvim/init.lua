@@ -1,6 +1,6 @@
 function user_install_plugins()
-    local use = require('packer').use
-    use {
+    return {
+    {
         'B4mbus/oxocarbon-lua.nvim',
         config = function()
             vim.g.oxocarbon_lua_disable_italic = true
@@ -11,21 +11,22 @@ function user_install_plugins()
             vim.cmd([[highlight CursorLine ctermbg=236]])
             vim.cmd([[highlight Visual ctermbg=239]])
         end
-    }
-    use {
+    },
+    {
         'preservim/vim-markdown',
-        requires = {'godlygeek/tabular'},
+        dependencies = {'godlygeek/tabular'},
         config = function()
             vim.g.vim_markdown_folding_style_pythonic = 1
         end
-    }
-    use {
+    },
+    {
         'simrat39/symbols-outline.nvim',
         config = function()
             require("symbols-outline").setup({
                 -- autofold_depth = 0,
             })
         end
+    },
     }
 end
 
