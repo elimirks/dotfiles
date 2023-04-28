@@ -51,9 +51,10 @@ function user_config()
         { '<leader>F', '<cmd>Neoformat<cr>', mode = { 'n', 'v' } },
 
         -- fzf
-        -- { '<leader>f', fzf.files },
-        { '<leader>f', function() fzf_files_browse(vim.loop.cwd()) end },
-        { '<leader>e', function() fzf_files_browse(vim.fs.dirname(vim.api.nvim_buf_get_name(0))) end},
+        --{ '<leader>f', function() fzf_find_file(vim.loop.cwd()) end },
+        --{ '<leader>e', function() fzf_find_file(vim.fs.dirname(vim.api.nvim_buf_get_name(0))) end},
+        { '<leader>f', fzf.files },
+        { '<leader>e', function() fzf_find_file(get_buf_dir()) end },
         { '<leader>m', fzf.buffers },
         { '<leader>g', fzf.live_grep },
         { '<leader>r', fzf.resume },
