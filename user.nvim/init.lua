@@ -31,6 +31,8 @@ function user_install_plugins()
 end
 
 function user_config()
+    vim.o.wrap = true
+
     local fzf = require('fzf-lua')
 
     require('legendary').keymaps({
