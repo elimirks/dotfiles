@@ -73,6 +73,13 @@ function user_config()
         { '<leader>q', '<cmd>Jaq<cr>' },
 
         { 'gy', '<cmd>lua get_sourcegraph_url()<cr>' },
+
+        -- DAP
+        { '<F5>', '<cmd>lua require("dap").continue()<cr>' },
+        { '<F9>', '<cmd>lua require("persistent-breakpoints.api").toggle_breakpoint()<cr>' },
+        { '<F10>', '<cmd>lua require("dap").step_over()<cr>' },
+        { '<F11>', '<cmd>lua require("dap").step_into()<cr>' },
+        { '<F12>', '<cmd>lua require("dapui").eval()<cr>', modes = { 'n', 'v' } },
     })
 end
 
