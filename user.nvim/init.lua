@@ -79,7 +79,7 @@ function user_config()
         { '<F9>', '<cmd>lua require("persistent-breakpoints.api").toggle_breakpoint()<cr>' },
         { '<F10>', '<cmd>lua require("dap").step_over()<cr>' },
         { '<F11>', '<cmd>lua require("dap").step_into()<cr>' },
-        { '<F12>', '<cmd>lua require("dapui").eval()<cr>', modes = { 'n', 'v' } },
+        { '<F12>', '<cmd>lua require("dapui").eval()<cr>', mode = { 'n', 'v' } },
     })
 end
 
