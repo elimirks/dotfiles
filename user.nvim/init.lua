@@ -1,15 +1,16 @@
 function user_install_plugins()
     return {
     {
-        'B4mbus/oxocarbon-lua.nvim',
+        -- TODO: Find a nicer color scheme
+        'bluz71/vim-moonfly-colors',
         config = function()
             vim.g.oxocarbon_lua_disable_italic = true
-            vim.cmd([[colorscheme oxocarbon-lua]])
+            vim.cmd([[colorscheme moonfly]])
+            --vim.cmd([[colorscheme torte]])
             vim.o.colorcolumn = '80'
             vim.o.cursorline = true
             vim.cmd([[highlight ColorColumn ctermbg=236]])
             vim.cmd([[highlight CursorLine ctermbg=236]])
-            vim.cmd([[highlight Visual ctermbg=239]])
         end
     },
     {
@@ -31,6 +32,7 @@ function user_install_plugins()
 end
 
 function user_config()
+    vim.o.timeoutlen = 5000
     vim.o.wrap = true
 
     local fzf = require('fzf-lua')
@@ -72,14 +74,22 @@ function user_config()
         -- Quickrun
         { '<leader>q', '<cmd>Jaq<cr>' },
 
-        { 'gy', '<cmd>lua get_sourcegraph_url()<cr>' },
+        -- Copy sourcegraph link to clipboard
+        { 'gys', '<cmd>lua get_sourcegraph_url()<cr>' },
+        -- Copy file path to clipboard
+        { 'gyf', '<cmd>let @+ = @%<cr>' },
 
         -- DAP
-        { '<F5>', '<cmd>lua require("dap").continue()<cr>' },
-        { '<F9>', '<cmd>lua require("persistent-breakpoints.api").toggle_breakpoint()<cr>' },
-        { '<F10>', '<cmd>lua require("dap").step_over()<cr>' },
-        { '<F11>', '<cmd>lua require("dap").step_into()<cr>' },
-        { '<F12>', '<cmd>lua require("dapui").eval()<cr>', mode = { 'n', 'v' } },
+        -- Debug continue (or start)
+        { '<leader>dc', '<cmd>lua require("dap").continue()<cr>' },
+        { '<leader>db', '<cmd>lua require("persistent-breakpoints.api").toggle_breakpoint()<cr>' },
+        { '<leader>do', '<cmd>lua require("dap").step_over()<cr>' },
+        { '<leader>di', '<cmd>lua require("dap").step_into()<cr>' },
+        -- Run code you highlighted. Can work in a code comment etc.
+        { '<leader>de', '<cmd>lua require("dapui").eval()<cr>', mode = { 'n', 'v' } },
+        -- Runs until the current cursor, ignoring breakpoints temporarily
+        { '<leader>dr', '<cmd>lua require("dap").run_to_cursor()<cr>' },
+        { '<leader>dq', '<cmd>lua require("dapui").close()<cr>' },
     })
 end
 
@@ -108,14 +118,16 @@ end
 user_lsp_overrides = {
     rust_analyzer = {
         settings = {
-            checkOnSave = {
-                extraArgs = {'/tmp/rust-analyzer-check'},
-            },
-            diagnostics = {
-                disabled = {
-                    'inactive-code',
+            ['rust-analyzer'] = {
+                checkOnSave = {
+                    extraArgs = {'--target-dir', '/Users/eli/rust-analyzer-build'}
                 },
-            },
+                diagnostics = {
+                    disabled = {
+                        'inactive-code',
+                    },
+                },
+            }
         }
     },
     pylsp = {
