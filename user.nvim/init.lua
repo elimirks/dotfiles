@@ -74,6 +74,9 @@ function user_config()
         -- Quickrun
         { '<leader>q', '<cmd>Jaq<cr>' },
 
+        -- Write code for me pls
+        { '<leader>c', '<cmd>Copilot<cr>' },
+
         -- Copy sourcegraph link to clipboard
         { 'gys', '<cmd>lua get_sourcegraph_url()<cr>' },
         -- Copy file path to clipboard
