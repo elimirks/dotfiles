@@ -1,12 +1,10 @@
 function user_install_plugins()
     return {
     {
-        -- TODO: Find a nicer color scheme
         'bluz71/vim-moonfly-colors',
         config = function()
             vim.g.oxocarbon_lua_disable_italic = true
             vim.cmd([[colorscheme moonfly]])
-            --vim.cmd([[colorscheme torte]])
             vim.o.colorcolumn = '80'
             vim.o.cursorline = true
             vim.cmd([[highlight ColorColumn ctermbg=236]])
@@ -26,6 +24,11 @@ function user_install_plugins()
             require("symbols-outline").setup({
                 -- autofold_depth = 0,
             })
+        end
+    },
+    {
+        'evanleck/vim-svelte',
+        config = function()
         end
     },
     }
@@ -105,6 +108,7 @@ function user_on_lsp_attach(client, bufnr)
     require('legendary').keymaps({
         { 'gd', fzf.lsp_definitions, opts = map_opts },
         { 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts = map_opts },
+        { 'gt', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts = map_opts },
         { 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts = map_opts },
         { 'gi', fzf.lsp_implementations, opts = map_opts },
         { '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts = map_opts },
@@ -114,7 +118,11 @@ function user_on_lsp_attach(client, bufnr)
         { '<leader>F', '<cmd>lua vim.lsp.buf.formatting()<cr>', opts = map_opts },
         { '<leader>F', '<cmd>lua vim.lsp.buf.range_formatting()<cr>', opts = map_opts, mode = { 'v' } },
         { 'gx', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts = map_opts },
-        { 'gR', '<cmd>lua vim.lsp.buf.rename()<cr>', opts = map_opts },
+        { 'gR', function() 
+                    vim.lsp.buf.rename()
+                    vim.cmd('silent! wa')
+                end,
+        opts = map_opts },
     })
 end
 

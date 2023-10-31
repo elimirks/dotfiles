@@ -1,4 +1,5 @@
 font:
   normal:
-    family: FiraCode Nerd Font Mono
+    # https://github.com/ryanoasis/nerd-fonts/releases/tag/v3.0.2
+    family: FiraCode Nerd Font
   size: 14.0

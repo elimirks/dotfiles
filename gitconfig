@@ -22,7 +22,7 @@
 # All Delta stuff #
 ###################
 [core]
-    pager = delta
+	pager = less
 
 [interactive]
     diffFilter = delta --color-only
