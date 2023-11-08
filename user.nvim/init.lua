@@ -37,6 +37,7 @@ end
 function user_config()
     vim.o.timeoutlen = 5000
     vim.o.wrap = true
+    vim.o.shortmess = "ltToOCFm"
 
     local fzf = require('fzf-lua')
 
