@@ -20,8 +20,8 @@ else  # Proboblay a Mac
     alias o='open'
 fi
 
-alias ll='ls -l'
-alias la='ls -la'
+alias ll='ls -lh'
+alias la='ls -lah'
 
 alias ..="cd .. && ls"
 alias ...="cd ../.. && ls"

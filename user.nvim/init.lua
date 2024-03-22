@@ -15,7 +15,7 @@ function user_install_plugins()
         'preservim/vim-markdown',
         dependencies = {'godlygeek/tabular'},
         config = function()
-            vim.g.vim_markdown_folding_style_pythonic = 1
+            vim.g.vim_markdown_folding_disabled = 1
         end
     },
     {

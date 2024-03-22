@@ -1,14 +1,15 @@
-#!/bin/sh
+#!/bin/bash
 
 # Taken from https://ddrscott.github.io/blog/2017/fzf-dictionary/
 
 # Default `fold` to screen width and break at spaces
 function fold {
-    if [ $# -eq 0 ]; then
-        /usr/bin/fold -w $COLUMNS -s
-    else
-        /usr/bin/fold $*
-    fi
+    /usr/bin/fold $*
+    # if [ $# -eq 0 ]; then
+    #     #/usr/bin/fold -w $COLUMNS -s
+    # else
+    #     #/usr/bin/fold $*
+    # fi
 }
 
 # Use `fzf` against system dictionary
