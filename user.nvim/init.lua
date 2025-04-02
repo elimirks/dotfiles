@@ -12,13 +12,6 @@ function user_install_plugins()
         end
     },
     {
-        'preservim/vim-markdown',
-        dependencies = {'godlygeek/tabular'},
-        config = function()
-            vim.g.vim_markdown_folding_disabled = 1
-        end
-    },
-    {
         'simrat39/symbols-outline.nvim',
         config = function()
             require("symbols-outline").setup({
@@ -31,6 +24,94 @@ function user_install_plugins()
         config = function()
         end
     },
+    {
+        'nvim-orgmode/orgmode',
+        config = function()
+            require('orgmode').setup({
+                -- org_agenda_files = '~/orgfiles/**/*',
+                -- org_default_notes_file = '~/orgfiles/refile.org',
+            })
+        end
+    },
+    {
+        "yetone/avante.nvim",
+        event = "VeryLazy",
+        version = false, -- Never set this value to "*"! Never!
+        opts = {
+            provider = "openai",
+            openai = {
+                endpoint = "https://api.openai.com/v1",
+                model = "gpt-4o",
+                timeout = 30000, -- ms
+                temperature = 0,
+                max_completion_tokens = 8192,
+                --reasoning_effort = "medium", -- low|medium|high, only used for reasoning models
+            },
+        },
+        -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+        build = "make",
+        -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+            "stevearc/dressing.nvim",
+            "nvim-lua/plenary.nvim",
+            "MunifTanjim/nui.nvim",
+            --- The below dependencies are optional,
+            "echasnovski/mini.pick", -- for file_selector provider mini.pick
+            "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
+            "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
+            "ibhagwan/fzf-lua", -- for file_selector provider fzf
+            "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+            "zbirenbaum/copilot.lua", -- for providers='copilot'
+            {
+                -- support for image pasting
+                "HakonHarnes/img-clip.nvim",
+                event = "VeryLazy",
+                opts = {
+                    -- recommended settings
+                    default = {
+                        embed_image_as_base64 = false,
+                        prompt_for_file_name = false,
+                        drag_and_drop = {
+                            insert_mode = true,
+                        },
+                        -- required for Windows users
+                        use_absolute_path = true,
+                    },
+                },
+            },
+            {
+                -- Make sure to set this up properly if you have lazy=true
+                'MeanderingProgrammer/render-markdown.nvim',
+                opts = {
+                    file_types = { "markdown", "Avante" },
+                },
+                ft = { "markdown", "Avante" },
+            },
+        },
+    }
+    -- {
+    --     'memgraph/cypher.vim',
+    --     config = function()
+    --     end
+    -- },
+    -- {
+    --     'scalameta/nvim-metals',
+    --     dependencies = {'nvim-lua/plenary.nvim'},
+    --     config = function(self, metals_config)
+    --         local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", {
+    --             clear = true
+    --         })
+    --         vim.api.nvim_create_autocmd("FileType", {
+    --             pattern = self.ft,
+    --             callback = function()
+    --                 require("metals").initialize_or_attach(metals_config)
+    --             end,
+    --             group = nvim_metals_group,
+    --         })
+    --
+    --     end
+    -- },
     }
 end
 
@@ -38,6 +119,8 @@ function user_config()
     vim.o.timeoutlen = 5000
     vim.o.wrap = true
     vim.o.shortmess = "ltToOCFm"
+    vim.g.markdown_folding_disabled = 1
+    vim.g.markdown_fenced_languages = { 'cypher=cypher' }
 
     local sp = require('snacks.picker')
 
@@ -62,9 +145,19 @@ function user_config()
         { '<leader>f', function() sp.git_files({ untracked = true }) end },
         { '<leader>e', snacks_find_file },
         { '<leader>m', sp.buffers },
-        { '<leader>g', sp.grep() },
+        { '<leader>g', sp.grep },
         { '<leader>r', sp.resume },
         { '<M-x>', sp.commands },
+        { '<leader>a@', function()
+            local sidebar = require('avante').get()
+            if not sidebar:is_open() then
+                require('avante.api').ask()
+                sidebar = require('avante').get()
+            end
+            local relative_path = vim.fn.expand('%')
+            sidebar.file_selector:add_selected_file(relative_path)
+        end
+        },
 
         -- Help
         { '<C-h>f', sp.help},
@@ -95,6 +188,10 @@ function user_config()
         -- Runs until the current cursor, ignoring breakpoints temporarily
         { '<leader>dr', '<cmd>lua require("dap").run_to_cursor()<cr>' },
         { '<leader>dq', '<cmd>lua require("dapui").close()<cr>' },
+    })
+
+    require('treesitter-context').setup({
+        max_lines = 7,
     })
 end
 
@@ -129,8 +226,11 @@ user_lsp_overrides = {
     rust_analyzer = {
         settings = {
             ['rust-analyzer'] = {
+                cargo = {
+                    allFeatures = true,
+                },
                 checkOnSave = {
-                    extraArgs = {'--target-dir', '/Users/eli/rust-analyzer-build'}
+                    extraArgs = {'--target-dir', '/home/eli/.cache/rust-analyzer'},
                 },
                 diagnostics = {
                     disabled = {
