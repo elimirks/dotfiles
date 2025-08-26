@@ -16,4 +16,4 @@ if [ -f /etc/bash_completion ]; then
 fi
 
 set -o vi
-
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

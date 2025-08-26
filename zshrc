@@ -173,8 +173,9 @@ bindkey -M viins '^xe'  edit-command-line
 bindkey -M viins '^x^e'  edit-command-line
 bindkey "^R" history-incremental-search-backward
 
-source_if_exists /usr/share/fzf/completion.zsh
-source_if_exists /usr/share/fzf/key-bindings.zsh
+# source_if_exists /usr/share/fzf/completion.zsh
+# source_if_exists /usr/share/fzf/key-bindings.zsh
+# source_if_exists /usr/share/fzf/key-bindings.zsh
 
 # TODO: Try this out again
 # source_if_exists ./zsh/zsh-github-copilot.plugin.zsh
