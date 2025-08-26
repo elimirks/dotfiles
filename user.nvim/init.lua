@@ -12,9 +12,9 @@ function user_install_plugins()
         end
     },
     {
-        'simrat39/symbols-outline.nvim',
+        'hedyhli/outline.nvim',
         config = function()
-            require("symbols-outline").setup({
+            require("outline").setup({
                 -- autofold_depth = 0,
             })
         end
@@ -25,91 +25,100 @@ function user_install_plugins()
         end
     },
     {
-        'nvim-orgmode/orgmode',
+        "frankroeder/parrot.nvim",
+        dependencies = { 'ibhagwan/fzf-lua', 'nvim-lua/plenary.nvim' },
+        -- optionally include "folke/noice.nvim" or "rcarriga/nvim-notify" for beautiful notifications
         config = function()
-            require('orgmode').setup({
-                -- org_agenda_files = '~/orgfiles/**/*',
-                -- org_default_notes_file = '~/orgfiles/refile.org',
-            })
-        end
-    },
-    {
-        "yetone/avante.nvim",
-        event = "VeryLazy",
-        version = false, -- Never set this value to "*"! Never!
-        opts = {
-            provider = "openai",
-            openai = {
-                endpoint = "https://api.openai.com/v1",
-                model = "gpt-4o",
-                timeout = 30000, -- ms
-                temperature = 0,
-                max_completion_tokens = 8192,
-                --reasoning_effort = "medium", -- low|medium|high, only used for reasoning models
-            },
-        },
-        -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-        build = "make",
-        -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
-        dependencies = {
-            "nvim-treesitter/nvim-treesitter",
-            "stevearc/dressing.nvim",
-            "nvim-lua/plenary.nvim",
-            "MunifTanjim/nui.nvim",
-            --- The below dependencies are optional,
-            "echasnovski/mini.pick", -- for file_selector provider mini.pick
-            "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
-            "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
-            "ibhagwan/fzf-lua", -- for file_selector provider fzf
-            "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-            "zbirenbaum/copilot.lua", -- for providers='copilot'
-            {
-                -- support for image pasting
-                "HakonHarnes/img-clip.nvim",
-                event = "VeryLazy",
-                opts = {
-                    -- recommended settings
-                    default = {
-                        embed_image_as_base64 = false,
-                        prompt_for_file_name = false,
-                        drag_and_drop = {
-                            insert_mode = true,
+            require("parrot").setup {
+                providers = {
+                    gemini = {
+                        name = "gemini",
+                        endpoint = function(self)
+                            return "https://generativelanguage.googleapis.com/v1beta/models/"
+                            .. self._model
+                            .. ":streamGenerateContent?alt=sse"
+                        end,
+                        model_endpoint = function(self)
+                            return { "https://generativelanguage.googleapis.com/v1beta/models?key=" .. self.api_key }
+                        end,
+                        -- api_key = os.getenv "GEMINI_API_KEY",
+                        api_key = "AIzaSyCevAx8TuNkwGc16NcNzyjigNxup9HbFlU",
+                        params = {
+                            chat = { temperature = 1.1, topP = 1, topK = 10, maxOutputTokens = 8192 },
+                            command = { temperature = 0.8, topP = 1, topK = 10, maxOutputTokens = 8192 },
                         },
-                        -- required for Windows users
-                        use_absolute_path = true,
+                        topic = {
+                            model = "gemini-1.5-flash",
+                            params = { maxOutputTokens = 64 },
+                        },
+                        headers = function(self)
+                            return {
+                                ["Content-Type"] = "application/json",
+                                ["x-goog-api-key"] = self.api_key,
+                            }
+                        end,
+                        models = {
+                            "gemini-2.5-flash-preview-05-20",
+                            "gemini-2.5-pro-preview-05-06",
+                            "gemini-1.5-pro-latest",
+                            "gemini-1.5-flash-latest",
+                            "gemini-2.5-pro-exp-03-25",
+                            "gemini-2.0-flash-lite",
+                            "gemini-2.0-flash-thinking-exp",
+                            "gemma-3-27b-it",
+                        },
+                        preprocess_payload = function(payload)
+                            local contents = {}
+                            local system_instruction = nil
+                            for _, message in ipairs(payload.messages) do
+                                if message.role == "system" then
+                                    system_instruction = { parts = { { text = message.content } } }
+                                else
+                                    local role = message.role == "assistant" and "model" or "user"
+                                    table.insert(
+                                    contents,
+                                    { role = role, parts = { { text = message.content:gsub("^%s*(.-)%s*$", "%1") } } }
+                                    )
+                                end
+                            end
+                            local gemini_payload = {
+                                contents = contents,
+                                generationConfig = {
+                                    temperature = payload.temperature,
+                                    topP = payload.topP or payload.top_p,
+                                    maxOutputTokens = payload.max_tokens or payload.maxOutputTokens,
+                                },
+                            }
+                            if system_instruction then
+                                gemini_payload.systemInstruction = system_instruction
+                            end
+                            return gemini_payload
+                        end,
+                        process_stdout = function(response)
+                            if not response or response == "" then
+                                return nil
+                            end
+                            local success, decoded = pcall(vim.json.decode, response)
+                            if
+                                success
+                                and decoded.candidates
+                                and decoded.candidates[1]
+                                and decoded.candidates[1].content
+                                and decoded.candidates[1].content.parts
+                                and decoded.candidates[1].content.parts[1]
+                            then
+                                return decoded.candidates[1].content.parts[1].text
+                            end
+                            return nil
+                        end,
                     },
-                },
-            },
-            {
-                -- Make sure to set this up properly if you have lazy=true
-                'MeanderingProgrammer/render-markdown.nvim',
-                opts = {
-                    file_types = { "markdown", "Avante" },
-                },
-                ft = { "markdown", "Avante" },
-            },
-        },
-    }
+                }
+            }
+        end,
+    },
     -- {
     --     'memgraph/cypher.vim',
     --     config = function()
-    --     end
-    -- },
-    -- {
-    --     'scalameta/nvim-metals',
-    --     dependencies = {'nvim-lua/plenary.nvim'},
-    --     config = function(self, metals_config)
-    --         local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", {
-    --             clear = true
-    --         })
-    --         vim.api.nvim_create_autocmd("FileType", {
-    --             pattern = self.ft,
-    --             callback = function()
-    --                 require("metals").initialize_or_attach(metals_config)
-    --             end,
-    --             group = nvim_metals_group,
-    --         })
-    --
     --     end
     -- },
     }
@@ -120,7 +129,7 @@ function user_config()
     vim.o.wrap = true
     vim.o.shortmess = "ltToOCFm"
     vim.g.markdown_folding_disabled = 1
-    vim.g.markdown_fenced_languages = { 'cypher=cypher' }
+    -- vim.g.markdown_fenced_languages = { 'cypher=cypher' }
 
     local sp = require('snacks.picker')
 
@@ -142,22 +151,23 @@ function user_config()
         { '<leader>F', '<cmd>Neoformat<cr>', mode = { 'n', 'v' } },
 
         -- Pickers
-        { '<leader>f', function() sp.git_files({ untracked = true }) end },
+        -- { '<leader>f', function() sp.git_files({ untracked = true }) end },
+        { '<leader>f', function() sp.files() end },
         { '<leader>e', snacks_find_file },
         { '<leader>m', sp.buffers },
         { '<leader>g', sp.grep },
         { '<leader>r', sp.resume },
         { '<M-x>', sp.commands },
-        { '<leader>a@', function()
-            local sidebar = require('avante').get()
-            if not sidebar:is_open() then
-                require('avante.api').ask()
-                sidebar = require('avante').get()
-            end
-            local relative_path = vim.fn.expand('%')
-            sidebar.file_selector:add_selected_file(relative_path)
-        end
-        },
+        -- { '<leader>a@', function()
+        --     local sidebar = require('avante').get()
+        --     if not sidebar:is_open() then
+        --         require('avante.api').ask()
+        --         sidebar = require('avante').get()
+        --     end
+        --     local relative_path = vim.fn.expand('%')
+        --     sidebar.file_selector:add_selected_file(relative_path)
+        -- end
+        -- },
 
         -- Help
         { '<C-h>f', sp.help},
@@ -188,10 +198,17 @@ function user_config()
         -- Runs until the current cursor, ignoring breakpoints temporarily
         { '<leader>dr', '<cmd>lua require("dap").run_to_cursor()<cr>' },
         { '<leader>dq', '<cmd>lua require("dapui").close()<cr>' },
+        -- Parrot
+        { '<leader>pi', '<cmd>\'<,\'PrtImplement<cr>', mode = { 'v' } },
+        { '<leader>pa', '<cmd>\'<,\'PrtAsk<cr>', mode = { 'v' } },
+        { '<leader>pr', '<cmd>\'<,\'PrtRewrite<cr>', mode = { 'v' } },
     })
 
     require('treesitter-context').setup({
         max_lines = 7,
+        opts = {
+            ensure_installed = {},
+        },
     })
 end
 
