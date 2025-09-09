@@ -1,5 +1,12 @@
+function string:endswith(suffix)
+    return self:sub(-#suffix) == suffix
+end
+
 function user_install_plugins()
     return {
+    {
+        'tidalcycles/vim-tidal',
+    },
     {
         'bluz71/vim-moonfly-colors',
         config = function()
@@ -116,11 +123,22 @@ function user_install_plugins()
             }
         end,
     },
-    -- {
-    --     'memgraph/cypher.vim',
-    --     config = function()
-    --     end
-    -- },
+    {
+        "folke/trouble.nvim",
+        cmd = "Trouble",
+        keys = {
+            {
+                "<leader>xx",
+                "<cmd>Trouble diagnostics toggle<cr>",
+                desc = "Diagnostics (Trouble)",
+            },
+        },
+    },
+    {
+        'memgraph/cypher.vim',
+        config = function()
+        end
+    },
     }
 end
 
@@ -198,11 +216,79 @@ function user_config()
         -- Runs until the current cursor, ignoring breakpoints temporarily
         { '<leader>dr', '<cmd>lua require("dap").run_to_cursor()<cr>' },
         { '<leader>dq', '<cmd>lua require("dapui").close()<cr>' },
+        { '<leader>dd', '<cmd>lua require("dapui").open()<cr>' },
         -- Parrot
         { '<leader>pi', '<cmd>\'<,\'PrtImplement<cr>', mode = { 'v' } },
         { '<leader>pa', '<cmd>\'<,\'PrtAsk<cr>', mode = { 'v' } },
         { '<leader>pr', '<cmd>\'<,\'PrtRewrite<cr>', mode = { 'v' } },
     })
+
+    local dap = require('dap')
+    local dapui = require('dapui')
+    dapui.setup({
+        layouts = { {
+            elements = { {
+                id = "scopes",
+                size = 0.25
+            }, {
+                id = "breakpoints",
+                size = 0.25
+            }, {
+                id = "stacks",
+                size = 0.25
+            }, {
+                id = "watches",
+                size = 0.25
+            } },
+            position = "left",
+            size = 40
+        }, {
+            elements = { {
+                id = "repl",
+                size = 0.5
+            }, {
+                id = "console",
+                size = 0.5
+            } },
+            position = "bottom",
+            size = 10
+        } },
+    })
+
+    function dap_program_path()
+        local path = vim.fn.getcwd() .. '/target/debug/*'
+        -- TODO: if multiple, pick one
+        for i, p in ipairs(vim.split(vim.fn.glob(path), '\n')) do
+            if vim.fn.filereadable(p) == 1 and vim.fn.getfperm(p):sub(3,3) == 'x' then
+                return p
+            end
+        end
+        -- return vim.fn.input('Path to executable: ', path, 'file')
+        return nil
+    end
+
+    dap.configurations.rust = {
+        {
+            name = 'Run',
+            type = 'codelldb',
+            request = 'launch',
+            program = dap_program_path(),
+            cwd = '${workspaceFolder}',
+            stopOnEntry = false,
+            args = function()
+                if dap_program_path():endswith('octopus') then
+                    return { 'server' }
+                end
+                local args = vim.fn.input('Args: ')
+                return { '--', args }
+            end,
+        },
+    }
+
+    dap.listeners.before.event_terminated["dapui_config"] = function()
+    end
+    dap.listeners.before.event_exited["dapui_config"] = function()
+    end
 
     require('treesitter-context').setup({
         max_lines = 7,
