@@ -1,6 +1,22 @@
 function string:endswith(suffix)
-    return self:sub(-#suffix) == suffix
+    return tostring(self):sub(-#suffix) == suffix
 end
+
+local syl_sesh_command_value = nil
+local function syl_sesh_cmd_request()
+  -- Prompt the user for input and set the result to a local global variable
+  syl_sesh_command_value = vim.fn.input('👾Gimme a command: ')
+end
+
+local function syl_sesh_command_execute()
+    if syl_sesh_command_value then
+        vim.cmd('!' .. syl_sesh_command_value)
+    else
+        print('No temp command set 💔')
+    end
+end
+
+local functions = require('shared.functions')
 
 require('shared.setup').setup({
     install_plugins = function()
@@ -15,8 +31,15 @@ require('shared.setup').setup({
                     vim.cmd([[colorscheme moonfly]])
                     vim.o.colorcolumn = '80'
                     vim.o.cursorline = true
-                    vim.cmd([[highlight ColorColumn ctermbg=236]])
-                    vim.cmd([[highlight CursorLine ctermbg=236]])
+                    vim.cmd([[highlight ColorColumn guibg=#3b3059]])
+                    vim.cmd([[highlight CursorLine guibg=#3b3059]])
+                    vim.cmd([[highlight Normal guibg=NONE ctermbg=NONE]])
+                    vim.cmd([[highlight NonText guibg=NONE ctermbg=NONE]])
+                    vim.cmd([[highlight Visual guibg=#734d3f]])
+                    vim.cmd([[highlight LineNr guibg=NONE]])
+                    vim.cmd([[highlight SignColumn guibg=NONE]])
+                    vim.cmd([[highlight CursorLineSign guibg=NONE]])
+                    vim.cmd([[highlight CursorLineNr guifg=#c58de4]])
                 end
             },
             {
@@ -35,11 +58,36 @@ require('shared.setup').setup({
             {
                 "folke/trouble.nvim",
                 cmd = "Trouble",
+                follow = false,
                 keys = {
                     {
                         "<leader>xx",
                         "<cmd>Trouble diagnostics toggle<cr>",
                         desc = "Diagnostics (Trouble)",
+                    },
+                    {
+                        "<leader>xn",
+                        function()
+                            require("trouble").next({ skip_groups = true, jump = true })
+                        end,
+                        desc = "Diagnostics (Trouble)",
+                    },
+                    {
+                        "<leader>xp",
+                        function()
+                            require("trouble").previous({ skip_groups = true, jump = true })
+                        end,
+                        desc = "Diagnostics (Trouble)",
+                    },
+                },
+                modes = {
+                    my_diagnostics = {
+                        mode = 'diagnostics',
+                        filter = function(items)
+                            return vim.tbl_filter(function(item)
+                                return item.severity == vim.diagnostic.severity.WARN
+                            end, items)
+                        end,
                     },
                 },
             },
@@ -80,7 +128,8 @@ require('shared.setup').setup({
             -- Pickers
             -- { '<leader>f', function() sp.git_files({ untracked = true }) end },
             { '<leader>f', function() sp.files() end },
-            { '<leader>e', snacks_find_file },
+            -- { '<leader>e', function() print("Bonjour") end },
+            { '<leader>e', functions.snacks_find_file },
             { '<leader>m', sp.buffers },
             { '<leader>g', sp.grep },
             { '<leader>r', sp.resume },
@@ -110,23 +159,26 @@ require('shared.setup').setup({
 
                 -- Copy sourcegraph link to clipboard
                 { 'gys', '<cmd>lua get_sourcegraph_url()<cr>' },
-                -- Copy file path to clipboard
-                { 'gyf', '<cmd>let @+ = @%<cr>' },
+                -- Copy absolute path to clipboard
+                { 'gyf', '<cmd>let @+ = expand("%:p")<cr>' },
+
+                { '<leader>st', function() syl_sesh_cmd_request() end },
+                { '<leader><CR>', function() syl_sesh_command_execute() end },
 
                 -- DAP
                 -- Debug continue (or start)
-                { '<leader>dc', '<cmd>lua require("dap").continue()<cr>' },
-                { '<leader>db', '<cmd>lua require("persistent-breakpoints.api").toggle_breakpoint()<cr>' },
-                { '<leader>do', '<cmd>lua require("dap").step_over()<cr>' },
-                { '<leader>di', '<cmd>lua require("dap").step_into()<cr>' },
-                { '<leader>d-', '<cmd>lua require("dap").up()<cr>' },
-                { '<leader>d+', '<cmd>lua require("dap").down()<cr>' },
-                -- Run code you highlighted. Can work in a code comment etc.
-                { '<leader>de', '<cmd>lua require("dapui").eval()<cr>', mode = { 'n', 'v' } },
+                -- { '<leader>dc', '<cmd>lua require("dap").continue()<cr>' },
+                -- { '<leader>db', '<cmd>lua require("persistent-breakpoints.api").toggle_breakpoint()<cr>' },
+                -- { '<leader>do', '<cmd>lua require("dap").step_over()<cr>' },
+                -- { '<leader>di', '<cmd>lua require("dap").step_into()<cr>' },
+                -- { '<leader>d-', '<cmd>lua require("dap").up()<cr>' },
+                -- { '<leader>d+', '<cmd>lua require("dap").down()<cr>' },
+                -- -- Run code you highlighted. Can work in a code comment etc.
+                -- { '<leader>de', '<cmd>lua require("dapui").eval()<cr>', mode = { 'n', 'v' } },
                 -- Runs until the current cursor, ignoring breakpoints temporarily
-                { '<leader>dr', '<cmd>lua require("dap").run_to_cursor()<cr>' },
-                { '<leader>dq', '<cmd>lua require("dapui").close()<cr>' },
-                { '<leader>dd', '<cmd>lua require("dapui").open()<cr>' },
+                -- { '<leader>dr', '<cmd>lua require("dap").run_to_cursor()<cr>' },
+                -- { '<leader>dq', '<cmd>lua require("dapui").close()<cr>' },
+                -- { '<leader>dd', '<cmd>lua require("dapui").open()<cr>' },
                 -- Parrot
                 -- { '<leader>pi', '<cmd>\'<,\'PrtImplement<cr>', mode = { 'v' } },
                 -- { '<leader>pa', '<cmd>\'<,\'PrtAsk<cr>', mode = { 'v' } },
@@ -243,33 +295,32 @@ require('shared.setup').setup({
         end
     })
 
-user_lsp_overrides = {
-    rust_analyzer = {
-        settings = {
-            ['rust-analyzer'] = {
-                cargo = {
-                    allFeatures = true,
-                },
-                checkOnSave = {
-                    extraArgs = {'--target-dir', '/home/eli/.cache/rust-analyzer'},
-                },
-                diagnostics = {
-                    disabled = {
-                        'inactive-code',
-                    },
-                },
-            }
+vim.lsp.config['rust_analyzer'] = {
+    settings = {
+        ['rust-analyzer'] = {
+            cargo = {
+                features = "all",
+            },
+            check = {
+                command = 'clippy'
+            },
+            diagnostics = {
+                disabled = { 'inactive-code' },
+            },
         }
-    },
-    pylsp = {
-        settings = {
-            pylsp = {
-                plugins = {
-                    pycodestyle={
-                        ignore={'E501'},
+    }
+}
+
+vim.lsp.config['svelte'] = {
+    settings = {
+        svelte = {
+            plugin = {
+                svelte = {
+                    compilerWarnings = {
+                        ['css_unused_selector'] = 'ignore',
                     },
                 },
             },
-        }
+        },
     },
 }
